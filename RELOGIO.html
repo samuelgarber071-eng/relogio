@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Painel de Fusos Horários</title>
+    <title>Painel de Fusos Horários - Capitais do Mundo</title>
     <style>
-        /* Estilo da Página Principal */
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: #121214;
@@ -43,7 +42,7 @@
             left: 0;
             width: 100vw;
             height: 100vh;
-            background-color: rgba(0, 0, 0, 0.75);
+            background-color: rgba(0, 0, 0, 0.8);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -53,15 +52,15 @@
             z-index: 9999;
         }
 
-        /* Estrutura do Pop-up com Proporção Exata 12x3 (1200x300) */
+        /* Estrutura do Pop-up com Proporção 12x3 (1200x300) */
         .modal-box {
             width: 1200px;
             height: 300px;
             background-color: #1a1a1e;
             border-radius: 10px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.6);
             border: 1px solid #3a3a42;
-            padding: 15px;
+            padding: 12px 15px;
             box-sizing: border-box;
             display: flex;
             flex-direction: column;
@@ -71,7 +70,6 @@
             transition: transform 0.3s ease;
         }
 
-        /* Quando o pop-up estiver ativo */
         .modal-overlay.active {
             opacity: 1;
             pointer-events: auto;
@@ -80,11 +78,10 @@
             transform: scale(1);
         }
 
-        /* Botão para Fechar o Pop-up */
         .close-btn {
             position: absolute;
-            top: 12px;
-            right: 15px;
+            top: 10px;
+            right: 12px;
             background: #ff5f56;
             border: none;
             color: white;
@@ -99,22 +96,46 @@
             font-size: 0.75rem;
         }
 
-        /* Elementos Internos da Régua */
+        /* Área de Seleção e Busca no Topo */
         .top-bar {
             display: flex;
             justify-content: flex-start;
-            margin-bottom: 5px;
+            margin-bottom: 2px;
         }
         .selectors { display: flex; gap: 15px; }
+        .search-group {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+        
+        .input-busca {
+            background-color: #26262b;
+            color: #4ea8de;
+            border: 1px solid #444;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            outline: none;
+            width: 280px;
+        }
+        .input-busca::placeholder {
+            color: #888;
+        }
+        .input-busca:focus {
+            border-color: #4ea8de;
+        }
+
         select {
             background-color: #333339;
             color: white;
             border: 1px solid #555;
-            padding: 5px 10px;
-            border-radius: 5px;
-            font-size: 0.85rem;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
             cursor: pointer;
             outline: none;
+            width: 280px;
         }
         
         table {
@@ -125,32 +146,35 @@
         th, td {
             border: 1px solid #3a3a42;
             text-align: center;
-            padding: 8px 2px;
-            font-size: 0.85rem;
+            padding: 6px 2px;
+            font-size: 0.8rem;
         }
         th { background-color: #1f1f23; font-weight: 600; }
         .city-header {
             text-align: left;
-            padding-left: 12px;
-            width: 180px;
+            padding-left: 8px;
+            width: 220px;
             font-weight: bold;
             background-color: #18181c;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
         
-        /* Legenda na Base */
+        /* Legenda */
         .legend { 
             display: flex; 
             gap: 20px; 
-            font-size: 0.8rem; 
+            font-size: 0.78rem; 
             background: #26262b;
-            padding: 6px 15px;
+            padding: 5px 15px;
             border-radius: 6px;
             justify-content: center;
         }
         .legend-item { display: flex; align-items: center; gap: 6px; }
-        .color-box { width: 14px; height: 14px; border-radius: 3px; }
+        .color-box { width: 12px; height: 12px; border-radius: 3px; }
 
-        /* Cores das Fases baseadas na foto */
+        /* Cores */
         .p-amanhecer { background-color: #d4a373; color: #000; font-weight: bold; }
         .p-manha     { background-color: #64b5f6; color: #000; font-weight: bold; }
         .p-dia       { background-color: #e9c46a; color: #000; font-weight: bold; }
@@ -160,7 +184,7 @@
 </head>
 <body>
 
-    <button class="btn-principal" onclick="toggleModal(true)">Abrir Tabela de Fusos (12x3)</button>
+    <button class="btn-principal" onclick="toggleModal(true)">Abrir Tabela de Capitais (12x3)</button>
 
     <div class="modal-overlay" id="modalOverlay">
         <div class="modal-box">
@@ -168,14 +192,28 @@
             
             <div class="top-bar">
                 <div class="selectors">
-                    <select id="sel-0" onchange="alterarFuso(0, this.value)"></select>
-                    <select id="sel-1" onchange="alterarFuso(1, this.value)"></select>
-                    <select id="sel-2" onchange="alterarFuso(2, this.value)"></select>
+                    <!-- Campo 1 com Pesquisa -->
+                    <div class="search-group">
+                        <input type="text" class="input-busca" placeholder="🔍 Pesquisar Capital 1..." oninput="filtrarOpcoes(0, this.value)">
+                        <select id="sel-0" onchange="alterarFuso(0, this.value)"></select>
+                    </div>
+
+                    <!-- Campo 2 com Pesquisa -->
+                    <div class="search-group">
+                        <input type="text" class="input-busca" placeholder="🔍 Pesquisar Capital 2..." oninput="filtrarOpcoes(1, this.value)">
+                        <select id="sel-1" onchange="alterarFuso(1, this.value)"></select>
+                    </div>
+
+                    <!-- Campo 3 com Pesquisa -->
+                    <div class="search-group">
+                        <input type="text" class="input-busca" placeholder="🔍 Pesquisar Capital 3..." oninput="filtrarOpcoes(2, this.value)">
+                        <select id="sel-2" onchange="alterarFuso(2, this.value)"></select>
+                    </div>
                 </div>
             </div>
 
             <table>
-                <thead><tr id="header-row"><th class="city-header">Cidade / Fuso Base</th></tr></thead>
+                <thead><tr id="header-row"><th class="city-header">Capital Base</th></tr></thead>
                 <tbody id="table-body"></tbody>
             </table>
 
@@ -190,40 +228,125 @@
     </div>
 
     <script>
-        // Banco de dados local estático
-        const cidadesDados = [
-            { offset: -12, name: "Baker Island (UTC -12)" },
-            { offset: -11, name: "Samoa Americana (UTC -11)" },
-            { offset: -10, name: "Honolulu (UTC -10)" },
-            { offset: -9, name: "Alasca (UTC -9)" },
-            { offset: -8, name: "Los Angeles (UTC -8)" },
-            { offset: -7, name: "Denver (UTC -7)" },
-            { offset: -6, name: "Cidade do México (UTC -6)" },
-            { offset: -5, name: "Washington D.C. (UTC -5)" },
-            { offset: -4, name: "Manaus / Santiago (UTC -4)" },
-            { offset: -3, name: "Brasília / São Paulo (UTC -3)" },
-            { offset: -2, name: "Fernando Noronha (UTC -2)" },
-            { offset: -1, name: "Açores / Cabo Verde (UTC -1)" },
-            { offset: 0, name: "Londres / GMT (UTC 0)" },
-            { offset: 1, name: "Paris / Berlim (UTC +1)" },
-            { offset: 2, name: "Tel Aviv / Cairo (UTC +2)" },
-            { offset: 3, name: "Moscou / Nairóbi (UTC +3)" },
-            { offset: 4, name: "Dubai / Baku (UTC +4)" },
-            { offset: 5, name: "Carachi / Maldivas (UTC +5)" },
-            { offset: 6, name: "Dhaka / Astana (UTC +6)" },
-            { offset: 7, name: "Bangcoc / Jacarta (UTC +7)" },
-            { offset: 8, name: "Pequim / Cingapura (UTC +8)" },
-            { offset: 9, name: "Hanseong / Tóquio (UTC +9)" },
-            { offset: 10, name: "Sydney / Melbourne (UTC +10)" },
-            { offset: 11, name: "Ilhas Salomão (UTC +11)" },
-            { offset: 12, name: "Auckland / Fiji (UTC +12)" },
-            { offset: 13, name: "Tonga / Samoa (UTC +13)" },
-            { offset: 14, name: "Quiribáti (UTC +14)" }
+        const capitaisMundo = [
+            { name: "Abuja (Nigéria)", offset: 1 },
+            { name: "Acra (Gana)", offset: 0 },
+            { name: "Adis Abeba (Etiópia)", offset: 3 },
+            { name: "Argel (Argélia)", offset: 1 },
+            { name: "Aman (Jordânia)", offset: 3 },
+            { name: "Amsterdã (Países Baixos)", offset: 1 },
+            { name: "Andorra la Vella (Andorra)", offset: 1 },
+            { name: "Ancara (Turquia)", offset: 3 },
+            { name: "Antananarivo (Madagascar)", offset: 3 },
+            { name: "Apia (Samoa)", offset: 13 },
+            { name: "Asgabate (Turcomenistão)", offset: 5 },
+            { name: "Assunção (Paraguai)", offset: -4 },
+            { name: "Atenas (Grécia)", offset: 2 },
+            { name: "Bagdá (Iraque)", offset: 3 },
+            { name: "Bacu (Aserbaidjão)", offset: 4 },
+            { name: "Bamako (Mali)", offset: 0 },
+            { name: "Bandar Seri Begawan (Brunei)", offset: 8 },
+            { name: "Bangcoc (Tailândia)", offset: 7 },
+            { name: "Bangui (Rep. Centro-Africana)", offset: 1 },
+            { name: "Banjul (Gâmbia)", offset: 0 },
+            { name: "Basseterre (São Cristóvão e Neves)", offset: -4 },
+            { name: "Beirute (Líbano)", offset: 2 },
+            { name: "Belgrado (Sérvia)", offset: 1 },
+            { name: "Belmopan (Belize)", offset: -6 },
+            { name: "Berlim (Alemanha)", offset: 1 },
+            { name: "Berna (Ssuíça)", offset: 1 },
+            { name: "Bissau (Guiné-Bissau)", offset: 0 },
+            { name: "Bixqueque (Quirguistão)", offset: 6 },
+            { name: "Bogotá (Colômbia)", offset: -5 },
+            { name: "Brasília (Brasil)", offset: -3 },
+            { name: "Bratislava (Eslováquia)", offset: 1 },
+            { name: "Brazzaville (Rep. do Congo)", offset: 1 },
+            { name: "Bridgetown (Barbados)", offset: -4 },
+            { name: "Bruxelas (Bélgica)", offset: 1 },
+            { name: "Bucareste (Romênia)", offset: 2 },
+            { name: "Budapeste (Hungria)", offset: 1 },
+            { name: "Buenos Aires (Argentina)", offset: -3 },
+            { name: "Cabul (Afeganistão)", offset: 4.5 },
+            { name: "Cairo (Egito)", offset: 2 },
+            { name: "Camberra (Austrália)", offset: 10 },
+            { name: "Caracas (Venezuela)", offset: -4 },
+            { name: "Castries (Santa Lúcia)", offset: -4 },
+            { name: "Catmandu (Nepal)", offset: 5.75 },
+            { name: "Cidade da Guatemala (Guatemala)", offset: -6 },
+            { name: "Cidade do México (México)", offset: -6 },
+            { name: "Cidade do Panamá (Panamá)", offset: -5 },
+            { name: "Colombo (Sri Lanka)", offset: 5.5 },
+            { name: "Copenhague (Dinamarca)", offset: 1 },
+            { name: "Dakar (Senegal)", offset: 0 },
+            { name: "Damasco (Síria)", offset: 3 },
+            { name: "Dacar (Bangladesh)", offset: 6 },
+            { name: "Díli (Timor-Leste)", offset: 9 },
+            { name: "Djibuti (Djibuti)", offset: 3 },
+            { name: "Doha (Catar)", offset: 3 },
+            { name: "Dublin (Irlanda)", offset: 0 },
+            { name: "Estocolmo (Suécia)", offset: 1 },
+            { name: "Georgetown (Guiana)", offset: -4 },
+            { name: "Hanoi (Vietnã)", offset: 7 },
+            { name: "Harare (Zimbábue)", offset: 2 },
+            { name: "Havana (Cuba)", offset: -5 },
+            { name: "Helsinque (Finlândia)", offset: 2 },
+            { name: "Honiara (Ilhas Salomão)", offset: 11 },
+            { name: "Islamabad (Paquistão)", offset: 5 },
+            { name: "Jacarta (Indonésia)", offset: 7 },
+            { name: "Jerusalém (Israel)", offset: 2 },
+            { name: "Kingston (Jamaica)", offset: -5 },
+            { name: "Kuala Lumpur (Malásia)", offset: 8 },
+            { name: "Kiev (Ucrânia)", offset: 2 },
+            { name: "La Paz (Bolívia)", offset: -4 },
+            { name: "Lima (Peru)", offset: -5 },
+            { name: "Lisboa (Portugal)", offset: 0 },
+            { name: "Londres (Reino Unido)", offset: 0 },
+            { name: "Luanda (Angola)", offset: 1 },
+            { name: "Luxemburgo (Luxemburgo)", offset: 1 },
+            { name: "Madri (Espanha)", offset: 1 },
+            { name: "Manágua (Nicarágua)", offset: -6 },
+            { name: "Manila (Filipinas)", offset: 8 },
+            { name: "Maputo (Moçambique)", offset: 2 },
+            { name: "Mascate (Omã)", offset: 4 },
+            { name: "Montevidéu (Uruguai)", offset: -3 },
+            { name: "Moscou (Rússia)", offset: 3 },
+            { name: "Nairóbi (Quênia)", offset: 3 },
+            { name: "Nassau (Bahamas)", offset: -5 },
+            { name: "Nova Déli (Índia)", offset: 5.5 },
+            { name: "Oslo (Noruega)", offset: 1 },
+            { name: "Ottawa (Canadá)", offset: -5 },
+            { name: "Paramaribo (Suriname)", offset: -3 },
+            { name: "Paris (França)", offset: 1 },
+            { name: "Pequim (China)", offset: 8 },
+            { name: "Porto Príncipe (Haiti)", offset: -5 },
+            { name: "Praga (Chéquia)", offset: 1 },
+            { name: "Pretória (África do Sul)", offset: 2 },
+            { name: "Quito (Equador)", offset: -5 },
+            { name: "Rabat (Marrocos)", offset: 1 },
+            { name: "Reiquiavique (Islândia)", offset: 0 },
+            { name: "Riade (Arábia Saudita)", offset: 3 },
+            { name: "Roma (Itália)", offset: 1 },
+            { name: "San José (Costa Rica)", offset: -6 },
+            { name: "San Salvador (El Salvador)", offset: -6 },
+            { name: "Santiago (Chile)", offset: -4 },
+            { name: "Santo Domingo (Rep. Dominicana)", offset: -4 },
+            { name: "Seul (Coreia do Sul)", offset: 9 },
+            { name: "Cingapura (Cingapura)", offset: 8 },
+            { name: "Suva (Fiji)", offset: 12 },
+            { name: "Tegucigalpa (Honduras)", offset: -6 },
+            { name: "Teerã (Irã)", offset: 3.5 },
+            { name: "Tóquio (Japão)", offset: 9 },
+            { name: "Trípoli (Líbia)", offset: 2 },
+            { name: "Túnis (Tunísia)", offset: 1 },
+            { name: "Varsóvia (Polônia)", offset: 1 },
+            { name: "Viena (Áustria)", offset: 1 },
+            { name: "Washington, D.C. (Estados Unidos)", offset: -5 },
+            { name: "Wellington (Nova Zelândia)", offset: 12 },
+            { name: "Zagreb (Croácia)", offset: 1 }
         ];
 
-        let cidadesAtivas = [-5, 2, 9]; 
+        let cidadesAtivas = [-3, 0, 9]; 
 
-        // Controle do Pop-up Virtual
         function toggleModal(open) {
             const overlay = document.getElementById('modalOverlay');
             if (open) overlay.classList.add('active');
@@ -238,21 +361,53 @@
             return 'p-noite'; 
         }
 
+        // Popula as opções do select baseado na pesquisa
+        function popularSelect(index, termoBusca = "") {
+            const select = document.getElementById(`sel-${index}`);
+            const valorAtual = cidadesAtivas[index];
+            select.innerHTML = '';
+
+            const listaFiltrada = capitaisMundo.filter(c => 
+                c.name.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+                .includes(termoBusca.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, ""))
+            );
+
+            if (listaFiltrada.length === 0) {
+                const opt = document.createElement('option');
+                opt.textContent = "Nenhum resultado encontrado";
+                select.appendChild(opt);
+                return;
+            }
+
+            listaFiltrada.forEach(capital => {
+                const opt = document.createElement('option');
+                opt.value = capital.offset;
+                const fusoStr = capital.offset >= 0 ? `+${capital.offset}` : capital.offset;
+                opt.textContent = `${capital.name} (UTC ${fusoStr})`;
+                
+                if (capital.offset === valorAtual) {
+                    opt.selected = true;
+                }
+                select.appendChild(opt);
+            });
+        }
+
+        function filtrarOpcoes(index, termo) {
+            popularSelect(index, termo);
+            const select = document.getElementById(`sel-${index}`);
+            if (select.options.length > 0 && select.value) {
+                alterarFuso(index, select.value);
+            }
+        }
+
         function inicializarSeletores() {
             for (let i = 0; i < 3; i++) {
-                const select = document.getElementById(`sel-${i}`);
-                cidadesDados.forEach(cidade => {
-                    const opt = document.createElement('option');
-                    opt.value = cidade.offset;
-                    opt.textContent = cidade.name;
-                    if (cidade.offset === cidadesAtivas[i]) opt.selected = true;
-                    select.appendChild(opt);
-                });
+                popularSelect(i);
             }
         }
 
         function alterarFuso(index, offsetValue) {
-            cidadesAtivas[index] = parseInt(offsetValue);
+            cidadesAtivas[index] = parseFloat(offsetValue);
             renderizarRegua();
         }
 
@@ -260,7 +415,7 @@
             const headerRow = document.getElementById('header-row');
             const tbody = document.getElementById('table-body');
             
-            headerRow.innerHTML = '<th class="city-header">Cidade / Fuso Base</th>';
+            headerRow.innerHTML = '<th class="city-header">Capital Base</th>';
             tbody.innerHTML = '';
 
             const fusoReferencia = cidadesAtivas[0];
@@ -271,13 +426,15 @@
                 headerRow.appendChild(th);
             }
 
-            cidadesAtivas.forEach(fusoAtual => {
+            cidadesAtivas.forEach((fusoAtual, idx) => {
                 const tr = document.createElement('tr');
-                const dadosCidade = cidadesDados.find(c => c.offset === fusoAtual);
+                const selectElem = document.getElementById(`sel-${idx}`);
+                const optionSelecionada = selectElem.options[selectElem.selectedIndex];
                 
                 const tdNome = document.createElement('td');
                 tdNome.className = 'city-header';
-                tdNome.innerHTML = `<strong>${dadosCidade.name.split(' (')[0]}</strong>`;
+                const textoNome = optionSelecionada ? optionSelecionada.textContent.split(' (')[0] : "—";
+                tdNome.innerHTML = `<strong>${textoNome}</strong>`;
                 tr.appendChild(tdNome);
 
                 for (let i = 0; i < 24; i++) {
@@ -286,8 +443,15 @@
                     if (horaCalculada < 0) horaCalculada += 24; 
 
                     const tdHora = document.createElement('td');
-                    tdHora.textContent = horaCalculada.toString().padStart(2, '0');
-                    tdHora.className = obterClassePeriodo(horaCalculada);
+                    
+                    const horaInteira = Math.floor(horaCalculada);
+                    const minutos = Math.round((horaCalculada - horaInteira) * 60);
+                    
+                    tdHora.textContent = minutos > 0 
+                        ? `${horaInteira.toString().padStart(2, '0')}:${minutos}`
+                        : horaInteira.toString().padStart(2, '0');
+
+                    tdHora.className = obterClassePeriodo(horaInteira);
                     tr.appendChild(tdHora);
                 }
                 tbody.appendChild(tr);
