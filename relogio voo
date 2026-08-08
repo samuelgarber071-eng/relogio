@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel de Fusos Horários - Capitais do Mundo</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #121214;
+            color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .btn-principal {
+            background-color: #4ea8de;
+            color: #121214;
+            border: none;
+            padding: 15px 35px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(78, 168, 222, 0.3);
+            transition: background-color 0.2s, transform 0.1s;
+        }
+
+        .btn-principal:hover {
+            background-color: #3a8dbd;
+            transform: scale(1.02);
+        }
+
+        /* Fundo escurecido do Pop-up Virtual */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: rgba(0, 0, 0, 0.85);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            z-index: 9999;
+        }
+
+        /* Estrutura do Pop-up */
+        .modal-box {
+            width: 1200px;
+            height: 480px; /* Expandido para acomodar a calculadora */
+            background-color: #1a1a1e;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+            border: 1px solid #3a3a42;
+            padding: 15px 20px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .modal-overlay.active .modal-box {
+            transform: scale(1);
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 12px;
+            background: #ff5f56;
+            border: none;
+            color: white;
+            font-weight: bold;
+            border-radius: 50%;
+            width: 22px;
+            height: 22px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+        }
+
+        /* Área de Seleção e Busca no Topo */
+        .top-bar {
+            display: flex;
+            justify-content: flex-start;
+            margin-bottom: 5px;
+        }
+        .selectors { display: flex; gap: 15px; }
+        .search-group {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+        
+        .input-busca, .input-time {
+            background-color: #26262b;
+            color: #4ea8de;
+            border: 1px solid #444;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            outline: none;
+        }
+        .input-busca { width: 280px; }
+        .input-busca::placeholder { color: #888; }
+        .input-busca:focus, .input-time:focus { border-color: #4ea8de; }
+
+        select {
+            background-color: #333339;
+            color: white;
+            border: 1px solid #555;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            outline: none;
+            width: 280px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: #26262b;
+        }
+        th, td {
+            border: 1px solid #3a3a42;
+            text-align: center;
+            padding: 6px 2px;
+            font-size: 0.8rem;
+        }
+        th { background-color: #1f1f23; font-weight: 600; }
+        .city-header {
+            text-align: left;
+            padding-left: 8px;
+            width: 220px;
+            font-weight: bold;
+            background-color: #18181c;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* Seção Calculadora de Voo */
+        .flight-calculator {
+            background-color: #232328;
+            border: 1px solid #3a3a42;
+            border-radius: 6px;
+            padding: 10px 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .calc-title {
+            font-size: 0.85rem;
+            font-weight: bold;
+            color: #4ea8de;
+            white-space: nowrap;
+        }
+
+        .calc-inputs {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .calc-field {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            font-size: 0.75rem;
+            color: #aaa;
+        }
+
+        .calc-field select { width: 180px; }
+
+        .btn-calc {
+            background-color: #2a9d8f;
+            color: white;
+            border: none;
+            padding: 6px 14px;
+            border-radius: 4px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+        .btn-calc:hover { background-color: #238377; }
+
+        .calc-result {
+            font-size: 0.9rem;
+            font-weight: bold;
+            color: #e9c46a;
+            background: #18181c;
+            padding: 6px 12px;
+            border-radius: 4px;
+            border: 1px solid #3a3a42;
+            white-space: nowrap;
+        }
+
+        /* Legenda */
+        .legend { 
+            display: flex; 
+            gap: 20px; 
+            font-size: 0.78rem; 
+            background: #26262b;
+            padding: 5px 15px;
+            border-radius: 6px;
+            justify-content: center;
+        }
+        .legend-item { display: flex; align-items: center; gap: 6px; }
+        .color-box { width: 12px; height: 12px; border-radius: 3px; }
+
+        /* Cores */
+        .p-amanhecer { background-color: #d4a373; color: #000; font-weight: bold; }
+        .p-manha     { background-color: #64b5f6; color: #000; font-weight: bold; }
+        .p-dia       { background-color: #e9c46a; color: #000; font-weight: bold; }
+        .p-anoitecer { background-color: #f4a261; color: #000; font-weight: bold; }
+        .p-noite     { background-color: #1d3557; color: #fff; }
+    </style>
+</head>
+<body>
+
+    <button class="btn-principal" onclick="toggleModal(true)">Abrir Tabela e Calculadora de Voo</button>
+
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal-box">
+            <button class="close-btn" onclick="toggleModal(false)">X</button>
+            
+            <!-- TOPO: Seletores e Busca para a Régua -->
+            <div class="top-bar">
+                <div class="selectors">
+                    <div class="search-group">
+                        <input type="text" class="input-busca" placeholder="🔍 Pesquisar Capital 1..." oninput="filtrarOpcoes(0, this.value)">
+                        <select id="sel-0" onchange="alterarFuso(0, this.value)"></select>
+                    </div>
+
+                    <div class="search-group">
+                        <input type="text" class="input-busca" placeholder="🔍 Pesquisar Capital 2..." oninput="filtrarOpcoes(1, this.value)">
+                        <select id="sel-1" onchange="alterarFuso(1, this.value)"></select>
+                    </div>
+
+                    <div class="search-group">
+                        <input type="text" class="input-busca" placeholder="🔍 Pesquisar Capital 3..." oninput="filtrarOpcoes(2, this.value)">
+                        <select id="sel-2" onchange="alterarFuso(2, this.value)"></select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MEIO 1: Tabela da Régua -->
+            <table>
+                <thead><tr id="header-row"><th class="city-header">Capital Base</th></tr></thead>
+                <tbody id="table-body"></tbody>
+            </table>
+
+            <!-- MEIO 2: Calculadora de Tempo de Voo -->
+            <div class="flight-calculator">
+                <div class="calc-title">✈️ Calculadora de Tempo de Voo</div>
+                <div class="calc-inputs">
+                    <div class="calc-field">
+                        <label>Origem:</label>
+                        <select id="calc-origem"></select>
+                    </div>
+                    <div class="calc-field">
+                        <label>Partida (Local):</label>
+                        <input type="time" id="calc-hora-partida" class="input-time" value="08:00">
+                    </div>
+                    <div class="calc-field">
+                        <label>Destino:</label>
+                        <select id="calc-destino"></select>
+                    </div>
+                    <div class="calc-field">
+                        <label>Chegada (Local Destino):</label>
+                        <input type="time" id="calc-hora-chegada" class="input-time" value="18:00">
+                    </div>
+                    <button class="btn-calc" onclick="calcularTempoVoo()">Calcular</button>
+                </div>
+                <div class="calc-result" id="calc-resultado">Duração: --h --min</div>
+            </div>
+
+            <!-- BASE: Legenda -->
+            <div class="legend">
+                <div class="legend-item"><div class="color-box p-amanhecer"></div> Amanhecer (05h-06h)</div>
+                <div class="legend-item"><div class="color-box p-manha"></div> Manhã (07h-11h)</div>
+                <div class="legend-item"><div class="color-box p-dia"></div> Dia (12h-16h)</div>
+                <div class="legend-item"><div class="color-box p-anoitecer"></div> Anoitecer (17h-18h)</div>
+                <div class="legend-item"><div class="color-box p-noite"></div> Noite / Madrugada (19h-04h)</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const capitaisMundo = [
+            { name: "Abuja (Nigéria)", offset: 1 },
+            { name: "Acra (Gana)", offset: 0 },
+            { name: "Adis Abeba (Etiópia)", offset: 3 },
+            { name: "Argel (Argélia)", offset: 1 },
+            { name: "Aman (Jordânia)", offset: 3 },
+            { name: "Amsterdã (Países Baixos)", offset: 1 },
+            { name: "Andorra la Vella (Andorra)", offset: 1 },
+            { name: "Ancara (Turquia)", offset: 3 },
+            { name: "Antananarivo (Madagascar)", offset: 3 },
+            { name: "Apia (Samoa)", offset: 13 },
+            { name: "Asgabate (Turcomenistão)", offset: 5 },
+            { name: "Assunção (Paraguai)", offset: -4 },
+            { name: "Atenas (Grécia)", offset: 2 },
+            { name: "Bagdá (Iraque)", offset: 3 },
+            { name: "Bacu (Aserbaidjão)", offset: 4 },
+            { name: "Bamako (Mali)", offset: 0 },
+            { name: "Bandar Seri Begawan (Brunei)", offset: 8 },
+            { name: "Bangcoc (Tailândia)", offset: 7 },
+            { name: "Bangui (Rep. Centro-Africana)", offset: 1 },
+            { name: "Banjul (Gâmbia)", offset: 0 },
+            { name: "Beirute (Líbano)", offset: 2 },
+            { name: "Belgrado (Sérvia)", offset: 1 },
+            { name: "Berlim (Alemanha)", offset: 1 },
+            { name: "Berna (Suíça)", offset: 1 },
+            { name: "Bogotá (Colômbia)", offset: -5 },
+            { name: "Brasília (Brasil)", offset: -3 },
+            { name: "Bruxelas (Bélgica)", offset: 1 },
+            { name: "Bucareste (Romênia)", offset: 2 },
+            { name: "Budapeste (Hungria)", offset: 1 },
+            { name: "Buenos Aires (Argentina)", offset: -3 },
+            { name: "Cabul (Afeganistão)", offset: 4.5 },
+            { name: "Cairo (Egito)", offset: 2 },
+            { name: "Camberra (Austrália)", offset: 10 },
+            { name: "Caracas (Venezuela)", offset: -4 },
+            { name: "Catmandu (Nepal)", offset: 5.75 },
+            { name: "Cidade do México (México)", offset: -6 },
+            { name: "Cidade do Panamá (Panamá)", offset: -5 },
+            { name: "Copenhague (Dinamarca)", offset: 1 },
+            { name: "Dakar (Senegal)", offset: 0 },
+            { name: "Damasco (Síria)", offset: 3 },
+            { name: "Dacar (Bangladesh)", offset: 6 },
+            { name: "Díli (Timor-Leste)", offset: 9 },
+            { name: "Doha (Catar)", offset: 3 },
+            { name: "Dublin (Irlanda)", offset: 0 },
+            { name: "Estocolmo (Suécia)", offset: 1 },
+            { name: "Hanoi (Vietnã)", offset: 7 },
+            { name: "Havana (Cuba)", offset: -5 },
+            { name: "Helsinque (Finlândia)", offset: 2 },
+            { name: "Islamabad (Paquistão)", offset: 5 },
+            { name: "Jacarta (Indonésia)", offset: 7 },
+            { name: "Jerusalém (Israel)", offset: 2 },
+            { name: "Kuala Lumpur (Malásia)", offset: 8 },
+            { name: "Kiev (Ucrânia)", offset: 2 },
+            { name: "La Paz (Bolívia)", offset: -4 },
+            { name: "Lima (Peru)", offset: -5 },
+            { name: "Lisboa (Portugal)", offset: 0 },
+            { name: "Londres (Reino Unido)", offset: 0 },
+            { name: "Luanda (Angola)", offset: 1 },
+            { name: "Madri (Espanha)", offset: 1 },
+            { name: "Manila (Filipinas)", offset: 8 },
+            { name: "Maputo (Moçambique)", offset: 2 },
+            { name: "Montevidéu (Uruguai)", offset: -3 },
+            { name: "Moscou (Rússia)", offset: 3 },
+            { name: "Nairóbi (Quênia)", offset: 3 },
+            { name: "Nova Déli (Índia)", offset: 5.5 },
+            { name: "Oslo (Noruega)", offset: 1 },
+            { name: "Ottawa (Canadá)", offset: -5 },
+            { name: "Paris (França)", offset: 1 },
+            { name: "Pequim (China)", offset: 8 },
+            { name: "Praga (Chéquia)", offset: 1 },
+            { name: "Pretória (África do Sul)", offset: 2 },
+            { name: "Quito (Equador)", offset: -5 },
+            { name: "Rabat (Marrocos)", offset: 1 },
+            { name: "Riade (Arábia Saudita)", offset: 3 },
+            { name: "Roma (Itália)", offset: 1 },
+            { name: "San José (Costa Rica)", offset: -6 },
+            { name: "Santiago (Chile)", offset: -4 },
+            { name: "Santo Domingo (Rep. Dominicana)", offset: -4 },
+            { name: "Seul (Coreia do Sul)", offset: 9 },
+            { name: "Cingapura (Cingapura)", offset: 8 },
+            { name: "Suva (Fiji)", offset: 12 },
+            { name: "Teerã (Irã)", offset: 3.5 },
+            { name: "Tóquio (Japão)", offset: 9 },
+            { name: "Varsóvia (Polônia)", offset: 1 },
+            { name: "Viena (Áustria)", offset: 1 },
+            { name: "Washington, D.C. (Estados Unidos)", offset: -5 },
+            { name: "Wellington (Nova Zelândia)", offset: 12 },
+            { name: "Zagreb (Croácia)", offset: 1 }
+        ];
+
+        let cidadesAtivas = [-3, 0, 9]; 
+
+        function toggleModal(open) {
+            const overlay = document.getElementById('modalOverlay');
+            if (open) overlay.classList.add('active');
+            else overlay.classList.remove('active');
+        }
+
+        function obterClassePeriodo(hora) {
+            if (hora >= 5 && hora <= 6) return 'p-amanhecer';
+            if (hora >= 7 && hora <= 11) return 'p-manha';
+            if (hora >= 12 && hora <= 16) return 'p-dia';
+            if (hora >= 17 && hora <= 18) return 'p-anoitecer';
+            return 'p-noite'; 
+        }
+
+        function popularSelect(index, termoBusca = "") {
+            const select = document.getElementById(`sel-${index}`);
+            const valorAtual = cidadesAtivas[index];
+            select.innerHTML = '';
+
+            const listaFiltrada = capitaisMundo.filter(c => 
+                c.name.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+                .includes(termoBusca.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, ""))
+            );
+
+            if (listaFiltrada.length === 0) {
+                const opt = document.createElement('option');
+                opt.textContent = "Nenhum resultado";
+                select.appendChild(opt);
+                return;
+            }
+
+            listaFiltrada.forEach(capital => {
+                const opt = document.createElement('option');
+                opt.value = capital.offset;
+                const fusoStr = capital.offset >= 0 ? `+${capital.offset}` : capital.offset;
+                opt.textContent = `${capital.name} (UTC ${fusoStr})`;
+                
+                if (capital.offset === valorAtual) opt.selected = true;
+                select.appendChild(opt);
+            });
+        }
+
+        function filtrarOpcoes(index, termo) {
+            popularSelect(index, termo);
+            const select = document.getElementById(`sel-${index}`);
+            if (select.options.length > 0 && select.value) {
+                alterarFuso(index, select.value);
+            }
+        }
+
+        function inicializarCalculadoraVoo() {
+            const selectOrigem = document.getElementById('calc-origem');
+            const selectDestino = document.getElementById('calc-destino');
+            
+            selectOrigem.innerHTML = '';
+            selectDestino.innerHTML = '';
+
+            capitaisMundo.forEach((capital, index) => {
+                const opt1 = document.createElement('option');
+                opt1.value = capital.offset;
+                opt1.textContent = capital.name;
+                
+                const opt2 = opt1.cloneNode(true);
+
+                if (capital.name.includes("Brasília")) opt1.selected = true;
+                if (capital.name.includes("Lisboa")) opt2.selected = true;
+
+                selectOrigem.appendChild(opt1);
+                selectDestino.appendChild(opt2);
+            });
+        }
+
+        function calcularTempoVoo() {
+            const fusoOrigem = parseFloat(document.getElementById('calc-origem').value);
+            const fusoDestino = parseFloat(document.getElementById('calc-destino').value);
+            
+            const horaPartidaStr = document.getElementById('calc-hora-partida').value;
+            const horaChegadaStr = document.getElementById('calc-hora-chegada').value;
+
+            if (!horaPartidaStr || !horaChegadaStr) return;
+
+            const [hP, mP] = horaPartidaStr.split(':').map(Number);
+            const [hC, mC] = horaChegadaStr.split(':').map(Number);
+
+            // Converte ambos os horários para minutos UTC
+            const minutosPartidaUTC = (hP * 60 + mP) - (fusoOrigem * 60);
+            let minutosChegadaUTC = (hC * 60 + mC) - (fusoDestino * 60);
+
+            // Ajuste caso o voo chegue no dia seguinte
+            while (minutosChegadaUTC <= minutosPartidaUTC) {
+                minutosChegadaUTC += 24 * 60;
+            }
+
+            const duracaoTotalMinutos = minutosChegadaUTC - minutosPartidaUTC;
+            const horasVoo = Math.floor(duracaoTotalMinutos / 60);
+            const minutosVoo = duracaoTotalMinutos % 60;
+
+            document.getElementById('calc-resultado').textContent = 
+                `Duração: ${horasVoo}h ${minutosVoo.toString().padStart(2, '0')}min`;
+        }
+
+        function inicializarSeletores() {
+            for (let i = 0; i < 3; i++) popularSelect(i);
+            inicializarCalculadoraVoo();
+        }
+
+        function alterarFuso(index, offsetValue) {
+            cidadesAtivas[index] = parseFloat(offsetValue);
+            renderizarRegua();
+        }
+
+        function renderizarRegua() {
+            const headerRow = document.getElementById('header-row');
+            const tbody = document.getElementById('table-body');
+            
+            headerRow.innerHTML = '<th class="city-header">Capital Base</th>';
+            tbody.innerHTML = '';
+
+            const fusoReferencia = cidadesAtivas[0];
+
+            for (let i = 0; i < 24; i++) {
+                const th = document.createElement('th');
+                th.textContent = i.toString().padStart(2, '0');
+                headerRow.appendChild(th);
+            }
+
+            cidadesAtivas.forEach((fusoAtual, idx) => {
+                const tr = document.createElement('tr');
+                const selectElem = document.getElementById(`sel-${idx}`);
+                const optionSelecionada = selectElem.options[selectElem.selectedIndex];
+                
+                const tdNome = document.createElement('td');
+                tdNome.className = 'city-header';
+                const textoNome = optionSelecionada ? optionSelecionada.textContent.split(' (')[0] : "—";
+                tdNome.innerHTML = `<strong>${textoNome}</strong>`;
+                tr.appendChild(tdNome);
+
+                for (let i = 0; i < 24; i++) {
+                    const diferenca = fusoAtual - fusoReferencia;
+                    let horaCalculada = (i + diferenca) % 24;
+                    if (horaCalculada < 0) horaCalculada += 24; 
+
+                    const tdHora = document.createElement('td');
+                    const horaInteira = Math.floor(horaCalculada);
+                    const minutos = Math.round((horaCalculada - horaInteira) * 60);
+                    
+                    tdHora.textContent = minutos > 0 
+                        ? `${horaInteira.toString().padStart(2, '0')}:${minutos}`
+                        : horaInteira.toString().padStart(2, '0');
+
+                    tdHora.className = obterClassePeriodo(horaInteira);
+                    tr.appendChild(tdHora);
+                }
+                tbody.appendChild(tr);
+            });
+        }
+
+        inicializarSeletores();
+        renderizarRegua();
+    </script>
+</body>
+</html>
