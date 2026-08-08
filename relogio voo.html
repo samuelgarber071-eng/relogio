@@ -52,15 +52,15 @@
             z-index: 9999;
         }
 
-        /* Estrutura do Pop-up */
+        /* Estrutura do Pop-up em Proporção 12x3 (1200x330) */
         .modal-box {
             width: 1200px;
-            height: 480px; /* Expandido para acomodar a calculadora */
+            height: 330px;
             background-color: #1a1a1e;
             border-radius: 10px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.6);
             border: 1px solid #3a3a42;
-            padding: 15px 20px;
+            padding: 10px 15px;
             box-sizing: border-box;
             display: flex;
             flex-direction: column;
@@ -80,7 +80,7 @@
 
         .close-btn {
             position: absolute;
-            top: 10px;
+            top: 8px;
             right: 12px;
             background: #ff5f56;
             border: none;
@@ -96,11 +96,49 @@
             font-size: 0.75rem;
         }
 
+        /* Área do Calculador de Voo */
+        .flight-calc-bar {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background-color: #26262b;
+            padding: 6px 12px;
+            border-radius: 6px;
+            border: 1px solid #333339;
+            font-size: 0.8rem;
+        }
+
+        .flight-calc-bar span {
+            color: #4ea8de;
+            font-weight: bold;
+        }
+
+        .flight-select {
+            background-color: #1a1a1e;
+            color: #fff;
+            border: 1px solid #555;
+            padding: 3px 6px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            outline: none;
+            max-width: 200px;
+        }
+
+        .calc-result {
+            margin-left: auto;
+            background: #18181c;
+            padding: 3px 10px;
+            border-radius: 4px;
+            border: 1px solid #4ea8de;
+            color: #e9c46a;
+            font-weight: bold;
+        }
+
         /* Área de Seleção e Busca no Topo */
         .top-bar {
             display: flex;
             justify-content: flex-start;
-            margin-bottom: 5px;
+            margin-bottom: 2px;
         }
         .selectors { display: flex; gap: 15px; }
         .search-group {
@@ -109,26 +147,26 @@
             gap: 2px;
         }
         
-        .input-busca, .input-time {
+        .input-busca {
             background-color: #26262b;
             color: #4ea8de;
             border: 1px solid #444;
-            padding: 4px 8px;
+            padding: 2px 6px;
             border-radius: 4px;
-            font-size: 0.75rem;
+            font-size: 0.72rem;
             outline: none;
+            width: 280px;
         }
-        .input-busca { width: 280px; }
         .input-busca::placeholder { color: #888; }
-        .input-busca:focus, .input-time:focus { border-color: #4ea8de; }
+        .input-busca:focus { border-color: #4ea8de; }
 
-        select {
+        select.sel-fuso {
             background-color: #333339;
             color: white;
             border: 1px solid #555;
-            padding: 4px 8px;
+            padding: 3px 6px;
             border-radius: 4px;
-            font-size: 0.8rem;
+            font-size: 0.78rem;
             cursor: pointer;
             outline: none;
             width: 280px;
@@ -142,8 +180,8 @@
         th, td {
             border: 1px solid #3a3a42;
             text-align: center;
-            padding: 6px 2px;
-            font-size: 0.8rem;
+            padding: 5px 2px;
+            font-size: 0.78rem;
         }
         th { background-color: #1f1f23; font-weight: 600; }
         .city-header {
@@ -156,72 +194,14 @@
             overflow: hidden;
             text-overflow: ellipsis;
         }
-
-        /* Seção Calculadora de Voo */
-        .flight-calculator {
-            background-color: #232328;
-            border: 1px solid #3a3a42;
-            border-radius: 6px;
-            padding: 10px 15px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 10px;
-        }
-
-        .calc-title {
-            font-size: 0.85rem;
-            font-weight: bold;
-            color: #4ea8de;
-            white-space: nowrap;
-        }
-
-        .calc-inputs {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .calc-field {
-            display: flex;
-            flex-direction: column;
-            gap: 2px;
-            font-size: 0.75rem;
-            color: #aaa;
-        }
-
-        .calc-field select { width: 180px; }
-
-        .btn-calc {
-            background-color: #2a9d8f;
-            color: white;
-            border: none;
-            padding: 6px 14px;
-            border-radius: 4px;
-            font-weight: bold;
-            cursor: pointer;
-            font-size: 0.8rem;
-        }
-        .btn-calc:hover { background-color: #238377; }
-
-        .calc-result {
-            font-size: 0.9rem;
-            font-weight: bold;
-            color: #e9c46a;
-            background: #18181c;
-            padding: 6px 12px;
-            border-radius: 4px;
-            border: 1px solid #3a3a42;
-            white-space: nowrap;
-        }
-
+        
         /* Legenda */
         .legend { 
             display: flex; 
             gap: 20px; 
-            font-size: 0.78rem; 
+            font-size: 0.75rem; 
             background: #26262b;
-            padding: 5px 15px;
+            padding: 4px 15px;
             border-radius: 6px;
             justify-content: center;
         }
@@ -238,64 +218,49 @@
 </head>
 <body>
 
-    <button class="btn-principal" onclick="toggleModal(true)">Abrir Tabela e Calculadora de Voo</button>
+    <button class="btn-principal" onclick="toggleModal(true)">Abrir Tabela de Capitais (12x3)</button>
 
     <div class="modal-overlay" id="modalOverlay">
         <div class="modal-box">
             <button class="close-btn" onclick="toggleModal(false)">X</button>
+
+            <!-- BARRA DE CÁLCULO DE VOO REAL -->
+            <div class="flight-calc-bar">
+                <span>✈️ Calculador de Voo Real:</span>
+                <label>De:</label>
+                <select id="flight-origem" class="flight-select" onchange="calcularTempoVoo()"></select>
+                <label>Para:</label>
+                <select id="flight-destino" class="flight-select" onchange="calcularTempoVoo()"></select>
+                <div class="calc-result" id="flight-resultado">Distância: 0 km | Tempo estimado: 0h 0m</div>
+            </div>
             
-            <!-- TOPO: Seletores e Busca para a Régua -->
+            <!-- SELETORES E PESQUISA -->
             <div class="top-bar">
                 <div class="selectors">
                     <div class="search-group">
                         <input type="text" class="input-busca" placeholder="🔍 Pesquisar Capital 1..." oninput="filtrarOpcoes(0, this.value)">
-                        <select id="sel-0" onchange="alterarFuso(0, this.value)"></select>
+                        <select id="sel-0" class="sel-fuso" onchange="alterarFuso(0, this.value)"></select>
                     </div>
 
                     <div class="search-group">
                         <input type="text" class="input-busca" placeholder="🔍 Pesquisar Capital 2..." oninput="filtrarOpcoes(1, this.value)">
-                        <select id="sel-1" onchange="alterarFuso(1, this.value)"></select>
+                        <select id="sel-1" class="sel-fuso" onchange="alterarFuso(1, this.value)"></select>
                     </div>
 
                     <div class="search-group">
                         <input type="text" class="input-busca" placeholder="🔍 Pesquisar Capital 3..." oninput="filtrarOpcoes(2, this.value)">
-                        <select id="sel-2" onchange="alterarFuso(2, this.value)"></select>
+                        <select id="sel-2" class="sel-fuso" onchange="alterarFuso(2, this.value)"></select>
                     </div>
                 </div>
             </div>
 
-            <!-- MEIO 1: Tabela da Régua -->
+            <!-- REGUA DE FUSOS -->
             <table>
                 <thead><tr id="header-row"><th class="city-header">Capital Base</th></tr></thead>
                 <tbody id="table-body"></tbody>
             </table>
 
-            <!-- MEIO 2: Calculadora de Tempo de Voo -->
-            <div class="flight-calculator">
-                <div class="calc-title">✈️ Calculadora de Tempo de Voo</div>
-                <div class="calc-inputs">
-                    <div class="calc-field">
-                        <label>Origem:</label>
-                        <select id="calc-origem"></select>
-                    </div>
-                    <div class="calc-field">
-                        <label>Partida (Local):</label>
-                        <input type="time" id="calc-hora-partida" class="input-time" value="08:00">
-                    </div>
-                    <div class="calc-field">
-                        <label>Destino:</label>
-                        <select id="calc-destino"></select>
-                    </div>
-                    <div class="calc-field">
-                        <label>Chegada (Local Destino):</label>
-                        <input type="time" id="calc-hora-chegada" class="input-time" value="18:00">
-                    </div>
-                    <button class="btn-calc" onclick="calcularTempoVoo()">Calcular</button>
-                </div>
-                <div class="calc-result" id="calc-resultado">Duração: --h --min</div>
-            </div>
-
-            <!-- BASE: Legenda -->
+            <!-- LEGENDA -->
             <div class="legend">
                 <div class="legend-item"><div class="color-box p-amanhecer"></div> Amanhecer (05h-06h)</div>
                 <div class="legend-item"><div class="color-box p-manha"></div> Manhã (07h-11h)</div>
@@ -307,95 +272,38 @@
     </div>
 
     <script>
+        // Banco com Coordenadas Geográficas Reais (Lat, Lon) das Capitais
         const capitaisMundo = [
-            { name: "Abuja (Nigéria)", offset: 1 },
-            { name: "Acra (Gana)", offset: 0 },
-            { name: "Adis Abeba (Etiópia)", offset: 3 },
-            { name: "Argel (Argélia)", offset: 1 },
-            { name: "Aman (Jordânia)", offset: 3 },
-            { name: "Amsterdã (Países Baixos)", offset: 1 },
-            { name: "Andorra la Vella (Andorra)", offset: 1 },
-            { name: "Ancara (Turquia)", offset: 3 },
-            { name: "Antananarivo (Madagascar)", offset: 3 },
-            { name: "Apia (Samoa)", offset: 13 },
-            { name: "Asgabate (Turcomenistão)", offset: 5 },
-            { name: "Assunção (Paraguai)", offset: -4 },
-            { name: "Atenas (Grécia)", offset: 2 },
-            { name: "Bagdá (Iraque)", offset: 3 },
-            { name: "Bacu (Aserbaidjão)", offset: 4 },
-            { name: "Bamako (Mali)", offset: 0 },
-            { name: "Bandar Seri Begawan (Brunei)", offset: 8 },
-            { name: "Bangcoc (Tailândia)", offset: 7 },
-            { name: "Bangui (Rep. Centro-Africana)", offset: 1 },
-            { name: "Banjul (Gâmbia)", offset: 0 },
-            { name: "Beirute (Líbano)", offset: 2 },
-            { name: "Belgrado (Sérvia)", offset: 1 },
-            { name: "Berlim (Alemanha)", offset: 1 },
-            { name: "Berna (Suíça)", offset: 1 },
-            { name: "Bogotá (Colômbia)", offset: -5 },
-            { name: "Brasília (Brasil)", offset: -3 },
-            { name: "Bruxelas (Bélgica)", offset: 1 },
-            { name: "Bucareste (Romênia)", offset: 2 },
-            { name: "Budapeste (Hungria)", offset: 1 },
-            { name: "Buenos Aires (Argentina)", offset: -3 },
-            { name: "Cabul (Afeganistão)", offset: 4.5 },
-            { name: "Cairo (Egito)", offset: 2 },
-            { name: "Camberra (Austrália)", offset: 10 },
-            { name: "Caracas (Venezuela)", offset: -4 },
-            { name: "Catmandu (Nepal)", offset: 5.75 },
-            { name: "Cidade do México (México)", offset: -6 },
-            { name: "Cidade do Panamá (Panamá)", offset: -5 },
-            { name: "Copenhague (Dinamarca)", offset: 1 },
-            { name: "Dakar (Senegal)", offset: 0 },
-            { name: "Damasco (Síria)", offset: 3 },
-            { name: "Dacar (Bangladesh)", offset: 6 },
-            { name: "Díli (Timor-Leste)", offset: 9 },
-            { name: "Doha (Catar)", offset: 3 },
-            { name: "Dublin (Irlanda)", offset: 0 },
-            { name: "Estocolmo (Suécia)", offset: 1 },
-            { name: "Hanoi (Vietnã)", offset: 7 },
-            { name: "Havana (Cuba)", offset: -5 },
-            { name: "Helsinque (Finlândia)", offset: 2 },
-            { name: "Islamabad (Paquistão)", offset: 5 },
-            { name: "Jacarta (Indonésia)", offset: 7 },
-            { name: "Jerusalém (Israel)", offset: 2 },
-            { name: "Kuala Lumpur (Malásia)", offset: 8 },
-            { name: "Kiev (Ucrânia)", offset: 2 },
-            { name: "La Paz (Bolívia)", offset: -4 },
-            { name: "Lima (Peru)", offset: -5 },
-            { name: "Lisboa (Portugal)", offset: 0 },
-            { name: "Londres (Reino Unido)", offset: 0 },
-            { name: "Luanda (Angola)", offset: 1 },
-            { name: "Madri (Espanha)", offset: 1 },
-            { name: "Manila (Filipinas)", offset: 8 },
-            { name: "Maputo (Moçambique)", offset: 2 },
-            { name: "Montevidéu (Uruguai)", offset: -3 },
-            { name: "Moscou (Rússia)", offset: 3 },
-            { name: "Nairóbi (Quênia)", offset: 3 },
-            { name: "Nova Déli (Índia)", offset: 5.5 },
-            { name: "Oslo (Noruega)", offset: 1 },
-            { name: "Ottawa (Canadá)", offset: -5 },
-            { name: "Paris (França)", offset: 1 },
-            { name: "Pequim (China)", offset: 8 },
-            { name: "Praga (Chéquia)", offset: 1 },
-            { name: "Pretória (África do Sul)", offset: 2 },
-            { name: "Quito (Equador)", offset: -5 },
-            { name: "Rabat (Marrocos)", offset: 1 },
-            { name: "Riade (Arábia Saudita)", offset: 3 },
-            { name: "Roma (Itália)", offset: 1 },
-            { name: "San José (Costa Rica)", offset: -6 },
-            { name: "Santiago (Chile)", offset: -4 },
-            { name: "Santo Domingo (Rep. Dominicana)", offset: -4 },
-            { name: "Seul (Coreia do Sul)", offset: 9 },
-            { name: "Cingapura (Cingapura)", offset: 8 },
-            { name: "Suva (Fiji)", offset: 12 },
-            { name: "Teerã (Irã)", offset: 3.5 },
-            { name: "Tóquio (Japão)", offset: 9 },
-            { name: "Varsóvia (Polônia)", offset: 1 },
-            { name: "Viena (Áustria)", offset: 1 },
-            { name: "Washington, D.C. (Estados Unidos)", offset: -5 },
-            { name: "Wellington (Nova Zelândia)", offset: 12 },
-            { name: "Zagreb (Croácia)", offset: 1 }
+            { name: "Brasília (Brasil)", offset: -3, lat: -15.793889, lon: -47.882778 },
+            { name: "Lisboa (Portugal)", offset: 0, lat: 38.716667, lon: -9.133333 },
+            { name: "Tóquio (Japão)", offset: 9, lat: 35.689722, lon: 139.692222 },
+            { name: "Washington, D.C. (Estados Unidos)", offset: -5, lat: 38.8951, lon: -77.0364 },
+            { name: "Londres (Reino Unido)", offset: 0, lat: 51.507222, lon: -0.1275 },
+            { name: "Paris (França)", offset: 1, lat: 48.856614, lon: 2.352222 },
+            { name: "Berlim (Alemanha)", offset: 1, lat: 52.52, lon: 13.405 },
+            { name: "Roma (Itália)", offset: 1, lat: 41.902782, lon: 12.496366 },
+            { name: "Madri (Espanha)", offset: 1, lat: 40.416775, lon: -3.703790 },
+            { name: "Buenos Aires (Argentina)", offset: -3, lat: -34.603722, lon: -58.381592 },
+            { name: "Santiago (Chile)", offset: -4, lat: -33.448890, lon: -70.669265 },
+            { name: "Bogotá (Colômbia)", offset: -5, lat: 4.710989, lon: -74.072092 },
+            { name: "Cidade do México (México)", offset: -6, lat: 19.432608, lon: -99.133208 },
+            { name: "Pequim (China)", offset: 8, lat: 39.9042, lon: 116.4074 },
+            { name: "Camberra (Austrália)", offset: 10, lat: -35.2809, lon: 149.1300 },
+            { name: "Moscou (Rússia)", offset: 3, lat: 55.7558, lon: 37.6173 },
+            { name: "Pretória (África do Sul)", offset: 2, lat: -25.747867, lon: 28.229271 },
+            { name: "Cairo (Egito)", offset: 2, lat: 30.0444, lon: 31.2357 },
+            { name: "Nova Déli (Índia)", offset: 5.5, lat: 28.6139, lon: 77.2090 },
+            { name: "Ottawa (Canadá)", offset: -5, lat: 45.4215, lon: -75.6972 },
+            { name: "Montevidéu (Uruguai)", offset: -3, lat: -34.9011, lon: -56.1645 },
+            { name: "Lima (Peru)", offset: -5, lat: -12.0464, lon: -77.0428 },
+            { name: "Cingapura (Cingapura)", offset: 8, lat: 1.3521, lon: 103.8198 },
+            { name: "Bangcoc (Tailândia)", offset: 7, lat: 13.7563, lon: 100.5018 },
+            { name: "Seul (Coreia do Sul)", offset: 9, lat: 37.5665, lon: 126.9780 },
+            { name: "Wellington (Nova Zelândia)", offset: 12, lat: -41.2865, lon: 174.7762 },
+            { name: "Caracas (Venezuela)", offset: -4, lat: 10.4806, lon: -66.9036 },
+            { name: "Quito (Equador)", offset: -5, lat: -0.1807, lon: -78.4678 },
+            { name: "Assunção (Paraguai)", offset: -4, lat: -25.2637, lon: -57.5759 },
+            { name: "La Paz (Bolívia)", offset: -4, lat: -16.4897, lon: -68.1193 }
         ];
 
         let cidadesAtivas = [-3, 0, 9]; 
@@ -404,6 +312,73 @@
             const overlay = document.getElementById('modalOverlay');
             if (open) overlay.classList.add('active');
             else overlay.classList.remove('active');
+        }
+
+        // Fórmula Haversine para Distância Ortodrômica Real (em km)
+        function calcularDistanciaHaversine(lat1, lon1, lat2, lon2) {
+            const R = 6371; // Raio da Terra em km
+            const dLat = (lat2 - lat1) * Math.PI / 180;
+            const dLon = (lon2 - lon1) * Math.PI / 180;
+            const a = 
+                Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
+                Math.sin(dLon / 2) * Math.sin(dLon / 2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+            return R * c; 
+        }
+
+        // Cálculo do tempo de voo com velocidade de cruzeiro comercial
+        function calcularTempoVoo() {
+            const indexOrigem = document.getElementById('flight-origem').value;
+            const indexDestino = document.getElementById('flight-destino').value;
+
+            const cOrigem = capitaisMundo[indexOrigem];
+            const cDestino = capitaisMundo[indexDestino];
+
+            if (!cOrigem || !cDestino) return;
+
+            if (indexOrigem === indexDestino) {
+                document.getElementById('flight-resultado').innerHTML = `Distância: 0 km | Tempo estimado: 0h 0m`;
+                return;
+            }
+
+            const distanciaKm = calcularDistanciaHaversine(cOrigem.lat, cOrigem.lon, cDestino.lat, cDestino.lon);
+            
+            // Velocidade média comercial de cruzeiro (~850 km/h) + 0.5h para táxi/decolagem/pouso
+            const velocidadeKmh = 850;
+            const horasTotais = (distanciaKm / velocidadeKmh) + 0.5;
+
+            const horas = Math.floor(horasTotais);
+            const minutos = Math.round((horasTotais - horas) * 60);
+
+            document.getElementById('flight-resultado').innerHTML = 
+                `Distância: <strong>${Math.round(distanciaKm).toLocaleString('pt-BR')} km</strong> | Tempo Estimado de Voo: <strong>${horas}h ${minutos}m</strong>`;
+        }
+
+        function popularSelectFlight() {
+            const selOrigem = document.getElementById('flight-origem');
+            const selDestino = document.getElementById('flight-destino');
+            
+            selOrigem.innerHTML = '';
+            selDestino.innerHTML = '';
+
+            capitaisMundo.forEach((capital, index) => {
+                const opt1 = document.createElement('option');
+                opt1.value = index;
+                opt1.textContent = capital.name.split(' (')[0];
+
+                const opt2 = document.createElement('option');
+                opt2.value = index;
+                opt2.textContent = capital.name.split(' (')[0];
+
+                selOrigem.appendChild(opt1);
+                selDestino.appendChild(opt2);
+            });
+
+            // Padrão: Brasília -> Lisboa
+            selOrigem.selectedIndex = 0;
+            selDestino.selectedIndex = 1;
+            calcularTempoVoo();
         }
 
         function obterClassePeriodo(hora) {
@@ -426,7 +401,7 @@
 
             if (listaFiltrada.length === 0) {
                 const opt = document.createElement('option');
-                opt.textContent = "Nenhum resultado";
+                opt.textContent = "Nenhum resultado encontrado";
                 select.appendChild(opt);
                 return;
             }
@@ -437,7 +412,9 @@
                 const fusoStr = capital.offset >= 0 ? `+${capital.offset}` : capital.offset;
                 opt.textContent = `${capital.name} (UTC ${fusoStr})`;
                 
-                if (capital.offset === valorAtual) opt.selected = true;
+                if (capital.offset === valorAtual) {
+                    opt.selected = true;
+                }
                 select.appendChild(opt);
             });
         }
@@ -450,60 +427,11 @@
             }
         }
 
-        function inicializarCalculadoraVoo() {
-            const selectOrigem = document.getElementById('calc-origem');
-            const selectDestino = document.getElementById('calc-destino');
-            
-            selectOrigem.innerHTML = '';
-            selectDestino.innerHTML = '';
-
-            capitaisMundo.forEach((capital, index) => {
-                const opt1 = document.createElement('option');
-                opt1.value = capital.offset;
-                opt1.textContent = capital.name;
-                
-                const opt2 = opt1.cloneNode(true);
-
-                if (capital.name.includes("Brasília")) opt1.selected = true;
-                if (capital.name.includes("Lisboa")) opt2.selected = true;
-
-                selectOrigem.appendChild(opt1);
-                selectDestino.appendChild(opt2);
-            });
-        }
-
-        function calcularTempoVoo() {
-            const fusoOrigem = parseFloat(document.getElementById('calc-origem').value);
-            const fusoDestino = parseFloat(document.getElementById('calc-destino').value);
-            
-            const horaPartidaStr = document.getElementById('calc-hora-partida').value;
-            const horaChegadaStr = document.getElementById('calc-hora-chegada').value;
-
-            if (!horaPartidaStr || !horaChegadaStr) return;
-
-            const [hP, mP] = horaPartidaStr.split(':').map(Number);
-            const [hC, mC] = horaChegadaStr.split(':').map(Number);
-
-            // Converte ambos os horários para minutos UTC
-            const minutosPartidaUTC = (hP * 60 + mP) - (fusoOrigem * 60);
-            let minutosChegadaUTC = (hC * 60 + mC) - (fusoDestino * 60);
-
-            // Ajuste caso o voo chegue no dia seguinte
-            while (minutosChegadaUTC <= minutosPartidaUTC) {
-                minutosChegadaUTC += 24 * 60;
-            }
-
-            const duracaoTotalMinutos = minutosChegadaUTC - minutosPartidaUTC;
-            const horasVoo = Math.floor(duracaoTotalMinutos / 60);
-            const minutosVoo = duracaoTotalMinutos % 60;
-
-            document.getElementById('calc-resultado').textContent = 
-                `Duração: ${horasVoo}h ${minutosVoo.toString().padStart(2, '0')}min`;
-        }
-
         function inicializarSeletores() {
-            for (let i = 0; i < 3; i++) popularSelect(i);
-            inicializarCalculadoraVoo();
+            for (let i = 0; i < 3; i++) {
+                popularSelect(i);
+            }
+            popularSelectFlight();
         }
 
         function alterarFuso(index, offsetValue) {
@@ -543,6 +471,7 @@
                     if (horaCalculada < 0) horaCalculada += 24; 
 
                     const tdHora = document.createElement('td');
+                    
                     const horaInteira = Math.floor(horaCalculada);
                     const minutos = Math.round((horaCalculada - horaInteira) * 60);
                     
