@@ -3,169 +3,197 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Painel Global de Capitais & Calculadora de Voo</title>
+    <title>Painel Global: Relógio de Fusos & Calculadora de Voo</title>
     <style>
         :root {
             --bg-color: #0f172a;
             --card-bg: #1e293b;
             --accent: #38bdf8;
-            --text: #f8fafc;
+            --accent-hover: #0284c7;
+            --text-main: #f8fafc;
             --text-muted: #94a3b8;
             --border: #334155;
         }
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text);
+        * {
+            box-sizing: border-box;
             margin: 0;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+            padding: 0;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
         }
 
-        h1, h2 { text-align: center; color: var(--accent); }
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            padding: 2rem 1rem;
+            display: flex;
+            justify-content: center;
+        }
 
         .container {
             width: 100%;
-            max-width: 1000px;
+            max-width: 1100px;
             display: flex;
             flex-direction: column;
-            gap: 25px;
+            gap: 2rem;
+        }
+
+        h1, h2 {
+            font-weight: 600;
+            color: var(--accent);
         }
 
         .card {
             background-color: var(--card-bg);
             border: 1px solid var(--border);
             border-radius: 12px;
-            padding: 20px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+            padding: 1.5rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
         }
 
-        /* Seção do Relógio */
+        /* Busca */
+        .search-box {
+            position: relative;
+        }
+
+        input, select, button {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background-color: #0f172a;
+            color: var(--text-main);
+            font-size: 1rem;
+            outline: none;
+        }
+
+        input:focus, select:focus {
+            border-color: var(--accent);
+        }
+
+        /* Relógio 3 Fusos */
         .clocks-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 15px;
+            gap: 1.5rem;
+            margin-top: 1rem;
         }
 
-        .clock-box {
-            background: rgba(15, 23, 42, 0.6);
+        .clock-card {
+            background-color: #0f172a;
             border: 1px solid var(--border);
             border-radius: 8px;
-            padding: 15px;
+            padding: 1.25rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
             text-align: center;
         }
 
         .time-display {
             font-size: 2rem;
-            font-weight: bold;
+            font-weight: 700;
+            letter-spacing: 2px;
             color: var(--accent);
             font-family: monospace;
-            margin: 10px 0;
         }
 
-        select, input {
-            width: 100%;
-            padding: 10px;
-            border-radius: 6px;
-            border: 1px solid var(--border);
-            background-color: var(--bg-color);
-            color: var(--text);
-            box-sizing: border-box;
-            margin-top: 5px;
+        .date-display {
+            font-size: 0.875rem;
+            color: var(--text-muted);
         }
 
-        /* Barra de Pesquisa de Capitais */
-        .search-results {
-            max-height: 150px;
-            overflow-y: auto;
-            border: 1px solid var(--border);
-            border-radius: 6px;
-            margin-top: 5px;
-            background: var(--bg-color);
-            display: none;
-        }
-
-        .search-item {
-            padding: 8px 12px;
-            cursor: pointer;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .search-item:hover { background-color: var(--card-bg); }
-
-        /* Seção do Calculador de Voo */
-        .flight-stop {
+        /* Calculadora de Voo */
+        .flight-stops {
             display: flex;
-            gap: 10px;
+            flex-direction: column;
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+
+        .stop-row {
+            display: flex;
+            gap: 0.75rem;
             align-items: center;
-            margin-bottom: 10px;
         }
 
         .btn {
             background-color: var(--accent);
-            color: #000;
-            font-weight: bold;
-            border: none;
-            padding: 10px 15px;
-            border-radius: 6px;
+            color: #0f172a;
+            font-weight: 600;
             cursor: pointer;
-            transition: 0.2s;
+            border: none;
+            transition: background-color 0.2s;
+            width: auto;
         }
 
-        .btn:hover { opacity: 0.9; }
+        .btn:hover {
+            background-color: var(--accent-hover);
+        }
 
         .btn-danger {
             background-color: #ef4444;
-            color: #fff;
-            padding: 10px;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background-color: #dc2626;
+        }
+
+        .actions {
+            display: flex;
+            gap: 1rem;
         }
 
         .result-box {
-            margin-top: 15px;
-            padding: 12px;
-            background-color: var(--bg-color);
-            border-radius: 6px;
-            text-align: center;
-            font-size: 1.1rem;
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background-color: #0f172a;
+            border-radius: 8px;
+            border-left: 4px solid var(--accent);
+            display: none;
+        }
+
+        /* Auto-complete / Datalist */
+        datalist {
+            background-color: var(--card-bg);
         }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>Painel de Capitais, Fusos Horários e Rotas</h1>
 
-    <!-- Busca Rápida -->
+    <!-- Busca Global -->
     <div class="card">
-        <h2>Pesquisar Capital / Fuso</h2>
-        <input type="text" id="capitalSearch" placeholder="Digite o nome de uma capital ou país..." oninput="filterCapitals()">
-        <div id="searchResults" class="search-results"></div>
+        <h2>Pesquisa de Capitais</h2>
+        <div class="search-box" style="margin-top: 1rem;">
+            <input type="text" id="globalSearch" list="capitalsList" placeholder="Digite uma capital ou país para verificar os dados...">
+        </div>
+        <div id="searchResult" style="margin-top: 1rem; color: var(--text-muted);"></div>
     </div>
 
-    <!-- Relógios de 3 Fusos -->
+    <!-- Relógio de 3 Fusos -->
     <div class="card">
-        <h2>Relógio Mundial (3 Fusos)</h2>
+        <h2>Relógio Mundial (3 Fusos Horários)</h2>
         <div class="clocks-grid">
-            <div class="clock-box">
-                <label for="select1">Localização 1:</label>
-                <select id="select1" onchange="updateClocks()"></select>
-                <div class="time-display" id="clock1">00:00:00</div>
-                <div id="date1" style="color: var(--text-muted); font-size: 0.9rem;">---</div>
+            <!-- Relógio 1 -->
+            <div class="clock-card">
+                <select id="selectZone1" onchange="updateClocks()"></select>
+                <div class="time-display" id="time1">00:00:00</div>
+                <div class="date-display" id="date1">--/--/----</div>
             </div>
-            <div class="clock-box">
-                <label for="select2">Localização 2:</label>
-                <select id="select2" onchange="updateClocks()"></select>
-                <div class="time-display" id="clock2">00:00:00</div>
-                <div id="date2" style="color: var(--text-muted); font-size: 0.9rem;">---</div>
+            <!-- Relógio 2 -->
+            <div class="clock-card">
+                <select id="selectZone2" onchange="updateClocks()"></select>
+                <div class="time-display" id="time2">00:00:00</div>
+                <div class="date-display" id="date2">--/--/----</div>
             </div>
-            <div class="clock-box">
-                <label for="select3">Localização 3:</label>
-                <select id="select3" onchange="updateClocks()"></select>
-                <div class="time-display" id="clock3">00:00:00</div>
-                <div id="date3" style="color: var(--text-muted); font-size: 0.9rem;">---</div>
+            <!-- Relógio 3 -->
+            <div class="clock-card">
+                <select id="selectZone3" onchange="updateClocks()"></select>
+                <div class="time-display" id="time3">00:00:00</div>
+                <div class="date-display" id="date3">--/--/----</div>
             </div>
         </div>
     </div>
@@ -173,247 +201,439 @@
     <!-- Calculadora de Distância de Voo -->
     <div class="card">
         <h2>Calculadora de Distância de Voo</h2>
-        <div id="flightStops">
-            <div class="flight-stop">
-                <select class="flight-select"><option value="">Origem...</option></select>
+        <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 0.25rem;">
+            Selecione a origem, destino e adicione quantas escalas desejar.
+        </p>
+
+        <div class="flight-stops" id="stopsContainer">
+            <div class="stop-row">
+                <select class="flight-select"><option value="">Selecione a Origem</option></select>
             </div>
-            <div class="flight-stop">
-                <select class="flight-select"><option value="">Destino Final...</option></select>
+            <div class="stop-row">
+                <select class="flight-select"><option value="">Selecione o Destino Final</option></select>
             </div>
         </div>
-        <div style="display: flex; gap: 10px; margin-top: 10px;">
+
+        <div class="actions">
             <button class="btn" onclick="addStop()">+ Adicionar Escala</button>
-            <button class="btn" onclick="calculateDistance()">Calcular Distância</button>
+            <button class="btn" onclick="calculateDistance()">Calcular Rota</button>
         </div>
-        <div class="result-box" id="flightResult">Selecione os pontos da rota para calcular a distância e o tempo estimado.</div>
+
+        <div class="result-box" id="flightResult"></div>
     </div>
+
 </div>
 
+<!-- Data List para Busca rápida -->
+<datalist id="capitalsList"></datalist>
+
 <script>
-// Banco de dados com Capitais, Países, Coordenadas (Lat/Lon) e Fuso Horário (Offset UTC em horas)
+// Base de Dados Completa com Capitais, Países, Coordenadas e IANA Timezones
 const database = [
-    { capital: "Cabul", country: "Afeganistão", tz: 4.5, lat: 34.5553, lon: 69.2075 },
-    { capital: "Tirana", country: "Albânia", tz: 1, lat: 41.3275, lon: 19.8187 },
-    { capital: "Berlim", country: "Alemanha", tz: 1, lat: 52.5200, lon: 13.4050 },
-    { capital: "Andorra-a-Velha", country: "Andorra", tz: 1, lat: 42.5063, lon: 1.5218 },
-    { capital: "Luanda", country: "Angola", tz: 1, lat: -8.8390, lon: 13.2894 },
-    { capital: "Buenos Aires", country: "Argentina", tz: -3, lat: -34.6037, lon: -58.3816 },
-    { capital: "Camberra", country: "Austrália", tz: 10, lat: -35.2809, lon: 149.1300 },
-    { capital: "Viena", country: "Áustria", tz: 1, lat: 48.2082, lon: 16.3738 },
-    { capital: "Baku", country: "Azerbaijão", tz: 4, lat: 40.4093, lon: 49.8671 },
-    { capital: "Bruxelas", country: "Bélgica", tz: 1, lat: 50.8503, lon: 4.3517 },
-    { capital: "Brasília", country: "Brasil", tz: -3, lat: -15.7975, lon: -47.8919 },
-    { capital: "Sófia", country: "Bulgária", tz: 2, lat: 42.6977, lon: 23.3219 },
-    { capital: "Ottawa", country: "Canadá", tz: -5, lat: 45.4215, lon: -75.6972 },
-    { capital: "Santiago", country: "Chile", tz: -4, lat: -33.4489, lon: -70.6693 },
-    { capital: "Pequim", country: "China", tz: 8, lat: 39.9042, lon: 116.4074 },
-    { capital: "Bogotá", country: "Colômbia", tz: -5, lat: 4.7110, lon: -74.0721 },
-    { capital: "Pyeongyang", country: "Coreia do Norte", tz: 9, lat: 39.0392, lon: 125.7625 },
-    { capital: "Seul", country: "Coreia do Sul", tz: 9, lat: 37.5665, lon: 126.9780 },
-    { capital: "Havana", country: "Cuba", tz: -5, lat: 23.1136, lon: -82.3666 },
-    { capital: "Copenhague", country: "Dinamarca", tz: 1, lat: 55.6761, lon: 12.5683 },
-    { capital: "Cairo", country: "Egito", tz: 2, lat: 30.0444, lon: 31.2357 },
-    { capital: "Madri", country: "Espanha", tz: 1, lat: 40.4168, lon: -3.7038 },
-    { capital: "Washington D.C.", country: "Estados Unidos", tz: -5, lat: 38.9072, lon: -77.0369 },
-    { capital: "S公务员", country: "Filipinas", tz: 8, lat: 14.5995, lon: 120.9842 }, // Manila
-    { capital: "Manila", country: "Filipinas", tz: 8, lat: 14.5995, lon: 120.9842 },
-    { capital: "Helsinque", country: "Finlândia", tz: 2, lat: 60.1699, lon: 24.9384 },
-    { capital: "Paris", country: "França", tz: 1, lat: 48.8566, lon: 2.3522 },
-    { capital: "Atenas", country: "Grécia", tz: 2, lat: 37.9838, lon: 23.7275 },
-    { capital: "Nova Délhi", country: "Índia", tz: 5.5, lat: 28.6139, lon: 77.2090 },
-    { capital: "Carcarta", country: "Indonésia", tz: 7, lat: -6.2088, lon: 106.8456 }, // Jacarta
-    { capital: "Jacarta", country: "Indonésia", tz: 7, lat: -6.2088, lon: 106.8456 },
-    { capital: "Dublin", country: "Irlanda", tz: 0, lat: 53.3498, lon: -6.2603 },
-    { capital: "Reykjavík", country: "Islândia", tz: 0, lat: 64.1466, lon: -21.9426 },
-    { capital: "Jerusalém", country: "Israel / Palestina", tz: 2, lat: 31.7683, lon: 35.2137 },
-    { capital: "Roma", country: "Itália", tz: 1, lat: 41.9028, lon: 12.4964 },
-    { capital: "Tóquio", country: "Japão", tz: 9, lat: 35.6762, lon: 139.6503 },
-    { capital: "Cidade do México", country: "México", tz: -6, lat: 19.4326, lon: -99.1332 },
-    { capital: "Oslo", country: "Noruega", tz: 1, lat: 59.9139, lon: 10.7522 },
-    { capital: "Wellington", country: "Nova Zelândia", tz: 12, lat: -41.2865, lon: 174.7762 },
-    { capital: "Amsterdã", country: "Países Baixos", tz: 1, lat: 52.3676, lon: 4.9041 },
-    { capital: "Lima", country: "Peru", tz: -5, lat: -12.0464, lon: -77.0428 },
-    { capital: "Lisboa", country: "Portugal", tz: 0, lat: 38.7223, lon: -9.1393 },
-    { capital: "Londres", country: "Reino Unido", tz: 0, lat: 51.5074, lon: -0.1278 },
-    { capital: "Moscou", country: "Rússia", tz: 3, lat: 55.7558, lon: 37.6173 },
-    { capital: "Drammen", country: "Suíça", tz: 1, lat: 46.9480, lon: 7.4474 }, // Berna
-    { capital: "Berna", country: "Suíça", tz: 1, lat: 46.9480, lon: 7.4474 },
-    { capital: "Pristina", country: "Kosovo", tz: 1, lat: 42.6629, lon: 21.1655 },
-    { capital: "Taipé", country: "Taiwan", tz: 8, lat: 25.0330, lon: 121.5654 },
-    { capital: "Mombaça", country: "Somalilândia", tz: 3, lat: 9.5600, lon: 44.0650 }, // Hargeisa
-    { capital: "Hargeisa", country: "Somalilândia", tz: 3, lat: 9.5600, lon: 44.0650 },
-    { capital: "Montevidéu", country: "Uruguai", tz: -3, lat: -34.9011, lon: -56.1645 },
-    { capital: "Caracas", country: "Venezuela", tz: -4, lat: 10.4806, lon: -66.9036 }
-    // As demais capitais podem ser adicionadas mantendo essa mesma estrutura de objeto.
+    // África
+    { country: "África do Sul", capital: "Pretória", tz: "Africa/Johannesburg", lat: -25.7479, lon: 28.2293 },
+    { country: "Argélia", capital: "Argel", tz: "Africa/Algiers", lat: 36.7538, lon: 3.0588 },
+    { country: "Angola", capital: "Luanda", tz: "Africa/Luanda", lat: -8.8390, lon: 13.2894 },
+    { country: "Benin", capital: "Porto Novo", tz: "Africa/Porto-Novo", lat: 6.4969, lon: 2.6288 },
+    { country: "Botsuana", capital: "Gaborone", tz: "Africa/Gaborone", lat: -24.6282, lon: 25.9231 },
+    { country: "Burkina Faso", capital: "Ouagadougou", tz: "Africa/Ouagadougou", lat: 12.3714, lon: -1.5197 },
+    { country: "Burundi", capital: "Gitega", tz: "Africa/Bujumbura", lat: -3.4264, lon: 29.9246 },
+    { country: "Cabo Verde", capital: "Praia", tz: "Atlantic/Cape_Verde", lat: 14.9315, lon: -23.5125 },
+    { country: "Camarões", capital: "Iaundé", tz: "Africa/Douala", lat: 3.8480, lon: 11.5021 },
+    { country: "Chade", capital: "N'Djamena", tz: "Africa/Ndjamena", lat: 12.1348, lon: 15.0557 },
+    { country: "Comores", capital: "Moroni", tz: "Indian/Comoro", lat: -11.7172, lon: 43.2473 },
+    { country: "Costa do Marfim", capital: "Iamassucro", tz: "Africa/Abidjan", lat: 6.8276, lon: -5.2893 },
+    { country: "Djibuti", capital: "Djibuti", tz: "Africa/Djibouti", lat: 11.5890, lon: 43.1450 },
+    { country: "Egito", capital: "Cairo", tz: "Africa/Cairo", lat: 30.0444, lon: 31.2357 },
+    { country: "Eritreia", capital: "Asmara", tz: "Africa/Asmara", lat: 15.3229, lon: 38.9251 },
+    { country: "Eswatini", capital: "Mbabane", tz: "Africa/Mbabane", lat: -26.3055, lon: 31.1367 },
+    { country: "Etiópia", capital: "Adis Abeba", tz: "Africa/Addis_Ababa", lat: 9.0300, lon: 38.7400 },
+    { country: "Gabão", capital: "Libreville", tz: "Africa/Libreville", lat: 0.4162, lon: 9.4673 },
+    { country: "Gâmbia", capital: "Banjul", tz: "Africa/Banjul", lat: 13.4549, lon: -16.5790 },
+    { country: "Gana", capital: "Acra", tz: "Africa/Accra", lat: 5.6037, lon: -0.1870 },
+    { country: "Guiné", capital: "Conacri", tz: "Africa/Conakry", lat: 9.6412, lon: -13.5784 },
+    { country: "Guiné-Bissau", capital: "Bissau", tz: "Africa/Bissau", lat: 11.8632, lon: -15.5984 },
+    { country: "Guiné Equatorial", capital: "Malabo", tz: "Africa/Malabo", lat: 3.7504, lon: 8.7371 },
+    { country: "Lesoto", capital: "Maseru", tz: "Africa/Maseru", lat: -29.3151, lon: 27.4869 },
+    { country: "Libéria", capital: "Monróvia", tz: "Africa/Monrovia", lat: 6.3005, lon: -10.7969 },
+    { country: "Líbia", capital: "Trípoli", tz: "Africa/Tripoli", lat: 32.8872, lon: 13.1913 },
+    { country: "Madagascar", capital: "Antananarivo", tz: "Indian/Antananarivo", lat: -18.8792, lon: 47.5079 },
+    { country: "Malawi", capital: "Lilongwe", tz: "Africa/Blantyre", lat: -13.9833, lon: 33.7833 },
+    { country: "Mali", capital: "Bamako", tz: "Africa/Bamako", lat: 12.6392, lon: -8.0029 },
+    { country: "Marrocos", capital: "Rabat", tz: "Africa/Casablanca", lat: 34.0209, lon: -6.8416 },
+    { country: "Maurício", capital: "Port Louis", tz: "Indian/Mauritius", lat: -20.1609, lon: 57.5012 },
+    { country: "Mauritânia", capital: "Nuaquexote", tz: "Africa/Nouakchott", lat: 18.0735, lon: -15.9582 },
+    { country: "Moçambique", capital: "Maputo", tz: "Africa/Maputo", lat: -25.9692, lon: 32.5732 },
+    { country: "Namíbia", capital: "Windhoek", tz: "Africa/Windhoek", lat: -22.5609, lon: 17.0658 },
+    { country: "Níger", capital: "Niamei", tz: "Africa/Niamey", lat: 13.5116, lon: 2.1254 },
+    { country: "Nigéria", capital: "Abuja", tz: "Africa/Lagos", lat: 9.0765, lon: 7.3986 },
+    { country: "Quênia", capital: "Nairóbi", tz: "Africa/Nairobi", lat: -1.2921, lon: 36.8219 },
+    { country: "República Centro-Africana", capital: "Bangui", tz: "Africa/Bangui", lat: 4.3947, lon: 18.5582 },
+    { country: "República do Congo", capital: "Brazzaville", tz: "Africa/Brazzaville", lat: -4.2634, lon: 15.2429 },
+    { country: "República Democrática do Congo", capital: "Kinshasa", tz: "Africa/Kinshasa", lat: -4.4419, lon: 15.2663 },
+    { country: "Ruanda", capital: "Quigali", tz: "Africa/Kigali", lat: -1.9706, lon: 30.1044 },
+    { country: "São Tomé e Príncipe", capital: "São Tomé", tz: "Africa/Sao_Tome", lat: 0.3302, lon: 6.7333 },
+    { country: "Senegal", capital: "Dacar", tz: "Africa/Dakar", lat: 14.7167, lon: -17.4677 },
+    { country: "Seychelles", capital: "Vitória", tz: "Indian/Mahe", lat: -4.6191, lon: 55.4513 },
+    { country: "Serra Leoa", capital: "Freetown", tz: "Africa/Freetown", lat: 8.4840, lon: -13.2299 },
+    { country: "Somália", capital: "Mogadíscio", tz: "Africa/Mogadishu", lat: 2.0469, lon: 45.3182 },
+    { country: "Sudão", capital: "Cartum", tz: "Africa/Khartoum", lat: 15.5007, lon: 32.5599 },
+    { country: "Sudão do Sul", capital: "Juba", tz: "Africa/Juba", lat: 4.8594, lon: 31.5713 },
+    { country: "Tanzânia", capital: "Dodoma", tz: "Africa/Dar_es_Salaam", lat: -6.1630, lon: 35.7516 },
+    { country: "Togo", capital: "Lomé", tz: "Africa/Lome", lat: 6.1375, lon: 1.2125 },
+    { country: "Tunísia", capital: "Túnis", tz: "Africa/Tunis", lat: 36.8065, lon: 10.1815 },
+    { country: "Uganda", capital: "Campala", tz: "Africa/Kampala", lat: 0.3476, lon: 32.5825 },
+    { country: "Zâmbia", capital: "Lusaka", tz: "Africa/Lusaka", lat: -15.3875, lon: 28.3228 },
+    { country: "Zimbábue", capital: "Harare", tz: "Africa/Harare", lat: -17.8252, lon: 31.0335 },
+
+    // América
+    { country: "Antígua e Barbuda", capital: "Saint John's", tz: "America/Antigua", lat: 17.1274, lon: -61.8468 },
+    { country: "Argentina", capital: "Buenos Aires", tz: "America/Argentina/Buenos_Aires", lat: -34.6037, lon: -58.3816 },
+    { country: "Bahamas", capital: "Nassau", tz: "America/Nassau", lat: 25.0343, lon: -77.3963 },
+    { country: "Barbados", capital: "Bridgetown", tz: "America/Barbados", lat: 13.1132, lon: -59.5988 },
+    { country: "Belize", capital: "Belmopan", tz: "America/Belize", lat: 17.2510, lon: -88.7590 },
+    { country: "Bolívia", capital: "Sucre", tz: "America/La_Paz", lat: -19.0196, lon: -65.2619 },
+    { country: "Brasil", capital: "Brasília", tz: "America/Sao_Paulo", lat: -15.7975, lon: -47.8919 },
+    { country: "Canadá", capital: "Ottawa", tz: "America/Toronto", lat: 45.4215, lon: -75.6972 },
+    { country: "Chile", capital: "Santiago", tz: "America/Santiago", lat: -33.4489, lon: -70.6693 },
+    { country: "Colômbia", capital: "Bogotá", tz: "America/Bogota", lat: 4.7110, lon: -74.0721 },
+    { country: "Costa Rica", capital: "São José", tz: "America/Costa_Rica", lat: 9.9281, lon: -84.0907 },
+    { country: "Cuba", capital: "Havana", tz: "America/Havana", lat: 23.1136, lon: -82.3666 },
+    { country: "Dominica", capital: "Roseau", tz: "America/Dominica", lat: 15.3092, lon: -61.3794 },
+    { country: "Equador", capital: "Quito", tz: "America/Guayaquil", lat: -0.1807, lon: -78.4678 },
+    { country: "El Salvador", capital: "São Salvador", tz: "America/El_Salvador", lat: 13.6929, lon: -89.2182 },
+    { country: "Estados Unidos", capital: "Washington, D.C.", tz: "America/New_York", lat: 38.9072, lon: -77.0369 },
+    { country: "Granada", capital: "St. George's", tz: "America/Grenada", lat: 12.0561, lon: -61.7485 },
+    { country: "Guatemala", capital: "Cidade da Guatemala", tz: "America/Guatemala", lat: 14.6349, lon: -90.5069 },
+    { country: "Guiana", capital: "Georgetown", tz: "America/Guyana", lat: 6.8013, lon: -58.1551 },
+    { country: "Haiti", capital: "Porto Príncipe", tz: "America/Port-au-Prince", lat: 18.5944, lon: -72.3074 },
+    { country: "Honduras", capital: "Tegucigalpa", tz: "America/Tegucigalpa", lat: 14.0723, lon: -87.1921 },
+    { country: "Jamaica", capital: "Kingston", tz: "America/Jamaica", lat: 17.9714, lon: -76.7936 },
+    { country: "México", capital: "Cidade do México", tz: "America/Mexico_City", lat: 19.4326, lon: -99.1332 },
+    { country: "Nicarágua", capital: "Manágua", tz: "America/Managua", lat: 12.1150, lon: -86.2362 },
+    { country: "Panamá", capital: "Cidade do Panamá", tz: "America/Panama", lat: 8.9824, lon: -79.5199 },
+    { country: "Paraguai", capital: "Assunção", tz: "America/Asuncion", lat: -25.2637, lon: -57.5759 },
+    { country: "Peru", capital: "Lima", tz: "America/Lima", lat: -12.0464, lon: -77.0428 },
+    { country: "República Dominicana", capital: "Santo Domingo", tz: "America/Santo_Domingo", lat: 18.4861, lon: -69.9312 },
+    { country: "Santa Lúcia", capital: "Castries", tz: "America/St_Lucia", lat: 14.0101, lon: -60.9875 },
+    { country: "São Cristóvão e Névis", capital: "Basseterre", tz: "America/St_Kitts", lat: 17.3026, lon: -62.7177 },
+    { country: "São Vicente e Granadinas", capital: "Kingstown", tz: "America/St_Vincent", lat: 13.1600, lon: -61.2248 },
+    { country: "Suriname", capital: "Paramaribo", tz: "America/Paramaribo", lat: 5.8520, lon: -55.2038 },
+    { country: "Trinidad e Tobago", capital: "Port of Spain", tz: "America/Port_of_Spain", lat: 10.6549, lon: -61.5019 },
+    { country: "Uruguai", capital: "Montevidéu", tz: "America/Montevideo", lat: -34.9011, lon: -56.1645 },
+    { country: "Venezuela", capital: "Caracas", tz: "America/Caracas", lat: 10.4806, lon: -66.9036 },
+
+    // Ásia
+    { country: "Afeganistão", capital: "Cabul", tz: "Asia/Kabul", lat: 34.5553, lon: 69.2075 },
+    { country: "Arábia Saudita", capital: "Riade", tz: "Asia/Riyadh", lat: 24.7136, lon: 46.6753 },
+    { country: "Armênia", capital: "Erevã", tz: "Asia/Yerevan", lat: 40.1872, lon: 44.5152 },
+    { country: "Azerbaijão", capital: "Baku", tz: "Asia/Baku", lat: 40.4093, lon: 49.8671 },
+    { country: "Bahrein", capital: "Manama", tz: "Asia/Bahrain", lat: 26.2285, lon: 50.5860 },
+    { country: "Bangladesh", capital: "Daca", tz: "Asia/Dhaka", lat: 23.8103, lon: 90.4125 },
+    { country: "Brunei", capital: "Bandar Seri Begawan", tz: "Asia/Brunei", lat: 4.9403, lon: 114.9481 },
+    { country: "Butão", capital: "Timphu", tz: "Asia/Thimphu", lat: 27.4728, lon: 89.6393 },
+    { country: "Camboja", capital: "Phnom Penh", tz: "Asia/Phnom_Penh", lat: 11.5564, lon: 104.9282 },
+    { country: "Catar", capital: "Doha", tz: "Asia/Qatar", lat: 25.2854, lon: 51.5310 },
+    { country: "Cazaquistão", capital: "Astana", tz: "Asia/Almaty", lat: 51.1694, lon: 71.4491 },
+    { country: "China", capital: "Pequim", tz: "Asia/Shanghai", lat: 39.9042, lon: 116.4074 },
+    { country: "Chipre", capital: "Nicosia", tz: "Asia/Nicosia", lat: 35.1856, lon: 33.3823 },
+    { country: "Coreia do Norte", capital: "Pyongyang", tz: "Asia/Pyongyang", lat: 39.0392, lon: 125.7625 },
+    { country: "Coreia do Sul", capital: "Seul", tz: "Asia/Seoul", lat: 37.5665, lon: 126.9780 },
+    { country: "Emirados Árabes Unidos", capital: "Abu Dhabi", tz: "Asia/Dubai", lat: 24.4539, lon: 54.3773 },
+    { country: "Filipinas", capital: "Manila", tz: "Asia/Manila", lat: 14.5995, lon: 120.9842 },
+    { country: "Geórgia", capital: "Tbilisi", tz: "Asia/Tbilisi", lat: 41.7151, lon: 44.8271 },
+    { country: "Iêmen", capital: "Sana", tz: "Asia/Aden", lat: 15.3694, lon: 44.1910 },
+    { country: "Índia", capital: "Nova Deli", tz: "Asia/Kolkata", lat: 28.6139, lon: 77.2090 },
+    { country: "Indonésia", capital: "Jacarta", tz: "Asia/Jakarta", lat: -6.2088, lon: 106.8456 },
+    { country: "Irã", capital: "Teerã", tz: "Asia/Tehran", lat: 35.6892, lon: 51.3890 },
+    { country: "Iraque", capital: "Bagdá", tz: "Asia/Baghdad", lat: 33.3152, lon: 44.3661 },
+    { country: "Israel", capital: "Jerusalém", tz: "Asia/Jerusalem", lat: 31.7683, lon: 35.2137 },
+    { country: "Japão", capital: "Tóquio", tz: "Asia/Tokyo", lat: 35.6762, lon: 139.6503 },
+    { country: "Jordânia", capital: "Amã", tz: "Asia/Amman", lat: 31.9454, lon: 35.9284 },
+    { country: "Kuwait", capital: "Cidade do Kuwait", tz: "Asia/Kuwait", lat: 29.3759, lon: 47.9774 },
+    { country: "Laos", capital: "Vientiane", tz: "Asia/Vientiane", lat: 17.9757, lon: 102.6331 },
+    { country: "Líbanos", capital: "Beirute", tz: "Asia/Beirut", lat: 33.8938, lon: 35.5018 },
+    { country: "Malásia", capital: "Cuala Lumpur", tz: "Asia/Kuala_Lumpur", lat: 3.1390, lon: 101.6869 },
+    { country: "Maldivas", capital: "Malé", tz: "Indian/Maldives", lat: 4.1755, lon: 73.5093 },
+    { country: "Mianmar", capital: "Moscou", tz: "Asia/Yangon", lat: 19.7633, lon: 96.0785 },
+    { country: "Mongólia", capital: "Ulan Bator", tz: "Asia/Ulaanbaatar", lat: 47.8864, lon: 106.9057 },
+    { country: "Nepal", capital: "Catmandu", tz: "Asia/Kathmandu", lat: 27.7172, lon: 85.3240 },
+    { country: "Omã", capital: "Mascate", tz: "Asia/Muscat", lat: 23.5880, lon: 58.3829 },
+    { country: "Paquistão", capital: "Islamabad", tz: "Asia/Karachi", lat: 33.6844, lon: 73.0479 },
+    { country: "Quirguistão", capital: "Bishkek", tz: "Asia/Bishkek", lat: 42.8746, lon: 74.5698 },
+    { country: "Singapura", capital: "Singapura", tz: "Asia/Singapore", lat: 1.3521, lon: 103.8198 },
+    { country: "Síria", capital: "Damasco", tz: "Asia/Damascus", lat: 33.5138, lon: 36.2765 },
+    { country: "Sri Lanka", capital: "Cotte", tz: "Asia/Colombo", lat: 6.9271, lon: 79.8612 },
+    { country: "Tajiquistão", capital: "Duchambe", tz: "Asia/Dushanbe", lat: 38.5598, lon: 68.7870 },
+    { country: "Tailândia", capital: "Bangcoc", tz: "Asia/Bangkok", lat: 13.7563, lon: 100.5018 },
+    { country: "Timor-Leste", capital: "Dili", tz: "Asia/Dili", lat: -8.5569, lon: 125.5603 },
+    { country: "Turcomenistão", capital: "Asgabate", tz: "Asia/Ashgabat", lat: 37.9601, lon: 58.3261 },
+    { country: "Turquia", capital: "Ancara", tz: "Europe/Istanbul", lat: 39.9334, lon: 32.8597 },
+    { country: "Uzbequistão", capital: "Tashkent", tz: "Asia/Tashkent", lat: 41.2995, lon: 69.2401 },
+    { country: "Vietnã", capital: "Hanoi", tz: "Asia/Ho_Chi_Minh", lat: 21.0285, lon: 105.8542 },
+
+    // Europa
+    { country: "Albânia", capital: "Tirana", tz: "Europe/Tirane", lat: 41.3275, lon: 19.8187 },
+    { country: "Alemanha", capital: "Berlim", tz: "Europe/Berlin", lat: 52.5200, lon: 13.4050 },
+    { country: "Andorra", capital: "Andorra-a-Velha", tz: "Europe/Andorra", lat: 42.5063, lon: 1.5218 },
+    { country: "Áustria", capital: "Viena", tz: "Europe/Vienna", lat: 48.2082, lon: 16.3738 },
+    { country: "Bélgica", capital: "Bruxelas", tz: "Europe/Brussels", lat: 50.8503, lon: 4.3517 },
+    { country: "Bielorrússia", capital: "Minsk", tz: "Europe/Minsk", lat: 53.9006, lon: 27.5590 },
+    { country: "Bósnia e Herzegovina", capital: "Sarajevo", tz: "Europe/Sarajevo", lat: 43.8563, lon: 18.4131 },
+    { country: "Bulgária", capital: "Sófia", tz: "Europe/Sofia", lat: 42.6977, lon: 23.3219 },
+    { country: "Croácia", capital: "Zagrebe", tz: "Europe/Zagreb", lat: 45.8150, lon: 15.9819 },
+    { country: "Dinamarca", capital: "Copenhague", tz: "Europe/Copenhagen", lat: 55.6761, lon: 12.5683 },
+    { country: "Eslováquia", capital: "Bratislava", tz: "Europe/Bratislava", lat: 48.1486, lon: 17.1077 },
+    { country: "Eslovênia", capital: "Ljubljana", tz: "Europe/Ljubljana", lat: 46.0569, lon: 14.5058 },
+    { country: "Espanha", capital: "Madri", tz: "Europe/Madrid", lat: 40.4168, lon: -3.7038 },
+    { country: "Estônia", capital: "Talin", tz: "Europe/Tallinn", lat: 59.4370, lon: 24.7536 },
+    { country: "Finlândia", capital: "Helsinque", tz: "Europe/Helsinki", lat: 60.1699, lon: 24.9384 },
+    { country: "França", capital: "Paris", tz: "Europe/Paris", lat: 48.8566, lon: 2.3522 },
+    { country: "Grécia", capital: "Atenas", tz: "Europe/Athens", lat: 37.9838, lon: 23.7275 },
+    { country: "Hungria", capital: "Budapeste", tz: "Europe/Budapest", lat: 47.4979, lon: 19.0402 },
+    { country: "Irlanda", capital: "Dublin", tz: "Europe/Dublin", lat: 53.3498, lon: -6.2603 },
+    { country: "Islândia", capital: "Reiquiavique", tz: "Atlantic/Reykjavik", lat: 64.1466, lon: -21.9426 },
+    { country: "Itália", capital: "Roma", tz: "Europe/Rome", lat: 41.9028, lon: 12.4964 },
+    { country: "Letônia", capital: "Riga", tz: "Europe/Riga", lat: 56.9496, lon: 24.1052 },
+    { country: "Liechtenstein", capital: "Vaduz", tz: "Europe/Vaduz", lat: 47.1410, lon: 9.5209 },
+    { country: "Lituânia", capital: "Vilnius", tz: "Europe/Vilnius", lat: 54.6872, lon: 25.2797 },
+    { country: "Luxemburgo", capital: "Luxemburgo", tz: "Europe/Luxembourg", lat: 49.6116, lon: 6.1319 },
+    { country: "Macedônia do Norte", capital: "Skopje", tz: "Europe/Skopje", lat: 41.9981, lon: 21.4254 },
+    { country: "Malta", capital: "Valletta", tz: "Europe/Malta", lat: 35.8997, lon: 14.5148 },
+    { country: "Moldávia", capital: "Chisinau", tz: "Europe/Chisinau", lat: 47.0105, lon: 28.8638 },
+    { country: "Mônaco", capital: "Mônaco", tz: "Europe/Monaco", lat: 43.7384, lon: 7.4246 },
+    { country: "Montenegro", capital: "Podgorica", tz: "Europe/Podgorica", lat: 42.4304, lon: 19.2594 },
+    { country: "Noruega", capital: "Oslo", tz: "Europe/Oslo", lat: 59.9139, lon: 10.7522 },
+    { country: "Países Baixos", capital: "Amsterdã", tz: "Europe/Amsterdam", lat: 52.3676, lon: 4.9041 },
+    { country: "Polônia", capital: "Varsóvia", tz: "Europe/Warsaw", lat: 52.2297, lon: 21.0122 },
+    { country: "Portugal", capital: "Lisboa", tz: "Europe/Lisbon", lat: 38.7223, lon: -9.1393 },
+    { country: "Reino Unido", capital: "Londres", tz: "Europe/London", lat: 51.5074, lon: -0.1278 },
+    { country: "República Tcheca", capital: "Praga", tz: "Europe/Prague", lat: 50.0755, lon: 14.4378 },
+    { country: "Romênia", capital: "Bucareste", tz: "Europe/Bucharest", lat: 44.4323, lon: 26.1063 },
+    { country: "Rússia", capital: "Moscou", tz: "Europe/Moscow", lat: 55.7558, lon: 37.6173 },
+    { country: "San Marino", capital: "San Marino", tz: "Europe/San_Marino", lat: 43.9424, lon: 12.4578 },
+    { country: "Sérvia", capital: "Belgrado", tz: "Europe/Belgrade", lat: 44.7866, lon: 20.4489 },
+    { country: "Suécia", capital: "Estocolmo", tz: "Europe/Stockholm", lat: 59.3293, lon: 18.0686 },
+    { country: "Suíça", capital: "Berna", tz: "Europe/Zurich", lat: 46.9480, lon: 7.4474 },
+    { country: "Ucrânia", capital: "Kiev", tz: "Europe/Kiev", lat: 50.4501, lon: 30.5234 },
+
+    // Oceania
+    { country: "Austrália", capital: "Camberra", tz: "Australia/Sydney", lat: -35.2809, lon: 149.1300 },
+    { country: "Fiji", capital: "Suva", tz: "Pacific/Fiji", lat: -18.1248, lon: 178.4501 },
+    { country: "Ilhas Marshall", capital: "Majuro", tz: "Pacific/Majuro", lat: 7.1315, lon: 171.1845 },
+    { country: "Ilhas Salomão", capital: "Honiara", tz: "Pacific/Guadalcanal", lat: -9.4456, lon: 159.9729 },
+    { country: "Kiribati", capital: "Tarauá do Sul", tz: "Pacific/Tarawa", lat: 1.3292, lon: 172.9785 },
+    { country: "Micronésia", capital: "Palikir", tz: "Pacific/Chuuk", lat: 6.9248, lon: 158.1611 },
+    { country: "Nauru", capital: "Iaren", tz: "Pacific/Nauru", lat: -0.5477, lon: 166.9208 },
+    { country: "Nova Zelândia", capital: "Wellington", tz: "Pacific/Auckland", lat: -41.2865, lon: 174.7762 },
+    { country: "Palau", capital: "Ngerulmud", tz: "Pacific/Palau", lat: 7.5004, lon: 134.6243 },
+    { country: "Papua-Nova Guiné", capital: "Port Moresby", tz: "Pacific/Port_Moresby", lat: -9.4438, lon: 147.1803 },
+    { country: "Samoa", capital: "Apia", tz: "Pacific/Apia", lat: -13.8333, lon: -171.7667 },
+    { country: "Tonga", capital: "Nuku'alofa", tz: "Pacific/Tongatapu", lat: -21.1789, lon: -175.1982 },
+    { country: "Tuvalu", capital: "Funafuti", tz: "Pacific/Funafuti", lat: -8.5207, lon: 179.1982 },
+    { country: "Vanuatu", capital: "Port Vila", tz: "Pacific/Efate", lat: -17.7333, lon: 168.3270 },
+
+    // Observadores ONU
+    { country: "Palestina", capital: "Jerusalém Oriental / Ramallah", tz: "Asia/Gaza", lat: 31.9038, lon: 35.2034 },
+    { country: "Vaticano", capital: "Cidade do Vaticano", tz: "Europe/Vatican", lat: 41.9029, lon: 12.4534 }
 ];
 
-// Inicialização de Seletores
-function initSelectors() {
-    const selects = [document.getElementById('select1'), document.getElementById('select2'), document.getElementById('select3')];
-    
-    // Ordenar alfabeticamente
-    database.sort((a, b) => a.capital.localeCompare(b.capital));
+// Inicialização de Dados no DOM
+document.addEventListener('DOMContentLoaded', () => {
+    populateLists();
+    setupClockSelects();
+    updateClocks();
+    setInterval(updateClocks, 1000);
+});
 
-    selects.forEach((select, index) => {
-        select.innerHTML = '';
-        database.forEach((item, i) => {
+// Preenche listas de seleção e busca
+function populateLists() {
+    const dataList = document.getElementById('capitalsList');
+    const selects = document.querySelectorAll('.flight-select');
+
+    database.sort((a,b) => a.capital.localeCompare(b.capital)).forEach((item, index) => {
+        // Popula Datalist para a busca
+        const option = document.createElement('option');
+        option.value = `${item.capital} (${item.country})`;
+        dataList.appendChild(option);
+
+        // Popula os selects da calculadora de voo
+        selects.forEach(select => {
             const opt = document.createElement('option');
-            opt.value = i;
-            opt.textContent = `${item.capital} (${item.country}) - UTC${item.tz >= 0 ? '+' : ''}${item.tz}`;
+            opt.value = index;
+            opt.textContent = `${item.capital} - ${item.country}`;
             select.appendChild(opt);
         });
     });
-
-    // Padrões Iniciais (Brasília, Londres, Tóquio)
-    if(selects[0]) selects[0].value = database.findIndex(x => x.capital === "Brasília");
-    if(selects[1]) selects[1].value = database.findIndex(x => x.capital === "Londres");
-    if(selects[2]) selects[2].value = database.findIndex(x => x.capital === "Tóquio");
-
-    updateFlightSelects();
 }
 
-// Atualização dos Relógios
+// Configura os fusos iniciais
+function setupClockSelects() {
+    const sel1 = document.getElementById('selectZone1');
+    const sel2 = document.getElementById('selectZone2');
+    const sel3 = document.getElementById('selectZone3');
+
+    database.forEach((item, idx) => {
+        const opt1 = new Option(`${item.capital} (${item.country})`, item.tz);
+        const opt2 = new Option(`${item.capital} (${item.country})`, item.tz);
+        const opt3 = new Option(`${item.capital} (${item.country})`, item.tz);
+
+        sel1.add(opt1);
+        sel2.add(opt2);
+        sel3.add(opt3);
+    });
+
+    // Padrões: Brasília (Brasil), Londres (Reino Unido), Tóquio (Japão)
+    sel1.value = "America/Sao_Paulo";
+    sel2.value = "Europe/London";
+    sel3.value = "Asia/Tokyo";
+}
+
+// Atualiza o relógio digital em tempo real
 function updateClocks() {
     for (let i = 1; i <= 3; i++) {
-        const select = document.getElementById(`select${i}`);
-        const clockEl = document.getElementById(`clock${i}`);
-        const dateEl = document.getElementById(`date${i}`);
-        
-        const item = database[select.value];
-        if (!item) continue;
-
+        const tz = document.getElementById(`selectZone${i}`).value;
         const now = new Date();
-        const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
-        const cityTime = new Date(utc + (3600000 * item.tz));
 
-        clockEl.textContent = cityTime.toLocaleTimeString('pt-BR');
-        dateEl.textContent = cityTime.toLocaleDateString('pt-BR', { weekday: 'short', day: 'numeric', month: 'short' });
+        try {
+            const timeFormatter = new Intl.DateTimeFormat('pt-BR', {
+                timeZone: tz,
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: false
+            });
+
+            const dateFormatter = new Intl.DateTimeFormat('pt-BR', {
+                timeZone: tz,
+                weekday: 'short',
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric'
+            });
+
+            document.getElementById(`time${i}`).textContent = timeFormatter.format(now);
+            document.getElementById(`date${i}`).textContent = dateFormatter.format(now);
+        } catch (e) {
+            document.getElementById(`time${i}`).textContent = "--:--:--";
+        }
     }
 }
 
-// Barra de Pesquisa Integrada
-function filterCapitals() {
-    const query = document.getElementById('capitalSearch').value.toLowerCase();
-    const resultsDiv = document.getElementById('searchResults');
-    resultsDiv.innerHTML = '';
-
-    if (query.trim() === '') {
-        resultsDiv.style.display = 'none';
+// Mecanismo de Busca
+document.getElementById('globalSearch').addEventListener('input', (e) => {
+    const val = e.target.value.toLowerCase();
+    const resultDiv = document.getElementById('searchResult');
+    
+    if(!val) {
+        resultDiv.innerHTML = '';
         return;
     }
 
-    const filtered = database.filter(item => 
-        item.capital.toLowerCase().includes(query) || 
-        item.country.toLowerCase().includes(query)
+    const found = database.find(item => 
+        item.capital.toLowerCase().includes(val) || 
+        item.country.toLowerCase().includes(val)
     );
 
-    if (filtered.length > 0) {
-        resultsDiv.style.display = 'block';
-        filtered.forEach(item => {
-            const div = document.createElement('div');
-            div.className = 'search-item';
-            div.textContent = `${item.capital} - ${item.country} (Fuso: UTC${item.tz >= 0 ? '+' : ''}${item.tz})`;
-            div.onclick = () => {
-                document.getElementById('select1').value = database.indexOf(item);
-                updateClocks();
-                resultsDiv.style.display = 'none';
-                document.getElementById('capitalSearch').value = '';
-            };
-            resultsDiv.appendChild(div);
-        });
+    if (found) {
+        resultDiv.innerHTML = `
+            <strong style="color:var(--text-main);">${found.capital}</strong>, ${found.country}<br>
+            Fuso Horário IANA: <code>${found.tz}</code> | Coordenadas: ${found.lat}, ${found.lon}
+        `;
     } else {
-        resultsDiv.style.display = 'none';
+        resultDiv.innerHTML = 'Nenhuma capital ou país encontrado.';
     }
-}
+});
 
-// Lógica para Cálculo de Voo
-function updateFlightSelects() {
-    const flightSelects = document.querySelectorAll('.flight-select');
-    flightSelects.forEach(select => {
-        const currentVal = select.value;
-        select.innerHTML = '<option value="">Selecione a capital...</option>';
-        database.forEach((item, i) => {
-            const opt = document.createElement('option');
-            opt.value = i;
-            opt.textContent = `${item.capital} (${item.country})`;
-            select.appendChild(opt);
-        });
-        select.value = currentVal;
-    });
-}
-
+// Adicionar escala na calculadora de voo
 function addStop() {
-    const container = document.getElementById('flightStops');
-    const stops = container.getElementsByClassName('flight-stop');
+    const container = document.getElementById('stopsContainer');
+    const rows = container.getElementsByClassName('stop-row');
     
-    const div = document.createElement('div');
-    div.className = 'flight-stop';
-    
+    // Cria novo select
+    const newRow = document.createElement('div');
+    newRow.className = 'stop-row';
+
     const select = document.createElement('select');
     select.className = 'flight-select';
-    
+    select.innerHTML = '<option value="">Selecione a Escala</option>';
+
+    database.forEach((item, index) => {
+        const opt = document.createElement('option');
+        opt.value = index;
+        opt.textContent = `${item.capital} - ${item.country}`;
+        select.appendChild(opt);
+    });
+
     const removeBtn = document.createElement('button');
     removeBtn.className = 'btn btn-danger';
     removeBtn.textContent = 'X';
-    removeBtn.onclick = () => { div.remove(); };
+    removeBtn.onclick = () => newRow.remove();
 
-    div.appendChild(select);
-    div.appendChild(removeBtn);
-    
-    // Inserir antes do último elemento (Destino)
-    container.insertBefore(div, stops[stops.length - 1]);
-    updateFlightSelects();
+    newRow.appendChild(select);
+    newRow.appendChild(removeBtn);
+
+    // Insere antes do destino final
+    container.insertBefore(newRow, rows[rows.length - 1]);
 }
 
-// Haversine Formula para Calcular Distância em Km
-function getDistanceInKm(lat1, lon1, lat2, lon2) {
-    const R = 6371; // Raio da Terra em km
-    const dLat = (lat2 - lat1) * Math.PI / 180;
-    const dLon = (lon2 - lon1) * Math.PI / 180;
-    const a = 
-        Math.sin(dLat/2) * Math.sin(dLat/2) +
-        Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
-        Math.sin(dLon/2) * Math.sin(dLon/2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-    return R * c;
-}
-
+// Cálculo geodésico (Fórmula de Haversine)
 function calculateDistance() {
     const selects = document.querySelectorAll('.flight-select');
-    let totalDistance = 0;
-    let path = [];
+    const points = [];
 
-    for (let i = 0; i < selects.length; i++) {
-        const index = selects[i].value;
-        if (index === "") {
-            document.getElementById('flightResult').textContent = "Por favor, preencha todos os pontos da rota.";
-            return;
+    selects.forEach(select => {
+        if(select.value !== "") {
+            points.push(database[select.value]);
         }
-        path.push(database[index]);
+    });
+
+    if (points.length < 2) {
+        alert("Por favor, selecione ao menos uma origem e um destino final.");
+        return;
     }
 
-    for (let i = 0; i < path.length - 1; i++) {
-        totalDistance += getDistanceInKm(path[i].lat, path[i].lon, path[i + 1].lat, path[i + 1].lon);
+    let totalKm = 0;
+    let routeSummary = "";
+
+    for (let i = 0; i < points.length - 1; i++) {
+        const p1 = points[i];
+        const p2 = points[i+1];
+        const dist = haversineDistance(p1.lat, p1.lon, p2.lat, p2.lon);
+        totalKm += dist;
+
+        const legName = i === 0 ? "Origem" : `Escala ${i}`;
+        const nextLegName = i + 1 === points.length - 1 ? "Destino" : `Escala ${i+1}`;
+        
+        routeSummary += `<br>• ${p1.capital} → ${p2.capital}: <strong>${Math.round(dist).toLocaleString('pt-BR')} km</strong>`;
     }
 
-    // Estimativa genérica: 800 km/h velocidade de cruzeiro + 30 min por escala
-    const flightHours = totalDistance / 800;
-    const layoverHours = (path.length - 2) * 1.5; // Ex: 1h30m de tempo por escala
-    const totalTimeHours = flightHours + (layoverHours > 0 ? layoverHours : 0);
+    const totalNauticalMiles = totalKm * 0.539957;
+    const estFlightHours = totalKm / 800; // Média estimada de 800 km/h para avião comercial
 
-    document.getElementById('flightResult').innerHTML = `
-        <strong>Distância Total:</strong> ${Math.round(totalDistance).toLocaleString('pt-BR')} km<br>
-        <strong>Tempo Estimado em Voo:</strong> ~${Math.floor(totalTimeHours)}h ${Math.round((totalTimeHours % 1) * 60)}m 
-        <small>(${path.length - 2} escala(s) considerada(s))</small>
+    const resultBox = document.getElementById('flightResult');
+    resultBox.style.display = 'block';
+    resultBox.innerHTML = `
+        <h3>Resumo da Rota</h3>
+        ${routeSummary}
+        <hr style="border-color: var(--border); margin: 0.75rem 0;">
+        <p><strong>Distância Total:</strong> ${Math.round(totalKm).toLocaleString('pt-BR')} km (${Math.round(totalNauticalMiles).toLocaleString('pt-BR')} NM)</p>
+        <p><strong>Tempo Estimado de Voo Direto:</strong> ~${Math.floor(estFlightHours)}h ${Math.round((estFlightHours % 1) * 60)}min (sem contar conexões/ventos)</p>
     `;
 }
 
-// Inicialização do App
-window.onload = () => {
-    initSelectors();
-    updateClocks();
-    setInterval(updateClocks, 1000);
-};
+function haversineDistance(lat1, lon1, lat2, lon2) {
+    const R = 6371; // Raio da Terra em KM
+    const dLat = (lat2 - lat1) * Math.PI / 180;
+    const dLon = (lon2 - lon1) * Math.PI / 180;
+    const a = 
+        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
+        Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c;
+}
 </script>
+
 </body>
 </html>
