@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Painel Global Compacto</title>
+    <title>Matriz de Fusos Horários - Linha do Tempo</title>
     <style>
         * {
             box-sizing: border-box;
@@ -23,13 +23,13 @@
 
         .app {
             width: 100%;
-            max-width: 680px;
+            max-width: 960px;
             display: flex;
             flex-direction: column;
             gap: 8px;
         }
 
-        /* Header Simples */
+        /* Header */
         .header {
             display: flex;
             justify-content: space-between;
@@ -44,16 +44,9 @@
             font-size: 12px;
             font-weight: bold;
             color: #ffffff;
-            letter-spacing: 0;
         }
 
-        .search-wrap {
-            position: relative;
-            flex: 1;
-            max-width: 240px;
-        }
-
-        input, select, button {
+        select, button {
             background: #ffffff;
             color: #000000;
             border: 2px inset #ffffff;
@@ -63,80 +56,13 @@
             border-radius: 0;
         }
 
-        input { width: 100%; }
-
-        .search-results {
-            position: absolute;
-            top: 24px;
-            left: 0;
-            right: 0;
-            background: #ffffff;
-            border: 2px solid #000000;
-            max-height: 150px;
-            overflow-y: auto;
-            z-index: 100;
-            display: none;
-        }
-
-        .search-item {
-            padding: 3px 6px;
-            cursor: pointer;
-            border-bottom: 1px solid #d4d0c8;
-            display: flex;
-            justify-content: space-between;
-        }
-
-        .search-item:hover {
-            background: #000080;
-            color: #ffffff;
-        }
-
-        /* Clocks */
-        .grid-3 {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 6px;
-        }
-
-        .clock-box {
-            background: #ece9d8;
-            border: 2px outset #ffffff;
-            padding: 6px;
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-            text-align: center;
-        }
-
-        .clock-box select {
-            width: 100%;
-            font-size: 11px;
-            text-overflow: ellipsis;
-        }
-
-        .time {
-            font-family: "Courier New", Courier, monospace;
-            font-size: 18px;
-            font-weight: bold;
-            color: #000080;
-            background: #ffffff;
-            border: 1px solid #808080;
-            padding: 2px 0;
-        }
-
-        .date {
-            font-size: 10px;
-            color: #404040;
-        }
-
-        /* Flight Calc */
         .card {
             background: #ece9d8;
             border: 2px outset #ffffff;
             padding: 8px;
             display: flex;
             flex-direction: column;
-            gap: 6px;
+            gap: 8px;
         }
 
         .card-title {
@@ -148,86 +74,93 @@
             text-transform: uppercase;
         }
 
-        .stops-list {
+        /* Controles de Seleção */
+        .select-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 6px;
+        }
+
+        .select-box {
             display: flex;
             flex-direction: column;
-            gap: 4px;
-        }
-
-        .stop-row {
-            display: flex;
-            gap: 4px;
-            align-items: center;
-        }
-
-        .stop-row label {
-            width: 60px;
-            font-size: 11px;
-            color: #000000;
-            font-weight: normal;
-        }
-
-        .stop-row select {
-            flex: 1;
-        }
-
-        .btn {
-            cursor: pointer;
-            font-weight: bold;
-            background: #d4d0c8;
-            color: #000000;
-            border: 2px outset #ffffff;
-            padding: 0 8px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
             gap: 2px;
-            border-radius: 0;
         }
 
-        .btn:active {
-            border-style: inset;
-        }
-
-        .btn-sm {
-            height: 22px;
-            font-size: 11px;
-        }
-
-        .btn-del {
-            background: #d4d0c8;
-            color: #c00000;
-            width: 22px;
-            padding: 0;
-            flex-shrink: 0;
+        .select-box label {
             font-weight: bold;
         }
 
-        .actions {
-            display: flex;
-            gap: 4px;
-            margin-top: 2px;
-        }
-
-        .result-panel {
-            background: #ffffff;
+        /* Tabela Estilo Imagem */
+        .table-wrap {
+            overflow-x: auto;
             border: 2px inset #ffffff;
-            padding: 6px;
-            display: none;
-            font-size: 11px;
-            margin-top: 4px;
+            background: #ffffff;
         }
 
-        .result-panel .total {
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        th, td {
+            border: 1px solid #808080;
+            padding: 3px 4px;
+            font-size: 10px;
+        }
+
+        th {
+            background: #d4d0c8;
             font-weight: bold;
-            color: #000080;
-            font-size: 11px;
         }
 
-        @media (max-width: 550px) {
-            .grid-3 { grid-template-columns: 1fr; }
-            .header { flex-direction: column; gap: 4px; align-items: stretch; }
-            .search-wrap { max-width: 100%; }
+        .col-city {
+            text-align: left;
+            font-weight: bold;
+            background: #ece9d8;
+            min-width: 150px;
+            padding-left: 6px;
+        }
+
+        /* Cores dos Períodos */
+        .p-amanhecer { background-color: #f8c28c; color: #000; } /* Laranja claro */
+        .p-manha { background-color: #add8e6; color: #000; }     /* Azul claro */
+        .p-dia { background-color: #ffffff; color: #000; }       /* Branco */
+        .p-anoitecer { background-color: #f4a460; color: #000; }  /* Laranja escuro */
+        .p-noite { background-color: #4682b4; color: #fff; }      /* Azul escuro */
+
+        .current-hour {
+            outline: 2px solid #000080;
+            font-weight: bold;
+        }
+
+        /* Legenda */
+        .legend {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            padding: 4px;
+            background: #ffffff;
+            border: 1px solid #808080;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 10px;
+        }
+
+        .legend-color {
+            width: 12px;
+            height: 12px;
+            border: 1px solid #000;
+        }
+
+        @media (max-width: 600px) {
+            .select-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -235,55 +168,42 @@
 
 <div class="app">
 
-    <!-- Header Compacto com Busca -->
     <div class="header">
-        <h1>Painel Global</h1>
-        <div class="search-wrap">
-            <input type="text" id="searchInput" placeholder="Buscar capital ou país..." autocomplete="off">
-            <div class="search-results" id="searchResults"></div>
-        </div>
+        <h1>Matriz Comparativa de Fusos Horários</h1>
+        <span id="clockHeader" style="font-family: monospace;">00:00:00</span>
     </div>
 
-    <!-- 3 Relógios de Fusos -->
-    <div class="grid-3">
-        <div class="clock-box">
-            <select id="tz1" onchange="updateClocks()"></select>
-            <div class="time" id="t1">00:00:00</div>
-            <div class="date" id="d1">--/--/----</div>
-        </div>
-        <div class="clock-box">
-            <select id="tz2" onchange="updateClocks()"></select>
-            <div class="time" id="t2">00:00:00</div>
-            <div class="date" id="d2">--/--/----</div>
-        </div>
-        <div class="clock-box">
-            <select id="tz3" onchange="updateClocks()"></select>
-            <div class="time" id="t3">00:00:00</div>
-            <div class="date" id="d3">--/--/----</div>
-        </div>
-    </div>
-
-    <!-- Calculadora de Distância de Voo -->
     <div class="card">
-        <div class="card-title">Calculadora de Voo & Escalas</div>
+        <div class="card-title">Configurar Cidades / Locais</div>
         
-        <div class="stops-list" id="stopsList">
-            <div class="stop-row" id="rowOrigin">
-                <label>Origem:</label>
-                <select class="flight-select"><option value="">Selecione...</option></select>
+        <div class="select-grid">
+            <div class="select-box">
+                <label>Linha 1 (Referência):</label>
+                <select id="tz1" onchange="renderTable()"></select>
             </div>
-            <div class="stop-row" id="rowDestination">
-                <label>Destino:</label>
-                <select class="flight-select"><option value="">Selecione...</option></select>
+            <div class="select-box">
+                <label>Linha 2:</label>
+                <select id="tz2" onchange="renderTable()"></select>
+            </div>
+            <div class="select-box">
+                <label>Linha 3:</label>
+                <select id="tz3" onchange="renderTable()"></select>
             </div>
         </div>
 
-        <div class="actions">
-            <button class="btn btn-sm" onclick="addStop()">+ Escala</button>
-            <button class="btn btn-sm" onclick="calculateRoute()" style="flex:1;">Calcular Rota</button>
+        <div class="legend">
+            <div class="legend-item"><div class="legend-color p-amanhecer"></div> Amanhecer (05h-06h)</div>
+            <div class="legend-item"><div class="legend-color p-manha"></div> Manhã (07h-11h)</div>
+            <div class="legend-item"><div class="legend-color p-dia"></div> Dia (12h-16h)</div>
+            <div class="legend-item"><div class="legend-color p-anoitecer"></div> Anoitecer (17h-18h)</div>
+            <div class="legend-item"><div class="legend-color p-noite"></div> Noite/Madrugada (19h-04h)</div>
         </div>
 
-        <div class="result-panel" id="resultPanel"></div>
+        <div class="table-wrap">
+            <table id="timeTable">
+                <!-- Gerado dinamicamente via JS -->
+            </table>
+        </div>
     </div>
 
 </div>
@@ -407,7 +327,7 @@ const db = [
     { c: "Indonésia", k: "Jacarta", tz: "Asia/Jakarta", lat: -6.2088, lon: 106.8456 },
     { c: "Irã", k: "Teerã", tz: "Asia/Tehran", lat: 35.6892, lon: 51.3890 },
     { c: "Iraque", k: "Bagdá", tz: "Asia/Baghdad", lat: 33.3152, lon: 44.3661 },
-    { c: "Israel", k: "Jerusalém", tz: "Asia/Jerusalem", lat: 31.7683, lon: 35.2137 },
+    { c: "Israel", k: "Jerusalém (Tel Aviv)", tz: "Asia/Jerusalem", lat: 31.7683, lon: 35.2137 },
     { c: "Japão", k: "Tóquio", tz: "Asia/Tokyo", lat: 35.6762, lon: 139.6503 },
     { c: "Jordânia", k: "Amã", tz: "Asia/Amman", lat: 31.9454, lon: 35.9284 },
     { c: "Kuwait", k: "Cidade do Kuwait", tz: "Asia/Kuwait", lat: 29.3759, lon: 47.9774 },
@@ -496,163 +416,120 @@ const db = [
     // Observadores
     { c: "Palestina", k: "Ramallah", tz: "Asia/Gaza", lat: 31.9038, lon: 35.2034 },
     { c: "Vaticano", k: "Vaticano", tz: "Europe/Vatican", lat: 41.9029, lon: 12.4534 }
-];
-
-// Sort db
-db.sort((a,b) => a.k.localeCompare(b.k));
+].sort((a,b) => a.k.localeCompare(b.k));
 
 document.addEventListener('DOMContentLoaded', () => {
     initSelects();
-    updateClocks();
-    setInterval(updateClocks, 1000);
+    renderTable();
+    setInterval(updateClockHeader, 1000);
 });
 
 function initSelects() {
-    const tz1 = document.getElementById('tz1');
-    const tz2 = document.getElementById('tz2');
-    const tz3 = document.getElementById('tz3');
-    
-    db.forEach((item) => {
+    const s1 = document.getElementById('tz1');
+    const s2 = document.getElementById('tz2');
+    const s3 = document.getElementById('tz3');
+
+    db.forEach((item, idx) => {
         const text = `${item.k} (${item.c})`;
-        tz1.add(new Option(text, item.tz));
-        tz2.add(new Option(text, item.tz));
-        tz3.add(new Option(text, item.tz));
+        s1.add(new Option(text, idx));
+        s2.add(new Option(text, idx));
+        s3.add(new Option(text, idx));
     });
 
-    tz1.value = "America/Sao_Paulo";
-    tz2.value = "Europe/London";
-    tz3.value = "Asia/Tokyo";
+    // Padrão inspirado na imagem (Washington, Tel Aviv, Seul)
+    const idxUS = db.findIndex(i => i.tz === "America/New_York");
+    const idxIL = db.findIndex(i => i.tz === "Asia/Jerusalem");
+    const idxKR = db.findIndex(i => i.tz === "Asia/Seoul");
 
-    populateFlightSelects();
+    s1.value = idxUS !== -1 ? idxUS : 0;
+    s2.value = idxIL !== -1 ? idxIL : 1;
+    s3.value = idxKR !== -1 ? idxKR : 2;
 }
 
-function populateFlightSelects() {
-    document.querySelectorAll('.flight-select').forEach(sel => {
-        if(sel.options.length <= 1) {
-            db.forEach((item, idx) => {
-                sel.add(new Option(`${item.k} - ${item.c}`, idx));
-            });
-        }
-    });
+function updateClockHeader() {
+    const now = new Date();
+    document.getElementById('clockHeader').textContent = now.toLocaleTimeString('pt-BR');
 }
 
-function updateClocks() {
-    [1,2,3].forEach(i => {
-        const tz = document.getElementById(`tz${i}`).value;
-        const now = new Date();
-        try {
-            const timeStr = new Intl.DateTimeFormat('pt-BR', { timeZone: tz, hour:'2-digit', minute:'2-digit', second:'2-digit', hour12: false }).format(now);
-            const dateStr = new Intl.DateTimeFormat('pt-BR', { timeZone: tz, day:'2-digit', month:'2-digit', weekday:'short' }).format(now);
-            document.getElementById(`t${i}`).textContent = timeStr;
-            document.getElementById(`d${i}`).textContent = dateStr;
-        } catch(e) {}
-    });
+function getPeriodClass(hour) {
+    if (hour >= 5 && hour <= 6) return 'p-amanhecer';
+    if (hour >= 7 && hour <= 11) return 'p-manha';
+    if (hour >= 12 && hour <= 16) return 'p-dia';
+    if (hour >= 17 && hour <= 18) return 'p-anoitecer';
+    return 'p-noite';
 }
 
-// Search
-const searchInput = document.getElementById('searchInput');
-const searchResults = document.getElementById('searchResults');
-
-searchInput.addEventListener('input', (e) => {
-    const val = e.target.value.toLowerCase().trim();
-    if(!val) { searchResults.style.display = 'none'; return; }
-
-    const matches = db.filter(item => item.k.toLowerCase().includes(val) || item.c.toLowerCase().includes(val)).slice(0, 8);
-
-    if(matches.length > 0) {
-        searchResults.innerHTML = matches.map(m => `
-            <div class="search-item" onclick="selectSearchResult('${m.tz}')">
-                <span><strong>${m.k}</strong>, ${m.c}</span>
-                <span style="color:#555555; font-size:10px;">${m.tz.split('/')[1] || ''}</span>
-            </div>
-        `).join('');
-        searchResults.style.display = 'block';
-    } else {
-        searchResults.style.display = 'none';
-    }
-});
-
-document.addEventListener('click', (e) => {
-    if(!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
-        searchResults.style.display = 'none';
-    }
-});
-
-function selectSearchResult(tz) {
-    document.getElementById('tz1').value = tz;
-    updateClocks();
-    searchResults.style.display = 'none';
-    searchInput.value = '';
+function getUTCOffsetHours(tz, date) {
+    const utcDate = new Date(date.toLocaleString('en-US', { timeZone: 'UTC' }));
+    const tzDate = new Date(date.toLocaleString('en-US', { timeZone: tz }));
+    return (tzDate - utcDate) / 3600000;
 }
 
-// Flight Stops
-function addStop() {
-    const list = document.getElementById('stopsList');
-    const destRow = document.getElementById('rowDestination');
-    const stops = list.querySelectorAll('.stop-row-escala');
+function renderTable() {
+    const idx1 = document.getElementById('tz1').value;
+    const idx2 = document.getElementById('tz2').value;
+    const idx3 = document.getElementById('tz3').value;
+
+    const loc1 = db[idx1];
+    const loc2 = db[idx2];
+    const loc3 = db[idx3];
+
+    const now = new Date();
     
-    const row = document.createElement('div');
-    row.className = 'stop-row stop-row-escala';
+    // Obter hora local da cidade de referência
+    const refTimeStr = now.toLocaleString("en-US", { timeZone: loc1.tz });
+    const refDate = new Date(refTimeStr);
+    const currentRefHour = refDate.getHours();
 
-    row.innerHTML = `
-        <label>Escala ${stops.length + 1}:</label>
-        <select class="flight-select"><option value="">Selecione...</option></select>
-        <button class="btn btn-sm btn-del" onclick="removeStop(this)">X</button>
+    // Diferenças em relação ao UTC para alinhar
+    const offset1 = getUTCOffsetHours(loc1.tz, now);
+    const offset2 = getUTCOffsetHours(loc2.tz, now);
+    const offset3 = getUTCOffsetHours(loc3.tz, now);
+
+    const diff2 = offset2 - offset1;
+    const diff3 = offset3 - offset1;
+
+    let html = `
+        <thead>
+            <tr>
+                <th class="col-city">Cidade / Fuso / País</th>
+                <th colspan="2" class="p-amanhecer">Amanhecer</th>
+                <th colspan="5" class="p-manha">Manhã</th>
+                <th colspan="5" class="p-dia">Dia</th>
+                <th colspan="2" class="p-anoitecer">Anoitecer</th>
+                <th colspan="10" class="p-noite">Noite / Madrugada</th>
+            </tr>
+        </thead>
+        <tbody>
     `;
 
-    list.insertBefore(row, destRow);
-    populateFlightSelects();
-}
+    const locations = [
+        { data: loc1, diff: 0 },
+        { data: loc2, diff: diff2 },
+        { data: loc3, diff: diff3 }
+    ];
 
-function removeStop(btn) {
-    btn.parentElement.remove();
-    document.querySelectorAll('.stop-row-escala').forEach((row, idx) => {
-        row.querySelector('label').textContent = `Escala ${idx + 1}:`;
+    locations.forEach(loc => {
+        html += `<tr>`;
+        html += `<td class="col-city">${loc.data.k}<br><span style="font-weight:normal; color:#555;">${loc.data.c}</span></td>`;
+        
+        // Gerar 24 colunas de horas sincronizadas com a linha de referência
+        for (let h = 0; h < 24; h++) {
+            let localHour = (h + loc.diff) % 24;
+            if (localHour < 0) localHour += 24;
+            
+            const periodClass = getPeriodClass(localHour);
+            const isCurrent = (h === currentRefHour) ? 'current-hour' : '';
+            const hourFormatted = String(Math.floor(localHour)).padStart(2, '0');
+
+            html += `<td class="${periodClass} ${isCurrent}" title="Hora local: ${hourFormatted}:00">${hourFormatted}</td>`;
+        }
+        
+        html += `</tr>`;
     });
-}
 
-function calculateRoute() {
-    const selects = document.querySelectorAll('.flight-select');
-    const points = [];
-
-    selects.forEach(s => {
-        if(s.value !== "") points.push(db[s.value]);
-    });
-
-    if(points.length < 2) {
-        alert("Selecione origem e destino!");
-        return;
-    }
-
-    let totalKm = 0;
-    let details = [];
-
-    for(let i=0; i<points.length-1; i++) {
-        const p1 = points[i], p2 = points[i+1];
-        const dist = haversine(p1.lat, p1.lon, p2.lat, p2.lon);
-        totalKm += dist;
-        details.push(`${p1.k} -> ${p2.k}: ${Math.round(dist)} km`);
-    }
-
-    const totalHours = totalKm / 800;
-    const h = Math.floor(totalHours);
-    const m = Math.round((totalHours - h) * 60);
-
-    const panel = document.getElementById('resultPanel');
-    panel.style.display = 'block';
-    panel.innerHTML = `
-        <div class="total">Distância Total: ${Math.round(totalKm).toLocaleString('pt-BR')} km (${Math.round(totalKm * 0.539957).toLocaleString('pt-BR')} NM)</div>
-        <div style="margin-top:2px; color:#333333;">${details.join(' | ')}</div>
-        <div style="font-size:11px; margin-top:2px;">Tempo est. voo: ~${h > 0 ? h + 'h ' : ''}${m}min</div>
-    `;
-}
-
-function haversine(lat1, lon1, lat2, lon2) {
-    const R = 6371;
-    const dLat = (lat2-lat1)*Math.PI/180;
-    const dLon = (lon2-lon1)*Math.PI/180;
-    const a = Math.sin(dLat/2)*Math.sin(dLat/2) + Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)*Math.sin(dLon/2);
-    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    html += `</tbody>`;
+    document.getElementById('timeTable').innerHTML = html;
 }
 </script>
 
