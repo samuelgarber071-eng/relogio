@@ -3,135 +3,178 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Painel Global de Fusos & Voos</title>
+    <title>Painel de Relógios & Voos Mundiais</title>
     <style>
+        @font-face {
+            font-family: 'DigitalClock';
+            src: local('Courier New'), monospace;
+        }
+
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: Tahoma, Verdana, Arial, sans-serif;
-            font-size: 11px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
         body {
-            background-color: #d4d0c8;
-            color: #000000;
-            padding: 10px;
+            background-color: #0b0e14;
+            color: #00ff66;
+            padding: 15px;
             display: flex;
             justify-content: center;
         }
 
         .app {
             width: 100%;
-            max-width: 960px;
+            max-width: 1000px;
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 15px;
+        }
+
+        /* Topo: Relógio Principal Estilo Led */
+        .main-clock-card {
+            background: #121824;
+            border: 2px solid #00ff66;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0 0 15px rgba(0, 255, 102, 0.2);
+        }
+
+        .main-clock-title {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #8899a6;
+            margin-bottom: 5px;
+        }
+
+        .digital-display {
+            font-family: 'Courier New', monospace;
+            font-size: 38px;
+            font-weight: bold;
+            color: #00ff66;
+            text-shadow: 0 0 10px rgba(0, 255, 102, 0.6);
+            letter-spacing: 3px;
         }
 
         /* Header e Barra de Pesquisa */
-        .header {
+        .header-search {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 4px 8px;
-            background: #000080;
-            color: #ffffff;
-            border: 2px outset #ffffff;
-            gap: 8px;
-        }
-
-        .header h1 {
-            font-size: 12px;
-            font-weight: bold;
-            color: #ffffff;
-            white-space: nowrap;
+            gap: 10px;
+            background: #161d2a;
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid #232d3f;
         }
 
         .search-wrap {
             position: relative;
             flex: 1;
-            max-width: 280px;
         }
 
         input, select, button {
-            background: #ffffff;
-            color: #000000;
-            border: 2px inset #ffffff;
-            padding: 2px 4px;
-            height: 22px;
+            background: #0b0e14;
+            color: #00ff66;
+            border: 1px solid #00ff66;
+            padding: 6px 10px;
             outline: none;
-            border-radius: 0;
+            border-radius: 4px;
+            font-size: 12px;
         }
 
         input { width: 100%; }
+        select { width: 100%; cursor: pointer; }
 
         .search-results {
             position: absolute;
-            top: 24px;
+            top: 32px;
             left: 0;
             right: 0;
-            background: #ffffff;
-            border: 2px solid #000000;
-            max-height: 180px;
+            background: #121824;
+            border: 1px solid #00ff66;
+            max-height: 200px;
             overflow-y: auto;
             z-index: 100;
             display: none;
+            border-radius: 4px;
         }
 
         .search-item {
-            padding: 3px 6px;
+            padding: 8px;
             cursor: pointer;
-            border-bottom: 1px solid #d4d0c8;
+            border-bottom: 1px solid #232d3f;
             display: flex;
             justify-content: space-between;
+            color: #e1e8ed;
         }
 
         .search-item:hover {
-            background: #000080;
-            color: #ffffff;
+            background: #00ff66;
+            color: #0b0e14;
         }
 
+        /* Cartões estilo Display Eletrônico */
         .card {
-            background: #ece9d8;
-            border: 2px outset #ffffff;
-            padding: 8px;
+            background: #121824;
+            border: 1px solid #232d3f;
+            border-radius: 8px;
+            padding: 12px;
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 12px;
         }
 
         .card-title {
-            font-size: 11px;
+            font-size: 12px;
             font-weight: bold;
-            color: #000080;
-            border-bottom: 1px solid #808080;
-            padding-bottom: 2px;
+            color: #ffb703;
             text-transform: uppercase;
+            letter-spacing: 1px;
+            border-bottom: 1px solid #232d3f;
+            padding-bottom: 5px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
 
-        /* Controles da Tabela */
-        .select-grid {
+        /* Mostradores Digitais das Cidades Selecionadas */
+        .clock-widgets-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 6px;
+            gap: 10px;
+        }
+
+        .widget-clock {
+            background: #0b0e14;
+            border: 1px solid #00b4d8;
+            border-radius: 6px;
+            padding: 8px;
+            text-align: center;
+        }
+
+        .widget-clock .time {
+            font-family: 'Courier New', monospace;
+            font-size: 20px;
+            font-weight: bold;
+            color: #00b4d8;
+            margin-top: 4px;
         }
 
         .select-box {
             display: flex;
             flex-direction: column;
-            gap: 2px;
+            gap: 4px;
         }
 
-        .select-box label {
-            font-weight: bold;
-        }
-
-        /* Tabela Matriz */
+        /* Tabela Matriz Estilo Radar */
         .table-wrap {
             overflow-x: auto;
-            border: 2px inset #ffffff;
-            background: #ffffff;
+            border: 1px solid #232d3f;
+            border-radius: 4px;
+            background: #0b0e14;
         }
 
         table {
@@ -142,122 +185,133 @@
         }
 
         th, td {
-            border: 1px solid #808080;
-            padding: 3px 4px;
+            border: 1px solid #1a2332;
+            padding: 6px 4px;
             font-size: 10px;
         }
 
         th {
-            background: #d4d0c8;
-            font-weight: bold;
+            background: #161d2a;
+            color: #8899a6;
         }
 
         .col-city {
             text-align: left;
             font-weight: bold;
-            background: #ece9d8;
+            background: #121824;
             min-width: 140px;
-            padding-left: 6px;
+            padding-left: 8px;
+            color: #ffffff;
         }
 
-        /* Cores dos Períodos */
-        .p-amanhecer { background-color: #f8c28c; color: #000; }
-        .p-manha { background-color: #add8e6; color: #000; }
-        .p-dia { background-color: #ffffff; color: #000; }
-        .p-anoitecer { background-color: #f4a460; color: #000; }
-        .p-noite { background-color: #4682b4; color: #fff; }
+        /* Cores Temáticas de Relógio (Períodos) */
+        .p-amanhecer { background-color: #3a2e1d; color: #ffb703; }
+        .p-manha { background-color: #122b38; color: #00b4d8; }
+        .p-dia { background-color: #1a3322; color: #00ff66; }
+        .p-anoitecer { background-color: #3b2019; color: #fb8500; }
+        .p-noite { background-color: #0d131a; color: #486581; }
 
         .current-hour {
-            outline: 2px solid #000080;
+            box-shadow: inset 0 0 0 2px #00ff66;
             font-weight: bold;
+            color: #ffffff !important;
         }
 
         /* Legenda */
         .legend {
             display: flex;
-            gap: 8px;
+            gap: 10px;
             flex-wrap: wrap;
-            padding: 4px;
-            background: #ffffff;
-            border: 1px solid #808080;
+            padding: 6px;
+            background: #0b0e14;
+            border: 1px solid #232d3f;
+            border-radius: 4px;
         }
 
         .legend-item {
             display: flex;
             align-items: center;
-            gap: 4px;
+            gap: 5px;
             font-size: 10px;
+            color: #8899a6;
         }
 
         .legend-color {
-            width: 12px;
-            height: 12px;
-            border: 1px solid #000;
+            width: 10px;
+            height: 10px;
+            border-radius: 2px;
         }
 
         /* Voo & Escalas */
         .stops-list {
             display: flex;
             flex-direction: column;
-            gap: 4px;
+            gap: 6px;
         }
 
         .stop-row {
             display: flex;
-            gap: 4px;
+            gap: 6px;
             align-items: center;
         }
 
         .stop-row label {
-            width: 65px;
+            width: 70px;
             font-size: 11px;
+            color: #8899a6;
         }
-
-        .stop-row select { flex: 1; }
 
         .btn {
             cursor: pointer;
             font-weight: bold;
-            background: #d4d0c8;
-            color: #000000;
-            border: 2px outset #ffffff;
-            padding: 0 8px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
+            background: #161d2a;
+            color: #00ff66;
+            border: 1px solid #00ff66;
+            padding: 6px 12px;
+            border-radius: 4px;
+            transition: 0.2s;
         }
 
-        .btn:active { border-style: inset; }
+        .btn:hover {
+            background: #00ff66;
+            color: #0b0e14;
+        }
 
         .btn-del {
-            color: #c00000;
-            width: 22px;
-            padding: 0;
-            font-weight: bold;
+            color: #ff4d4d;
+            border-color: #ff4d4d;
+            padding: 4px 8px;
+        }
+
+        .btn-del:hover {
+            background: #ff4d4d;
+            color: #fff;
         }
 
         .actions {
             display: flex;
-            gap: 4px;
+            gap: 8px;
         }
 
         .result-panel {
-            background: #ffffff;
-            border: 2px inset #ffffff;
-            padding: 6px;
+            background: #0b0e14;
+            border: 1px solid #ffb703;
+            border-radius: 4px;
+            padding: 10px;
             display: none;
             font-size: 11px;
+            color: #e1e8ed;
         }
 
         .result-panel .total {
             font-weight: bold;
-            color: #000080;
+            color: #ffb703;
+            font-size: 12px;
         }
 
         @media (max-width: 650px) {
-            .header { flex-direction: column; align-items: stretch; }
-            .search-wrap { max-width: 100%; }
-            .select-grid { grid-template-columns: 1fr; }
+            .clock-widgets-grid { grid-template-columns: 1fr; }
+            .digital-display { font-size: 28px; }
         }
     </style>
 </head>
@@ -265,33 +319,52 @@
 
 <div class="app">
 
-    <!-- Header com Busca -->
-    <div class="header">
-        <h1>Painel Global de Fusos Horários</h1>
+    <!-- Mostrador Principal -->
+    <div class="main-clock-card">
+        <div class="main-clock-title">⏱️ Relógio do Sistema (UTC)</div>
+        <div class="digital-display" id="mainClock">00:00:00 UTC</div>
+    </div>
+
+    <!-- Barra de Pesquisa -->
+    <div class="header-search">
         <div class="search-wrap">
-            <input type="text" id="searchInput" placeholder="Pesquisar país ou capital..." autocomplete="off">
+            <input type="text" id="searchInput" placeholder="🔍 Pesquisar país ou cidade..." autocomplete="off">
             <div class="search-results" id="searchResults"></div>
         </div>
     </div>
 
-    <!-- Tabela Matriz de Fusos -->
+    <!-- Controles & Mostradores Individuais -->
     <div class="card">
-        <div class="card-title">Matriz Comparativa de 24 Horas</div>
+        <div class="card-title">🌐 Seleção de Fusos Horários</div>
         
-        <div class="select-grid">
+        <div class="clock-widgets-grid">
             <div class="select-box">
-                <label>Linha 1 (Referência):</label>
-                <select id="tz1" onchange="renderTable()"></select>
+                <select id="tz1" onchange="updateAll()"></select>
+                <div class="widget-clock">
+                    <div style="font-size:10px; color:#8899a6;" id="name1">--</div>
+                    <div class="time" id="clock1">00:00:00</div>
+                </div>
             </div>
             <div class="select-box">
-                <label>Linha 2:</label>
-                <select id="tz2" onchange="renderTable()"></select>
+                <select id="tz2" onchange="updateAll()"></select>
+                <div class="widget-clock">
+                    <div style="font-size:10px; color:#8899a6;" id="name2">--</div>
+                    <div class="time" id="clock2">00:00:00</div>
+                </div>
             </div>
             <div class="select-box">
-                <label>Linha 3:</label>
-                <select id="tz3" onchange="renderTable()"></select>
+                <select id="tz3" onchange="updateAll()"></select>
+                <div class="widget-clock">
+                    <div style="font-size:10px; color:#8899a6;" id="name3">--</div>
+                    <div class="time" id="clock3">00:00:00</div>
+                </div>
             </div>
         </div>
+    </div>
+
+    <!-- Tabela Matriz -->
+    <div class="card">
+        <div class="card-title">📊 Matriz Comparativa de 24 Horas</div>
 
         <div class="legend">
             <div class="legend-item"><div class="legend-color p-amanhecer"></div> Amanhecer (05h-06h)</div>
@@ -308,7 +381,7 @@
 
     <!-- Calculadora de Voo -->
     <div class="card">
-        <div class="card-title">Calculadora de Distância de Voo & Escalas</div>
+        <div class="card-title">✈️ Trajetória de Voo & Distâncias</div>
         
         <div class="stops-list" id="stopsList">
             <div class="stop-row" id="rowOrigin">
@@ -322,8 +395,8 @@
         </div>
 
         <div class="actions">
-            <button class="btn" onclick="addStop()">+ Adicionar Escala</button>
-            <button class="btn" onclick="calculateRoute()" style="flex:1;">Calcular Rota</button>
+            <button class="btn" onclick="addStop()">+ Escala</button>
+            <button class="btn" onclick="calculateRoute()" style="flex:1;">Calcular Voo</button>
         </div>
 
         <div class="result-panel" id="resultPanel"></div>
@@ -543,7 +616,9 @@ const db = [
 
 document.addEventListener('DOMContentLoaded', () => {
     initSelects();
+    updateClocks();
     renderTable();
+    setInterval(updateClocks, 1000);
 });
 
 function initSelects() {
@@ -558,7 +633,6 @@ function initSelects() {
         s3.add(new Option(text, idx));
     });
 
-    // Padrão inspirado na imagem
     s1.value = db.findIndex(i => i.tz === "America/New_York");
     s2.value = db.findIndex(i => i.tz === "Asia/Jerusalem" || i.tz === "Asia/Gaza");
     s3.value = db.findIndex(i => i.tz === "Asia/Seoul");
@@ -574,6 +648,33 @@ function populateFlightSelects() {
             });
         }
     });
+}
+
+function updateClocks() {
+    const now = new Date();
+    document.getElementById('mainClock').textContent = now.toISOString().substring(11,19) + " UTC";
+
+    const idx1 = document.getElementById('tz1').value;
+    const idx2 = document.getElementById('tz2').value;
+    const idx3 = document.getElementById('tz3').value;
+
+    if (db[idx1]) {
+        document.getElementById('name1').textContent = `${db[idx1].k}, ${db[idx1].c}`;
+        document.getElementById('clock1').textContent = now.toLocaleTimeString('pt-BR', { timeZone: db[idx1].tz });
+    }
+    if (db[idx2]) {
+        document.getElementById('name2').textContent = `${db[idx2].k}, ${db[idx2].c}`;
+        document.getElementById('clock2').textContent = now.toLocaleTimeString('pt-BR', { timeZone: db[idx2].tz });
+    }
+    if (db[idx3]) {
+        document.getElementById('name3').textContent = `${db[idx3].k}, ${db[idx3].c}`;
+        document.getElementById('clock3').textContent = now.toLocaleTimeString('pt-BR', { timeZone: db[idx3].tz });
+    }
+}
+
+function updateAll() {
+    updateClocks();
+    renderTable();
 }
 
 function getPeriodClass(hour) {
@@ -634,7 +735,7 @@ function renderTable() {
 
     locations.forEach(loc => {
         html += `<tr>`;
-        html += `<td class="col-city">${loc.data.k}<br><span style="font-weight:normal; color:#555;">${loc.data.c}</span></td>`;
+        html += `<td class="col-city">${loc.data.k}<br><span style="font-weight:normal; color:#8899a6;">${loc.data.c}</span></td>`;
         
         for (let h = 0; h < 24; h++) {
             let localHour = (h + loc.diff) % 24;
@@ -654,7 +755,7 @@ function renderTable() {
     document.getElementById('timeTable').innerHTML = html;
 }
 
-// Lógica de Busca Instantânea
+// Busca Instantânea
 const searchInput = document.getElementById('searchInput');
 const searchResults = document.getElementById('searchResults');
 
@@ -668,7 +769,7 @@ searchInput.addEventListener('input', (e) => {
         searchResults.innerHTML = matches.map(m => `
             <div class="search-item" onclick="selectSearchResult('${m.tz}')">
                 <span><strong>${m.k}</strong>, ${m.c}</span>
-                <span style="color:#555; font-size:10px;">${m.tz.split('/')[1] || ''}</span>
+                <span style="color:#8899a6; font-size:10px;">${m.tz.split('/')[1] || ''}</span>
             </div>
         `).join('');
         searchResults.style.display = 'block';
@@ -687,13 +788,13 @@ function selectSearchResult(tz) {
     const idx = db.findIndex(item => item.tz === tz);
     if (idx !== -1) {
         document.getElementById('tz1').value = idx;
-        renderTable();
+        updateAll();
     }
     searchResults.style.display = 'none';
     searchInput.value = '';
 }
 
-// Calculadora de Voo & Escalas
+// Voo & Escalas
 function addStop() {
     const list = document.getElementById('stopsList');
     const destRow = document.getElementById('rowDestination');
@@ -705,7 +806,7 @@ function addStop() {
     row.innerHTML = `
         <label>Escala ${stops.length + 1}:</label>
         <select class="flight-select"><option value="">Selecione...</option></select>
-        <button class="btn btn-del" onclick="removeStop(this)">X</button>
+        <button class="btn btn-del" onclick="removeStop(this)">✕</button>
     `;
 
     list.insertBefore(row, destRow);
@@ -739,19 +840,19 @@ function calculateRoute() {
         const p1 = points[i], p2 = points[i + 1];
         const dist = haversine(p1.lat, p1.lon, p2.lat, p2.lon);
         totalKm += dist;
-        details.push(`${p1.k} -> ${p2.k}: ${Math.round(dist).toLocaleString('pt-BR')} km`);
+        details.push(`${p1.k} ✈️ ${p2.k}: ${Math.round(dist).toLocaleString('pt-BR')} km`);
     }
 
-    const totalHours = totalKm / 800; // Média comercial de 800 km/h
+    const totalHours = totalKm / 800;
     const h = Math.floor(totalHours);
     const m = Math.round((totalHours - h) * 60);
 
     const panel = document.getElementById('resultPanel');
     panel.style.display = 'block';
     panel.innerHTML = `
-        <div class="total">Distância Total: ${Math.round(totalKm).toLocaleString('pt-BR')} km (${Math.round(totalKm * 0.539957).toLocaleString('pt-BR')} NM)</div>
-        <div style="margin-top:2px; color:#333;">Trechos: ${details.join(' | ')}</div>
-        <div style="margin-top:2px;">Tempo est. de voo: ~${h > 0 ? h + 'h ' : ''}${m}min (velocidade média de 800 km/h)</div>
+        <div class="total">📐 Distância Total: ${Math.round(totalKm).toLocaleString('pt-BR')} km (${Math.round(totalKm * 0.539957).toLocaleString('pt-BR')} NM)</div>
+        <div style="margin-top:4px; color:#8899a6;">Trechos: ${details.join(' | ')}</div>
+        <div style="margin-top:4px;">⏱️ Tempo estimado de voo: ~${h > 0 ? h + 'h ' : ''}${m}min (vel. média 800 km/h)</div>
     `;
 }
 
