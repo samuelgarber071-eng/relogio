@@ -3,18 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Painel Global Compacto</title>
+    <title>Painel Global</title>
     <style>
         :root {
-            --bg: #090d16;
-            --card: #131b2e;
-            --card-inner: #1c2740;
-            --accent: #38bdf8;
-            --accent-hover: #0284c7;
-            --text: #f1f5f9;
-            --muted: #94a3b8;
-            --border: #243352;
+            --bg: #f8fafc;
+            --surface: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
             --danger: #ef4444;
+            --radius: 8px;
         }
 
         * {
@@ -22,165 +22,168 @@
             margin: 0;
             padding: 0;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            font-size: 13px;
         }
 
         body {
             background-color: var(--bg);
-            color: var(--text);
-            padding: 12px;
+            color: var(--text-main);
+            padding: 24px 16px;
             display: flex;
             justify-content: center;
         }
 
         .app {
             width: 100%;
-            max-width: 720px;
+            max-width: 680px;
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 16px;
         }
 
         .header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 6px 10px;
-            background: var(--card);
+            background: var(--surface);
+            padding: 12px 16px;
+            border-radius: var(--radius);
             border: 1px solid var(--border);
-            border-radius: 6px;
         }
 
         .header h1 {
-            font-size: 14px;
-            font-weight: 700;
-            color: var(--accent);
-            letter-spacing: 0.5px;
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-main);
         }
 
         .search-wrap {
             position: relative;
             flex: 1;
-            max-width: 280px;
+            max-width: 260px;
         }
 
         input, select, button {
-            background: var(--card-inner);
-            color: var(--text);
+            background: var(--surface);
+            color: var(--text-main);
             border: 1px solid var(--border);
-            border-radius: 4px;
-            padding: 4px 8px;
-            height: 28px;
+            border-radius: 6px;
+            padding: 6px 10px;
+            font-size: 13px;
             outline: none;
+            transition: border-color 0.15s;
         }
 
         input:focus, select:focus {
-            border-color: var(--accent);
+            border-color: var(--primary);
         }
 
         input { width: 100%; }
 
         .search-results {
             position: absolute;
-            top: 30px;
+            top: calc(100% + 4px);
             left: 0;
             right: 0;
-            background: var(--card);
+            background: var(--surface);
             border: 1px solid var(--border);
-            border-radius: 4px;
-            max-height: 180px;
+            border-radius: 6px;
+            max-height: 200px;
             overflow-y: auto;
             z-index: 100;
             display: none;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
         }
 
         .search-item {
-            padding: 6px 8px;
+            padding: 8px 10px;
             cursor: pointer;
             border-bottom: 1px solid var(--border);
             display: flex;
             justify-content: space-between;
+            font-size: 12px;
         }
 
+        .search-item:last-child { border-bottom: none; }
+
         .search-item:hover {
-            background: var(--card-inner);
-            color: var(--accent);
+            background: var(--bg);
+            color: var(--primary);
         }
 
         /* Clocks */
         .grid-3 {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 8px;
+            gap: 12px;
         }
 
         .clock-box {
-            background: var(--card);
+            background: var(--surface);
             border: 1px solid var(--border);
-            border-radius: 6px;
-            padding: 8px;
+            border-radius: var(--radius);
+            padding: 12px;
             display: flex;
             flex-direction: column;
-            gap: 4px;
-            text-align: center;
+            gap: 6px;
+            align-items: center;
         }
 
         .clock-box select {
             width: 100%;
-            font-size: 11px;
+            font-size: 12px;
             text-overflow: ellipsis;
+            border: none;
+            background: transparent;
+            text-align-last: center;
+            cursor: pointer;
         }
 
         .time {
-            font-family: monospace;
-            font-size: 20px;
-            font-weight: 700;
-            color: var(--accent);
-            line-height: 1.1;
+            font-size: 22px;
+            font-weight: 600;
+            color: var(--text-main);
+            letter-spacing: -0.5px;
         }
 
         .date {
-            font-size: 10px;
-            color: var(--muted);
+            font-size: 11px;
+            color: var(--text-muted);
+            text-transform: capitalize;
         }
 
         /* Flight Calc */
         .card {
-            background: var(--card);
+            background: var(--surface);
             border: 1px solid var(--border);
-            border-radius: 6px;
-            padding: 10px;
+            border-radius: var(--radius);
+            padding: 16px;
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 12px;
         }
 
         .card-title {
-            font-size: 12px;
+            font-size: 13px;
             font-weight: 600;
-            color: var(--accent);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+            color: var(--text-main);
         }
 
         .stops-list {
             display: flex;
             flex-direction: column;
-            gap: 6px;
+            gap: 8px;
         }
 
         .stop-row {
             display: flex;
-            gap: 6px;
+            gap: 8px;
             align-items: center;
         }
 
         .stop-row label {
-            width: 55px;
-            font-size: 11px;
-            color: var(--muted);
-            font-weight: 500;
+            width: 70px;
+            font-size: 12px;
+            color: var(--text-muted);
         }
 
         .stop-row select {
@@ -189,56 +192,66 @@
 
         .btn {
             cursor: pointer;
-            font-weight: 600;
-            background: var(--accent);
-            color: #090d16;
+            font-weight: 500;
+            background: var(--primary);
+            color: #ffffff;
             border: none;
-            padding: 0 10px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 4px;
-            transition: opacity 0.2s;
+            padding: 6px 12px;
+            font-size: 12px;
+            border-radius: 6px;
+            transition: background-color 0.15s;
         }
 
-        .btn:hover { opacity: 0.9; }
+        .btn:hover { background: var(--primary-hover); }
 
-        .btn-sm {
-            height: 28px;
-            font-size: 11px;
+        .btn-outline {
+            background: transparent;
+            color: var(--text-main);
+            border: 1px solid var(--border);
+        }
+
+        .btn-outline:hover {
+            background: var(--bg);
         }
 
         .btn-del {
-            background: var(--danger);
-            color: white;
-            width: 28px;
+            background: transparent;
+            color: var(--danger);
+            border: 1px solid var(--border);
+            width: 30px;
             padding: 0;
             flex-shrink: 0;
         }
 
+        .btn-del:hover {
+            background: #fef2f2;
+            border-color: #fca5a5;
+        }
+
         .actions {
             display: flex;
-            gap: 6px;
+            gap: 8px;
+            margin-top: 4px;
         }
 
         .result-panel {
-            background: var(--card-inner);
-            border-radius: 4px;
-            padding: 8px 10px;
+            background: var(--bg);
+            border-radius: 6px;
+            padding: 12px;
             display: none;
-            border-left: 3px solid var(--accent);
+            border: 1px solid var(--border);
             font-size: 12px;
         }
 
         .result-panel .total {
-            font-weight: 700;
-            color: var(--accent);
+            font-weight: 600;
+            color: var(--text-main);
             font-size: 13px;
         }
 
         @media (max-width: 550px) {
             .grid-3 { grid-template-columns: 1fr; }
-            .header { flex-direction: column; gap: 8px; align-items: stretch; }
+            .header { flex-direction: column; gap: 10px; align-items: stretch; }
             .search-wrap { max-width: 100%; }
         }
     </style>
@@ -249,9 +262,9 @@
 
     <!-- Header Compacto com Busca -->
     <div class="header">
-        <h1>GLOBAL DASH</h1>
+        <h1>Painel Global</h1>
         <div class="search-wrap">
-            <input type="text" id="searchInput" placeholder="🔍 Buscar capital ou país..." autocomplete="off">
+            <input type="text" id="searchInput" placeholder="Buscar país ou capital..." autocomplete="off">
             <div class="search-results" id="searchResults"></div>
         </div>
     </div>
@@ -280,19 +293,19 @@
         <div class="card-title">Calculadora de Voo & Escalas</div>
         
         <div class="stops-list" id="stopsList">
-            <div class="stop-row">
-                <label>Origem:</label>
+            <div class="stop-row" id="rowOrigin">
+                <label>Origem</label>
                 <select class="flight-select"><option value="">Selecione...</option></select>
             </div>
-            <div class="stop-row">
-                <label>Destino:</label>
+            <div class="stop-row" id="rowDestination">
+                <label>Destino</label>
                 <select class="flight-select"><option value="">Selecione...</option></select>
             </div>
         </div>
 
         <div class="actions">
-            <button class="btn btn-sm" onclick="addStop()">+ Escala</button>
-            <button class="btn btn-sm" onclick="calculateRoute()" style="flex:1;">Calcular Rota</button>
+            <button class="btn btn-outline" onclick="addStop()">+ Escala</button>
+            <button class="btn" onclick="calculateRoute()" style="flex:1;">Calcular Rota</button>
         </div>
 
         <div class="result-panel" id="resultPanel"></div>
@@ -427,7 +440,7 @@ const db = [
     { c: "Líbano", k: "Beirute", tz: "Asia/Beirut", lat: 33.8938, lon: 35.5018 },
     { c: "Malásia", k: "Cuala Lumpur", tz: "Asia/Kuala_Lumpur", lat: 3.1390, lon: 101.6869 },
     { c: "Maldivas", k: "Malé", tz: "Indian/Maldives", lat: 4.1755, lon: 73.5093 },
-    { c: "Mianmar", k: "Moscou", tz: "Asia/Yangon", lat: 19.7633, lon: 96.0785 },
+    { c: "Mianmar", k: "Yangon", tz: "Asia/Yangon", lat: 16.8661, lon: 96.1951 },
     { c: "Mongólia", k: "Ulan Bator", tz: "Asia/Ulaanbaatar", lat: 47.8864, lon: 106.9057 },
     { c: "Nepal", k: "Catmandu", tz: "Asia/Kathmandu", lat: 27.7172, lon: 85.3240 },
     { c: "Omã", k: "Mascate", tz: "Asia/Muscat", lat: 23.5880, lon: 58.3829 },
@@ -510,7 +523,6 @@ const db = [
     { c: "Vaticano", k: "Vaticano", tz: "Europe/Vatican", lat: 41.9029, lon: 12.4534 }
 ];
 
-// Sort db
 db.sort((a,b) => a.k.localeCompare(b.k));
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -524,7 +536,7 @@ function initSelects() {
     const tz2 = document.getElementById('tz2');
     const tz3 = document.getElementById('tz3');
     
-    db.forEach((item, idx) => {
+    db.forEach((item) => {
         const text = `${item.k} (${item.c})`;
         tz1.add(new Option(text, item.tz));
         tz2.add(new Option(text, item.tz));
@@ -561,7 +573,6 @@ function updateClocks() {
     });
 }
 
-// Search
 const searchInput = document.getElementById('searchInput');
 const searchResults = document.getElementById('searchResults');
 
@@ -575,7 +586,7 @@ searchInput.addEventListener('input', (e) => {
         searchResults.innerHTML = matches.map(m => `
             <div class="search-item" onclick="selectSearchResult('${m.tz}')">
                 <span><strong>${m.k}</strong>, ${m.c}</span>
-                <span style="color:var(--muted); font-size:10px;">${m.tz.split('/')[1] || ''}</span>
+                <span style="color:var(--text-muted); font-size:11px;">${m.tz.split('/')[1] || ''}</span>
             </div>
         `).join('');
         searchResults.style.display = 'block';
@@ -597,23 +608,29 @@ function selectSearchResult(tz) {
     searchInput.value = '';
 }
 
-// Flight Stops
 function addStop() {
     const list = document.getElementById('stopsList');
-    const rows = list.querySelectorAll('.stop-row');
+    const destRow = document.getElementById('rowDestination');
+    const stops = list.querySelectorAll('.stop-row-escala');
     
     const row = document.createElement('div');
-    row.className = 'stop-row';
+    row.className = 'stop-row stop-row-escala';
 
-    const count = rows.length - 1;
     row.innerHTML = `
-        <label>Escala ${count}:</label>
+        <label>Escala ${stops.length + 1}</label>
         <select class="flight-select"><option value="">Selecione...</option></select>
-        <button class="btn btn-sm btn-del" onclick="this.parentElement.remove()">✕</button>
+        <button class="btn btn-del" onclick="removeStop(this)">✕</button>
     `;
 
-    list.insertBefore(row, rows[rows.length - 1]);
+    list.insertBefore(row, destRow);
     populateFlightSelects();
+}
+
+function removeStop(btn) {
+    btn.parentElement.remove();
+    document.querySelectorAll('.stop-row-escala').forEach((row, idx) => {
+        row.querySelector('label').textContent = `Escala ${idx + 1}`;
+    });
 }
 
 function calculateRoute() {
@@ -639,12 +656,16 @@ function calculateRoute() {
         details.push(`${p1.k} → ${p2.k}: <strong>${Math.round(dist)} km</strong>`);
     }
 
+    const totalHours = totalKm / 800;
+    const h = Math.floor(totalHours);
+    const m = Math.round((totalHours - h) * 60);
+
     const panel = document.getElementById('resultPanel');
     panel.style.display = 'block';
     panel.innerHTML = `
         <div class="total">Distância Total: ${Math.round(totalKm).toLocaleString('pt-BR')} km (${Math.round(totalKm * 0.539957).toLocaleString('pt-BR')} NM)</div>
-        <div style="margin-top:4px; color:var(--muted);">${details.join(' | ')}</div>
-        <div style="font-size:11px; margin-top:2px;">⏱ Tempo est. voo: ~${Math.floor(totalKm/800)}h ${Math.round(((totalKm/800)%1)*60)}min</div>
+        <div style="margin-top:4px; color:var(--text-muted);">${details.join(' | ')}</div>
+        <div style="font-size:11px; margin-top:4px; color:var(--text-muted);">Tempo estimado de voo: ~${h > 0 ? h + 'h ' : ''}${m}min</div>
     `;
 }
 
