@@ -2,185 +2,166 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Painel Global de Fusos Horários & Rotas de Voo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel de Relógios & Voos Mundiais - 9"</title>
     <style>
+        @font-face {
+            font-family: 'DigitalClock';
+            src: local('Courier New'), monospace;
+        }
+
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Segoe UI', Tahoma, Verdana, Arial, sans-serif;
-            font-size: 11px;
-            user-select: none;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
-            background-color: #3a6ea5;
-            color: #000000;
-            padding: 8px;
+            background-color: #0b0e14;
+            color: #00ff66;
+            padding: 12px;
             display: flex;
             justify-content: center;
             align-items: flex-start;
             min-height: 100vh;
         }
 
-        .app-window {
+        .app {
             width: 100%;
-            max-width: 960px; /* Perfeito para tablet de 9" em paisagem */
-            background: #d4d0c8;
-            border: 2px solid #ffffff;
-            border-right-color: #404040;
-            border-bottom-color: #404040;
-            box-shadow: 4px 4px 10px rgba(0,0,0,0.5);
+            max-width: 1280px; /* Otimizado para visualização ampla em 9" */
             display: flex;
             flex-direction: column;
-            gap: 6px;
-            padding: 6px;
+            gap: 12px;
         }
 
-        /* Titlebar Retrô Classic */
-        .title-bar {
-            background: linear-gradient(90deg, #000080, #1084d0);
-            padding: 4px 8px;
+        /* Layout em duas colunas para telas médias (Tablets/Dashboard 9") */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        /* Header e Barra de Pesquisa */
+        .header-search {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            color: white;
-            font-weight: bold;
-            font-size: 12px;
-            border: 1px solid #000080;
-        }
-
-        .title-bar-controls {
-            display: flex;
-            gap: 2px;
-        }
-
-        .win-btn {
-            width: 16px;
-            height: 14px;
-            background: #d4d0c8;
-            border: 1px outset #fff;
-            font-size: 9px;
-            font-weight: bold;
-            color: #000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-        }
-
-        /* Estilo Relógio Principal */
-        .clock-banner {
-            background: #000000;
-            color: #00ff00;
-            border: 2px inset #ffffff;
+            gap: 10px;
+            background: #161d2a;
             padding: 8px 12px;
+            border-radius: 6px;
+            border: 1px solid #232d3f;
+        }
+
+        .search-wrap {
+            position: relative;
+            flex: 1;
+        }
+
+        input, select, button {
+            background: #0b0e14;
+            color: #00ff66;
+            border: 1px solid #00ff66;
+            padding: 8px 12px;
+            outline: none;
+            border-radius: 6px;
+            font-size: 13px;
+            min-height: 40px; /* Touch target amigável */
+        }
+
+        input { width: 100%; }
+        select { width: 100%; cursor: pointer; }
+
+        .search-results {
+            position: absolute;
+            top: 45px;
+            left: 0;
+            right: 0;
+            background: #121824;
+            border: 1px solid #00ff66;
+            max-height: 220px;
+            overflow-y: auto;
+            z-index: 100;
+            display: none;
+            border-radius: 6px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+        }
+
+        .search-item {
+            padding: 10px 12px;
+            cursor: pointer;
+            border-bottom: 1px solid #232d3f;
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            font-family: 'Courier New', Courier, monospace;
+            color: #e1e8ed;
+            font-size: 13px;
         }
 
-        .clock-display {
-            font-size: 20px;
-            font-weight: bold;
-            letter-spacing: 2px;
-            text-shadow: 0 0 5px #00ff00;
+        .search-item:hover {
+            background: #00ff66;
+            color: #0b0e14;
         }
 
-        .clock-controls {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            color: #ffffff;
-            font-family: Tahoma, sans-serif;
-        }
-
-        /* Cards / Panels */
-        .panel {
-            background: #ece9d8;
-            border: 2px outset #ffffff;
-            padding: 8px;
+        /* Cartões estilo Display Eletrônico */
+        .card {
+            background: #121824;
+            border: 1px solid #232d3f;
+            border-radius: 8px;
+            padding: 12px;
             display: flex;
             flex-direction: column;
+            gap: 10px;
+        }
+
+        .card-title {
+            font-size: 13px;
+            font-weight: bold;
+            color: #ffb703;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-bottom: 1px solid #232d3f;
+            padding-bottom: 6px;
+            display: flex;
+            align-items: center;
             gap: 6px;
         }
 
-        .panel-header {
-            font-size: 11px;
-            font-weight: bold;
-            color: #000080;
-            border-bottom: 1px solid #808080;
-            padding-bottom: 2px;
-            text-transform: uppercase;
-            display: flex;
-            justify-content: space-between;
-        }
-
-        /* Inputs & Controls Retrô */
-        select, input, button {
-            background: #ffffff;
-            color: #000000;
-            border: 2px inset #ffffff;
-            padding: 3px 5px;
-            height: 24px;
-            outline: none;
-            border-radius: 0;
-            font-size: 11px;
-        }
-
-        button {
-            border: 2px outset #ffffff;
-            background: #d4d0c8;
-            cursor: pointer;
-            font-weight: bold;
-            padding: 0 10px;
-        }
-
-        button:active {
-            border-style: inset;
-            padding: 1px 9px 0 11px;
-        }
-
-        /* Grid de Seleção de Cidades */
-        .city-select-grid {
+        /* Mostradores Digitais das Cidades Selecionadas */
+        .clock-widgets-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 8px;
         }
 
-        .select-group {
+        .widget-clock {
+            background: #0b0e14;
+            border: 1px solid #00b4d8;
+            border-radius: 6px;
+            padding: 8px;
+            text-align: center;
+        }
+
+        .widget-clock .time {
+            font-family: 'Courier New', monospace;
+            font-size: 22px;
+            font-weight: bold;
+            color: #00b4d8;
+            margin-top: 4px;
+        }
+
+        .select-box {
             display: flex;
             flex-direction: column;
-            gap: 3px;
+            gap: 4px;
         }
 
-        .select-group label {
-            font-weight: bold;
-            color: #000000;
-        }
-
-        /* Search Filter Box */
-        .search-box {
-            display: flex;
-            gap: 6px;
-            align-items: center;
-            background: #d4d0c8;
-            padding: 4px;
-            border: 1px solid #808080;
-        }
-
-        .search-box input {
-            flex: 1;
-        }
-
-        /* Tabela Estilo Matriz Visual */
+        /* Tabela Matriz Estilo Radar */
         .table-wrap {
             overflow-x: auto;
-            border: 2px inset #ffffff;
-            background: #ffffff;
-            max-width: 100%;
+            border: 1px solid #232d3f;
+            border-radius: 6px;
+            background: #0b0e14;
+            -webkit-overflow-scrolling: touch;
         }
 
         table {
@@ -191,194 +172,223 @@
         }
 
         th, td {
-            border: 1px solid #808080;
-            padding: 4px 2px;
-            font-size: 10px;
-            min-width: 25px;
+            border: 1px solid #1a2332;
+            padding: 8px 6px;
+            font-size: 11px;
         }
 
         th {
-            background: #d4d0c8;
-            font-weight: bold;
+            background: #161d2a;
+            color: #8899a6;
         }
 
         .col-city {
             text-align: left;
             font-weight: bold;
-            background: #ece9d8;
-            min-width: 140px;
-            padding-left: 6px;
+            background: #121824;
+            min-width: 130px;
+            padding-left: 8px;
+            color: #ffffff;
             position: sticky;
             left: 0;
             z-index: 2;
-            border-right: 2px solid #808080;
         }
 
-        /* Cores dos Períodos */
-        .p-amanhecer { background-color: #f8c28c; color: #000; } 
-        .p-manha { background-color: #add8e6; color: #000; }     
-        .p-dia { background-color: #ffffff; color: #000; }       
-        .p-anoitecer { background-color: #f4a460; color: #000; }  
-        .p-noite { background-color: #2b4c7e; color: #fff; }      
+        /* Cores Temáticas de Relógio (Períodos) */
+        .p-amanhecer { background-color: #3a2e1d; color: #ffb703; }
+        .p-manha { background-color: #122b38; color: #00b4d8; }
+        .p-dia { background-color: #1a3322; color: #00ff66; }
+        .p-anoitecer { background-color: #3b2019; color: #fb8500; }
+        .p-noite { background-color: #0d131a; color: #486581; }
 
-        .selected-ref-hour {
-            outline: 2px solid #ff0000;
-            outline-offset: -2px;
+        .current-hour {
+            box-shadow: inset 0 0 0 2px #00ff66;
             font-weight: bold;
+            color: #ffffff !important;
         }
 
         /* Legenda */
-        .legend-bar {
+        .legend {
             display: flex;
-            gap: 10px;
+            gap: 12px;
             flex-wrap: wrap;
-            padding: 4px 6px;
-            background: #ffffff;
-            border: 1px solid #808080;
+            padding: 8px;
+            background: #0b0e14;
+            border: 1px solid #232d3f;
+            border-radius: 6px;
         }
 
         .legend-item {
             display: flex;
             align-items: center;
-            gap: 4px;
-            font-size: 10px;
+            gap: 6px;
+            font-size: 11px;
+            color: #8899a6;
         }
 
         .legend-color {
             width: 12px;
             height: 12px;
-            border: 1px solid #000;
+            border-radius: 3px;
         }
 
-        /* Módulo Calculadora de Voo */
-        .flight-planner {
+        /* Voo & Escalas */
+        .stops-list {
             display: flex;
             flex-direction: column;
-            gap: 6px;
-        }
-
-        .flight-stops {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
+            gap: 8px;
         }
 
         .stop-row {
             display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .stop-badge {
-            background: #000080;
-            color: #fff;
-            padding: 2px 6px;
-            font-weight: bold;
-            min-width: 75px;
-            text-align: center;
-        }
-
-        .flight-results {
-            background: #000;
-            color: #00ff00;
-            font-family: 'Courier New', monospace;
-            padding: 6px;
-            border: 2px inset #fff;
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
             gap: 8px;
-            text-align: center;
+            align-items: center;
         }
 
-        .flight-metric-title {
-            color: #aaa;
-            font-size: 9px;
-            text-transform: uppercase;
+        .stop-row label {
+            width: 65px;
+            font-size: 12px;
+            color: #8899a6;
         }
 
-        .flight-metric-val {
-            font-size: 13px;
+        .btn {
+            cursor: pointer;
             font-weight: bold;
-            color: #00ff00;
+            background: #161d2a;
+            color: #00ff66;
+            border: 1px solid #00ff66;
+            padding: 8px 14px;
+            border-radius: 6px;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        /* Responsividade para Tablet 9" na vertical se girar */
-        @media (max-width: 720px) {
-            .city-select-grid { grid-template-columns: 1fr; }
-            .flight-results { grid-template-columns: 1fr; }
+        .btn:hover, .btn:active {
+            background: #00ff66;
+            color: #0b0e14;
+        }
+
+        .btn-del {
+            color: #ff4d4d;
+            border-color: #ff4d4d;
+            padding: 6px 10px;
+            min-height: 40px;
+        }
+
+        .btn-del:hover, .btn-del:active {
+            background: #ff4d4d;
+            color: #fff;
+        }
+
+        .actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 4px;
+        }
+
+        .result-panel {
+            background: #0b0e14;
+            border: 1px solid #ffb703;
+            border-radius: 6px;
+            padding: 10px;
+            display: none;
+            font-size: 12px;
+            color: #e1e8ed;
+        }
+
+        .result-panel .total {
+            font-weight: bold;
+            color: #ffb703;
+            font-size: 13px;
+        }
+
+        /* Adaptações para telas menores ou orientações em retrato no dispositivo de 9" */
+        @media (max-width: 820px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+            .clock-widgets-grid { 
+                grid-template-columns: 1fr; 
+            }
         }
     </style>
 </head>
 <body>
 
-<div class="app-window">
-    
-    <!-- Titlebar -->
-    <div class="title-bar">
-        <span>🌐 MATRIZ GLOBAL DE FUSOS & CALCULADORA DE ROTAS AÉREAS v3.0</span>
-        <div class="title-bar-controls">
-            <div class="win-btn">_</div>
-            <div class="win-btn">□</div>
-            <div class="win-btn">✕</div>
+<div class="app">
+
+    <!-- Barra de Pesquisa -->
+    <div class="header-search">
+        <div class="search-wrap">
+            <input type="text" id="searchInput" placeholder="🔍 Pesquisar país ou cidade..." autocomplete="off">
+            <div class="search-results" id="searchResults"></div>
         </div>
     </div>
 
-    <!-- Clock Display & Ref Control -->
-    <div class="clock-banner">
-        <div>
-            <span style="font-size:10px; color:#aaa;">HORA LOCAL ATUAL (SISTEMA):</span><br>
-            <span class="clock-display" id="sysClock">00:00:00</span>
+    <!-- Layout Dividido em Duas Colunas para Displays de 9 polegadas -->
+    <div class="dashboard-grid">
+        
+        <!-- Controles & Mostradores Individuais -->
+        <div class="card">
+            <div class="card-title">🌐 Seleção de Fusos Horários</div>
+            
+            <div class="clock-widgets-grid">
+                <div class="select-box">
+                    <select id="tz1" onchange="updateAll()"></select>
+                    <div class="widget-clock">
+                        <div style="font-size:11px; color:#8899a6;" id="name1">--</div>
+                        <div class="time" id="clock1">00:00:00</div>
+                    </div>
+                </div>
+                <div class="select-box">
+                    <select id="tz2" onchange="updateAll()"></select>
+                    <div class="widget-clock">
+                        <div style="font-size:11px; color:#8899a6;" id="name2">--</div>
+                        <div class="time" id="clock2">00:00:00</div>
+                    </div>
+                </div>
+                <div class="select-box">
+                    <select id="tz3" onchange="updateAll()"></select>
+                    <div class="widget-clock">
+                        <div style="font-size:11px; color:#8899a6;" id="name3">--</div>
+                        <div class="time" id="clock3">00:00:00</div>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="clock-controls">
-            <label for="customHourRef">Simular Hora na Linha 1:</label>
-            <select id="customHourRef" onchange="renderTable()">
-                <option value="auto">⏱️ Hora Atual (Tempo Real)</option>
-                <option value="0">00:00 (Meia-noite)</option>
-                <option value="1">01:00</option><option value="2">02:00</option>
-                <option value="3">03:00</option><option value="4">04:00</option>
-                <option value="5">05:00</option><option value="6">06:00</option>
-                <option value="7">07:00</option><option value="8">08:00</option>
-                <option value="9">09:00</option><option value="10">10:00</option>
-                <option value="11">11:00</option><option value="12">12:00 (Meio-dia)</option>
-                <option value="13">13:00</option><option value="14">14:00</option>
-                <option value="15">15:00</option><option value="16">16:00</option>
-                <option value="17">17:00</option><option value="18">18:00</option>
-                <option value="19">19:00</option><option value="20">20:00</option>
-                <option value="21">21:00</option><option value="22">22:00</option>
-                <option value="23">23:00</option>
-            </select>
+
+        <!-- Calculadora de Voo -->
+        <div class="card">
+            <div class="card-title">✈️ Trajetória de Voo & Distâncias</div>
+            
+            <div class="stops-list" id="stopsList">
+                <div class="stop-row" id="rowOrigin">
+                    <label>Origem:</label>
+                    <select class="flight-select"><option value="">Selecione...</option></select>
+                </div>
+                <div class="stop-row" id="rowDestination">
+                    <label>Destino:</label>
+                    <select class="flight-select"><option value="">Selecione...</option></select>
+                </div>
+            </div>
+
+            <div class="actions">
+                <button class="btn" onclick="addStop()">+ Escala</button>
+                <button class="btn" onclick="calculateRoute()" style="flex:1;">Calcular Voo</button>
+            </div>
+
+            <div class="result-panel" id="resultPanel"></div>
         </div>
+
     </div>
 
-    <!-- Painel de Filtro e Seleção -->
-    <div class="panel">
-        <div class="panel-header">
-            <span>Selecione 3 Cidades para Comparação Horizontal</span>
-            <span id="totalCount">0 Países Carregados</span>
-        </div>
+    <!-- Tabela Matriz Comparativa em Destaque -->
+    <div class="card">
+        <div class="card-title">📊 Matriz Comparativa de 24 Horas</div>
 
-        <div class="search-box">
-            <span>🔍 Filtrar Lista:</span>
-            <input type="text" id="searchFilter" placeholder="Digite o nome da cidade ou país..." oninput="filterSelects()">
-            <button onclick="clearSearch()">Limpar</button>
-        </div>
-
-        <div class="city-select-grid">
-            <div class="select-group">
-                <label>Linha 1 (Referência Base):</label>
-                <select id="tz1" onchange="renderTable(); updateFlightCalculation();"></select>
-            </div>
-            <div class="select-group">
-                <label>Linha 2 (Comparativo):</label>
-                <select id="tz2" onchange="renderTable(); updateFlightCalculation();"></select>
-            </div>
-            <div class="select-group">
-                <label>Linha 3 (Comparativo):</label>
-                <select id="tz3" onchange="renderTable(); updateFlightCalculation();"></select>
-            </div>
-        </div>
-
-        <div class="legend-bar">
+        <div class="legend">
             <div class="legend-item"><div class="legend-color p-amanhecer"></div> Amanhecer (05h-06h)</div>
             <div class="legend-item"><div class="legend-color p-manha"></div> Manhã (07h-11h)</div>
             <div class="legend-item"><div class="legend-color p-dia"></div> Dia (12h-16h)</div>
@@ -386,47 +396,14 @@
             <div class="legend-item"><div class="legend-color p-noite"></div> Noite/Madrugada (19h-04h)</div>
         </div>
 
-        <!-- Matriz Comparativa Horizontal das 24h -->
         <div class="table-wrap">
-            <table id="timeTable">
-                <!-- Conteúdo renderizado dinamicamente -->
-            </table>
-        </div>
-    </div>
-
-    <!-- Calculadora de Distância de Voo com Escalas -->
-    <div class="panel">
-        <div class="panel-header">
-            <span>✈️ Calculadora de Distância de Voo & Múltiplas Escalas</span>
-            <button onclick="addFlightStop()">+ Adicionar Escala</button>
-        </div>
-
-        <div class="flight-planner">
-            <div class="flight-stops" id="stopsContainer">
-                <!-- Escalas inseridas dinamicamente -->
-            </div>
-
-            <div class="flight-results">
-                <div>
-                    <div class="flight-metric-title">Distância Total</div>
-                    <div class="flight-metric-val" id="resDistance">0 km</div>
-                </div>
-                <div>
-                    <div class="flight-metric-title">Tempo Estimado de Voo</div>
-                    <div class="flight-metric-val" id="resTime">0h 0m</div>
-                </div>
-                <div>
-                    <div class="flight-metric-title">Combustível Est. (Jumbo 747)</div>
-                    <div class="flight-metric-val" id="resFuel">0 Litros</div>
-                </div>
-            </div>
+            <table id="timeTable"></table>
         </div>
     </div>
 
 </div>
 
 <script>
-// Banco Completo de Países / Capitais / Timezones / Coordenadas
 const db = [
     // África
     { c: "África do Sul", k: "Pretória", tz: "Africa/Johannesburg", lat: -25.7479, lon: 28.2293 },
@@ -634,76 +611,68 @@ const db = [
     // Observadores
     { c: "Palestina", k: "Ramallah", tz: "Asia/Gaza", lat: 31.9038, lon: 35.2034 },
     { c: "Vaticano", k: "Vaticano", tz: "Europe/Vatican", lat: 41.9029, lon: 12.4534 }
-].sort((a,b) => a.c.localeCompare(b.c));
-
-let extraStops = [];
+].sort((a,b) => a.k.localeCompare(b.k));
 
 document.addEventListener('DOMContentLoaded', () => {
-    document.getElementById('totalCount').textContent = `${db.length} Locais Cadastrados`;
     initSelects();
-    initFlightStops();
+    updateClocks();
     renderTable();
-    updateFlightCalculation();
-    setInterval(updateSysClock, 1000);
+    setInterval(updateClocks, 1000);
 });
 
 function initSelects() {
-    populateSelect('tz1', "Brasil");
-    populateSelect('tz2', "Estados Unidos");
-    populateSelect('tz3', "Japão");
-}
+    const s1 = document.getElementById('tz1');
+    const s2 = document.getElementById('tz2');
+    const s3 = document.getElementById('tz3');
 
-function populateSelect(id, defaultCountry) {
-    const sel = document.getElementById(id);
-    const filter = document.getElementById('searchFilter').value.toLowerCase();
-    const currentVal = sel.value;
-
-    sel.innerHTML = '';
-    
     db.forEach((item, idx) => {
-        const text = `${item.c} - ${item.k}`;
-        if (text.toLowerCase().includes(filter)) {
-            const opt = new Option(text, idx);
-            sel.add(opt);
-        }
+        const text = `${item.k} (${item.c})`;
+        s1.add(new Option(text, idx));
+        s2.add(new Option(text, idx));
+        s3.add(new Option(text, idx));
     });
 
-    if (currentVal && sel.querySelector(`option[value="${currentVal}"]`)) {
-        sel.value = currentVal;
-    } else {
-        const found = db.findIndex(i => i.c.toLowerCase() === defaultCountry.toLowerCase());
-        if (found !== -1) sel.value = found;
-    }
+    s1.value = db.findIndex(i => i.tz === "America/New_York");
+    s2.value = db.findIndex(i => i.tz === "Asia/Jerusalem" || i.tz === "Asia/Gaza");
+    s3.value = db.findIndex(i => i.tz === "Asia/Seoul");
+
+    populateFlightSelects();
 }
 
-function filterSelects() {
-    const v1 = document.getElementById('tz1').value;
-    const v2 = document.getElementById('tz2').value;
-    const v3 = document.getElementById('tz3').value;
-
-    populateSelect('tz1', '');
-    populateSelect('tz2', '');
-    populateSelect('tz3', '');
-
-    document.getElementById('tz1').value = v1;
-    document.getElementById('tz2').value = v2;
-    document.getElementById('tz3').value = v3;
-
-    // Atualizar também os selects de escala
-    extraStops.forEach((_, i) => populateStopSelect(i));
+function populateFlightSelects() {
+    document.querySelectorAll('.flight-select').forEach(sel => {
+        if (sel.options.length <= 1) {
+            db.forEach((item, idx) => {
+                sel.add(new Option(`${item.k} - ${item.c}`, idx));
+            });
+        }
+    });
 }
 
-function clearSearch() {
-    document.getElementById('searchFilter').value = '';
-    filterSelects();
-}
-
-function updateSysClock() {
+function updateClocks() {
     const now = new Date();
-    document.getElementById('sysClock').textContent = now.toLocaleTimeString('pt-BR');
-    if (document.getElementById('customHourRef').value === 'auto') {
-        renderTable();
+
+    const idx1 = document.getElementById('tz1').value;
+    const idx2 = document.getElementById('tz2').value;
+    const idx3 = document.getElementById('tz3').value;
+
+    if (db[idx1]) {
+        document.getElementById('name1').textContent = `${db[idx1].k}, ${db[idx1].c}`;
+        document.getElementById('clock1').textContent = now.toLocaleTimeString('pt-BR', { timeZone: db[idx1].tz });
     }
+    if (db[idx2]) {
+        document.getElementById('name2').textContent = `${db[idx2].k}, ${db[idx2].c}`;
+        document.getElementById('clock2').textContent = now.toLocaleTimeString('pt-BR', { timeZone: db[idx2].tz });
+    }
+    if (db[idx3]) {
+        document.getElementById('name3').textContent = `${db[idx3].k}, ${db[idx3].c}`;
+        document.getElementById('clock3').textContent = now.toLocaleTimeString('pt-BR', { timeZone: db[idx3].tz });
+    }
+}
+
+function updateAll() {
+    updateClocks();
+    renderTable();
 }
 
 function getPeriodClass(hour) {
@@ -715,13 +684,9 @@ function getPeriodClass(hour) {
 }
 
 function getUTCOffsetHours(tz, date) {
-    try {
-        const utcDate = new Date(date.toLocaleString('en-US', { timeZone: 'UTC' }));
-        const tzDate = new Date(date.toLocaleString('en-US', { timeZone: tz }));
-        return (tzDate - utcDate) / 3600000;
-    } catch(e) {
-        return 0;
-    }
+    const utcDate = new Date(date.toLocaleString('en-US', { timeZone: 'UTC' }));
+    const tzDate = new Date(date.toLocaleString('en-US', { timeZone: tz }));
+    return (tzDate - utcDate) / 3600000;
 }
 
 function renderTable() {
@@ -729,22 +694,15 @@ function renderTable() {
     const idx2 = document.getElementById('tz2').value;
     const idx3 = document.getElementById('tz3').value;
 
-    if (idx1 === "" || idx2 === "" || idx3 === "") return;
-
     const loc1 = db[idx1];
     const loc2 = db[idx2];
     const loc3 = db[idx3];
 
     const now = new Date();
-    const refOption = document.getElementById('customHourRef').value;
     
-    let baseRefHour;
-    if (refOption === 'auto') {
-        const refTimeStr = now.toLocaleString("en-US", { timeZone: loc1.tz });
-        baseRefHour = new Date(refTimeStr).getHours();
-    } else {
-        baseRefHour = parseInt(refOption, 10);
-    }
+    const refTimeStr = now.toLocaleString("en-US", { timeZone: loc1.tz });
+    const refDate = new Date(refTimeStr);
+    const currentRefHour = refDate.getHours();
 
     const offset1 = getUTCOffsetHours(loc1.tz, now);
     const offset2 = getUTCOffsetHours(loc2.tz, now);
@@ -756,7 +714,7 @@ function renderTable() {
     let html = `
         <thead>
             <tr>
-                <th class="col-city">País / Cidade</th>
+                <th class="col-city">Cidade / Fuso / País</th>
                 <th colspan="2" class="p-amanhecer">Amanhecer</th>
                 <th colspan="5" class="p-manha">Manhã</th>
                 <th colspan="5" class="p-dia">Dia</th>
@@ -767,25 +725,25 @@ function renderTable() {
         <tbody>
     `;
 
-    const rows = [
+    const locations = [
         { data: loc1, diff: 0 },
         { data: loc2, diff: diff2 },
         { data: loc3, diff: diff3 }
     ];
 
-    rows.forEach((row, rowIdx) => {
+    locations.forEach(loc => {
         html += `<tr>`;
-        html += `<td class="col-city">${row.data.c}<br><span style="font-weight:normal; color:#555;">${row.data.k}</span></td>`;
+        html += `<td class="col-city">${loc.data.k}<br><span style="font-weight:normal; color:#8899a6;">${loc.data.c}</span></td>`;
         
         for (let h = 0; h < 24; h++) {
-            let localHour = (h + row.diff) % 24;
+            let localHour = (h + loc.diff) % 24;
             if (localHour < 0) localHour += 24;
             
             const periodClass = getPeriodClass(localHour);
-            const isRefHour = (h === baseRefHour) ? 'selected-ref-hour' : '';
+            const isCurrent = (h === currentRefHour) ? 'current-hour' : '';
             const hourFormatted = String(Math.floor(localHour)).padStart(2, '0');
 
-            html += `<td class="${periodClass} ${isRefHour}" title="Horário: ${hourFormatted}:00">${hourFormatted}h</td>`;
+            html += `<td class="${periodClass} ${isCurrent}" title="Hora local: ${hourFormatted}:00">${hourFormatted}</td>`;
         }
         
         html += `</tr>`;
@@ -795,135 +753,115 @@ function renderTable() {
     document.getElementById('timeTable').innerHTML = html;
 }
 
-// --- LÓGICA DA CALCULADORA DE VOO E DISTÂNCIA (HAVERSINE) ---
+// Busca Instantânea
+const searchInput = document.getElementById('searchInput');
+const searchResults = document.getElementById('searchResults');
 
-function haversineDistance(lat1, lon1, lat2, lon2) {
-    const R = 6371; // Raio da Terra em KM
-    const dLat = (lat2 - lat1) * Math.PI / 180;
-    const dLon = (lon2 - lon1) * Math.PI / 180;
-    const a = 
-        Math.sin(dLat/2) * Math.sin(dLat/2) +
-        Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
-        Math.sin(dLon/2) * Math.sin(dLon/2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-    return R * c;
-}
+searchInput.addEventListener('input', (e) => {
+    const val = e.target.value.toLowerCase().trim();
+    if (!val) { searchResults.style.display = 'none'; return; }
 
-function initFlightStops() {
-    extraStops = [];
-    renderStopsUI();
-}
+    const matches = db.filter(item => item.k.toLowerCase().includes(val) || item.c.toLowerCase().includes(val)).slice(0, 8);
 
-function addFlightStop() {
-    extraStops.push(db.length > 1 ? 1 : 0);
-    renderStopsUI();
-    updateFlightCalculation();
-}
-
-function removeFlightStop(index) {
-    extraStops.splice(index, 1);
-    renderStopsUI();
-    updateFlightCalculation();
-}
-
-function renderStopsUI() {
-    const container = document.getElementById('stopsContainer');
-    let html = '';
-
-    // Ponto de Partida (Cidade 1)
-    html += `
-        <div class="stop-row">
-            <span class="stop-badge">ORIGEM</span>
-            <span id="origLabel" style="font-weight:bold;">-</span>
-        </div>
-    `;
-
-    // Escalas intermediárias
-    extraStops.forEach((stopIdx, i) => {
-        html += `
-            <div class="stop-row">
-                <span class="stop-badge" style="background:#d96b00;">ESCALA ${i+1}</span>
-                <select id="stopSel_${i}" onchange="extraStops[${i}]=this.value; updateFlightCalculation();" style="flex:1;"></select>
-                <button onclick="removeFlightStop(${i})">✕</button>
+    if (matches.length > 0) {
+        searchResults.innerHTML = matches.map(m => `
+            <div class="search-item" onclick="selectSearchResult('${m.tz}')">
+                <span><strong>${m.k}</strong>, ${m.c}</span>
+                <span style="color:#8899a6; font-size:11px;">${m.tz.split('/')[1] || ''}</span>
             </div>
-        `;
-    });
+        `).join('');
+        searchResults.style.display = 'block';
+    } else {
+        searchResults.style.display = 'none';
+    }
+});
 
-    // Ponto de Destino (Cidade 2)
-    html += `
-        <div class="stop-row">
-            <span class="stop-badge" style="background:#008000;">DESTINO</span>
-            <span id="destLabel" style="font-weight:bold;">-</span>
-        </div>
+document.addEventListener('click', (e) => {
+    if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
+        searchResults.style.display = 'none';
+    }
+});
+
+function selectSearchResult(tz) {
+    const idx = db.findIndex(item => item.tz === tz);
+    if (idx !== -1) {
+        document.getElementById('tz1').value = idx;
+        updateAll();
+    }
+    searchResults.style.display = 'none';
+    searchInput.value = '';
+}
+
+// Voo & Escalas
+function addStop() {
+    const list = document.getElementById('stopsList');
+    const destRow = document.getElementById('rowDestination');
+    const stops = list.querySelectorAll('.stop-row-escala');
+    
+    const row = document.createElement('div');
+    row.className = 'stop-row stop-row-escala';
+
+    row.innerHTML = `
+        <label>Escala ${stops.length + 1}:</label>
+        <select class="flight-select"><option value="">Selecione...</option></select>
+        <button class="btn btn-del" onclick="removeStop(this)">✕</button>
     `;
 
-    container.innerHTML = html;
-
-    // Popula selects das escalas
-    extraStops.forEach((_, i) => populateStopSelect(i));
+    list.insertBefore(row, destRow);
+    populateFlightSelects();
 }
 
-function populateStopSelect(i) {
-    const sel = document.getElementById(`stopSel_${i}`);
-    if (!sel) return;
-    const filter = document.getElementById('searchFilter').value.toLowerCase();
-
-    sel.innerHTML = '';
-    db.forEach((item, idx) => {
-        const text = `${item.c} - ${item.k}`;
-        if (text.toLowerCase().includes(filter)) {
-            sel.add(new Option(text, idx));
-        }
+function removeStop(btn) {
+    btn.parentElement.remove();
+    document.querySelectorAll('.stop-row-escala').forEach((row, idx) => {
+        row.querySelector('label').textContent = `Escala ${idx + 1}:`;
     });
-    sel.value = extraStops[i];
 }
 
-function updateFlightCalculation() {
-    const idx1 = document.getElementById('tz1').value;
-    const idx2 = document.getElementById('tz2').value;
+function calculateRoute() {
+    const selects = document.querySelectorAll('.flight-select');
+    const points = [];
 
-    if (idx1 === "" || idx2 === "") return;
-
-    const locOrig = db[idx1];
-    const locDest = db[idx2];
-
-    const origElem = document.getElementById('origLabel');
-    const destElem = document.getElementById('destLabel');
-
-    if (origElem) origElem.textContent = `${locOrig.c} (${locOrig.k})`;
-    if (destElem) destElem.textContent = `${locDest.c} (${locDest.k})`;
-
-    // Construir rota completa de pontos [lat, lon]
-    let route = [];
-    route.push({ lat: locOrig.lat, lon: locOrig.lon });
-
-    extraStops.forEach(stopIdx => {
-        const stopLoc = db[stopIdx];
-        route.push({ lat: stopLoc.lat, lon: stopLoc.lon });
+    selects.forEach(s => {
+        if (s.value !== "") points.push(db[s.value]);
     });
 
-    route.push({ lat: locDest.lat, lon: locDest.lon });
-
-    // Calcular distância acumulada
-    let totalKm = 0;
-    for (let i = 0; i < route.length - 1; i++) {
-        totalKm += haversineDistance(route[i].lat, route[i].lon, route[i+1].lat, route[i+1].lon);
+    if (points.length < 2) {
+        alert("Selecione pelo menos origem e destino!");
+        return;
     }
 
-    // Estimativas da Aviação Comercial
-    const avgCruiseSpeedKmH = 850; // Velocidade média de cruzeiro comercial
-    const hours = totalKm / avgCruiseSpeedKmH;
-    const totalMinutes = Math.round(hours * 60);
-    const flightH = Math.floor(totalMinutes / 60);
-    const flightM = totalMinutes % 60;
+    let totalKm = 0;
+    let details = [];
 
-    // Consumo médio estimado de aeronave de longo curso (~12 litros/km)
-    const fuelLitres = Math.round(totalKm * 12);
+    for (let i = 0; i < points.length - 1; i++) {
+        const p1 = points[i], p2 = points[i + 1];
+        const dist = haversine(p1.lat, p1.lon, p2.lat, p2.lon);
+        totalKm += dist;
+        details.push(`${p1.k} ✈️ ${p2.k}: ${Math.round(dist).toLocaleString('pt-BR')} km`);
+    }
 
-    // Atualizar tela
-    document.getElementById('resDistance').textContent = `${Math.round(totalKm).toLocaleString('pt-BR')} km`;
-    document.getElementById('resTime').textContent = `${flightH}h ${flightM}m`;
-    document.getElementById('resFuel').textContent = `${fuelLitres.toLocaleString('pt-BR')} L`;
+    const totalHours = totalKm / 800;
+    const h = Math.floor(totalHours);
+    const m = Math.round((totalHours - h) * 60);
+
+    const panel = document.getElementById('resultPanel');
+    panel.style.display = 'block';
+    panel.innerHTML = `
+        <div class="total">📐 Distância Total: ${Math.round(totalKm).toLocaleString('pt-BR')} km (${Math.round(totalKm * 0.539957).toLocaleString('pt-BR')} NM)</div>
+        <div style="margin-top:4px; color:#8899a6;">Trechos: ${details.join(' | ')}</div>
+        <div style="margin-top:4px;">⏱️ Tempo estimado de voo: ~${h > 0 ? h + 'h ' : ''}${m}min (vel. média 800 km/h)</div>
+    `;
+}
+
+function haversine(lat1, lon1, lat2, lon2) {
+    const R = 6371;
+    const dLat = (lat2 - lat1) * Math.PI / 180;
+    const dLon = (lon2 - lon1) * Math.PI / 180;
+    const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+              Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+              Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 }
 </script>
 
