@@ -2,8 +2,8 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Painel de Relógios & Voos Mundiais - 9"</title>
+    <meta name="viewport" content="width=800, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Painel 8.5" - Relógios & Voos</title>
     <style>
         @font-face {
             font-family: 'DigitalClock';
@@ -15,41 +15,34 @@
             margin: 0;
             padding: 0;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            -webkit-tap-highlight-color: transparent;
         }
 
         body {
             background-color: #0b0e14;
             color: #00ff66;
-            padding: 12px;
+            padding: 8px;
             display: flex;
             justify-content: center;
             align-items: flex-start;
             min-height: 100vh;
         }
 
+        /* Otimizado para telas de ~8.5 polegadas (~800px) */
         .app {
             width: 100%;
-            max-width: 1280px; /* Otimizado para visualização ampla em 9" */
+            max-width: 800px;
             display: flex;
             flex-direction: column;
-            gap: 12px;
-        }
-
-        /* Layout em duas colunas para telas médias (Tablets/Dashboard 9") */
-        .dashboard-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
+            gap: 8px;
         }
 
         /* Header e Barra de Pesquisa */
         .header-search {
             display: flex;
-            gap: 10px;
+            gap: 6px;
             background: #161d2a;
-            padding: 8px 12px;
-            border-radius: 6px;
+            padding: 6px;
+            border-radius: 4px;
             border: 1px solid #232d3f;
         }
 
@@ -62,39 +55,37 @@
             background: #0b0e14;
             color: #00ff66;
             border: 1px solid #00ff66;
-            padding: 8px 12px;
+            padding: 4px 8px;
             outline: none;
-            border-radius: 6px;
-            font-size: 13px;
-            min-height: 40px; /* Touch target amigável */
+            border-radius: 4px;
+            font-size: 11px;
         }
 
-        input { width: 100%; }
-        select { width: 100%; cursor: pointer; }
+        input { width: 100%; height: 28px; }
+        select { width: 100%; height: 28px; cursor: pointer; }
 
         .search-results {
             position: absolute;
-            top: 45px;
+            top: 30px;
             left: 0;
             right: 0;
             background: #121824;
             border: 1px solid #00ff66;
-            max-height: 220px;
+            max-height: 140px;
             overflow-y: auto;
             z-index: 100;
             display: none;
-            border-radius: 6px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+            border-radius: 4px;
         }
 
         .search-item {
-            padding: 10px 12px;
+            padding: 5px 8px;
             cursor: pointer;
             border-bottom: 1px solid #232d3f;
             display: flex;
             justify-content: space-between;
             color: #e1e8ed;
-            font-size: 13px;
+            font-size: 11px;
         }
 
         .search-item:hover {
@@ -102,66 +93,66 @@
             color: #0b0e14;
         }
 
-        /* Cartões estilo Display Eletrônico */
+        /* Cartões Reduzidos */
         .card {
             background: #121824;
             border: 1px solid #232d3f;
-            border-radius: 8px;
-            padding: 12px;
+            border-radius: 6px;
+            padding: 8px;
             display: flex;
             flex-direction: column;
-            gap: 10px;
-        }
-
-        .card-title {
-            font-size: 13px;
-            font-weight: bold;
-            color: #ffb703;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            border-bottom: 1px solid #232d3f;
-            padding-bottom: 6px;
-            display: flex;
-            align-items: center;
             gap: 6px;
         }
 
-        /* Mostradores Digitais das Cidades Selecionadas */
+        .card-title {
+            font-size: 10px;
+            font-weight: bold;
+            color: #ffb703;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid #232d3f;
+            padding-bottom: 3px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* Grid de Relógios Otimizado para 8.5" */
         .clock-widgets-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 8px;
+            gap: 6px;
         }
 
         .widget-clock {
             background: #0b0e14;
             border: 1px solid #00b4d8;
-            border-radius: 6px;
-            padding: 8px;
+            border-radius: 4px;
+            padding: 4px;
             text-align: center;
         }
 
         .widget-clock .time {
             font-family: 'Courier New', monospace;
-            font-size: 22px;
+            font-size: 16px;
             font-weight: bold;
             color: #00b4d8;
-            margin-top: 4px;
+            margin-top: 2px;
         }
 
         .select-box {
             display: flex;
             flex-direction: column;
-            gap: 4px;
+            gap: 3px;
         }
 
-        /* Tabela Matriz Estilo Radar */
+        /* Tabela Compacta */
         .table-wrap {
             overflow-x: auto;
             border: 1px solid #232d3f;
-            border-radius: 6px;
+            border-radius: 4px;
             background: #0b0e14;
-            -webkit-overflow-scrolling: touch;
+            max-width: 100%;
         }
 
         table {
@@ -173,8 +164,8 @@
 
         th, td {
             border: 1px solid #1a2332;
-            padding: 8px 6px;
-            font-size: 11px;
+            padding: 3px 2px;
+            font-size: 9px;
         }
 
         th {
@@ -186,15 +177,13 @@
             text-align: left;
             font-weight: bold;
             background: #121824;
-            min-width: 130px;
-            padding-left: 8px;
+            min-width: 100px;
+            padding-left: 5px;
             color: #ffffff;
-            position: sticky;
-            left: 0;
-            z-index: 2;
+            font-size: 9px;
         }
 
-        /* Cores Temáticas de Relógio (Períodos) */
+        /* Cores dos Períodos */
         .p-amanhecer { background-color: #3a2e1d; color: #ffb703; }
         .p-manha { background-color: #122b38; color: #00b4d8; }
         .p-dia { background-color: #1a3322; color: #00ff66; }
@@ -202,7 +191,7 @@
         .p-noite { background-color: #0d131a; color: #486581; }
 
         .current-hour {
-            box-shadow: inset 0 0 0 2px #00ff66;
+            box-shadow: inset 0 0 0 1.5px #00ff66;
             font-weight: bold;
             color: #ffffff !important;
         }
@@ -210,44 +199,44 @@
         /* Legenda */
         .legend {
             display: flex;
-            gap: 12px;
+            gap: 8px;
             flex-wrap: wrap;
-            padding: 8px;
+            padding: 4px;
             background: #0b0e14;
             border: 1px solid #232d3f;
-            border-radius: 6px;
+            border-radius: 4px;
         }
 
         .legend-item {
             display: flex;
             align-items: center;
-            gap: 6px;
-            font-size: 11px;
+            gap: 4px;
+            font-size: 9px;
             color: #8899a6;
         }
 
         .legend-color {
-            width: 12px;
-            height: 12px;
-            border-radius: 3px;
+            width: 8px;
+            height: 8px;
+            border-radius: 2px;
         }
 
         /* Voo & Escalas */
         .stops-list {
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 4px;
         }
 
         .stop-row {
             display: flex;
-            gap: 8px;
+            gap: 6px;
             align-items: center;
         }
 
         .stop-row label {
-            width: 65px;
-            font-size: 12px;
+            width: 55px;
+            font-size: 10px;
             color: #8899a6;
         }
 
@@ -257,15 +246,14 @@
             background: #161d2a;
             color: #00ff66;
             border: 1px solid #00ff66;
-            padding: 8px 14px;
-            border-radius: 6px;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 10px;
+            height: 28px;
             transition: 0.2s;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
         }
 
-        .btn:hover, .btn:active {
+        .btn:hover {
             background: #00ff66;
             color: #0b0e14;
         }
@@ -273,45 +261,34 @@
         .btn-del {
             color: #ff4d4d;
             border-color: #ff4d4d;
-            padding: 6px 10px;
-            min-height: 40px;
+            padding: 2px 6px;
+            height: 28px;
         }
 
-        .btn-del:hover, .btn-del:active {
+        .btn-del:hover {
             background: #ff4d4d;
             color: #fff;
         }
 
         .actions {
             display: flex;
-            gap: 8px;
-            margin-top: 4px;
+            gap: 6px;
         }
 
         .result-panel {
             background: #0b0e14;
             border: 1px solid #ffb703;
-            border-radius: 6px;
-            padding: 10px;
+            border-radius: 4px;
+            padding: 6px;
             display: none;
-            font-size: 12px;
+            font-size: 10px;
             color: #e1e8ed;
         }
 
         .result-panel .total {
             font-weight: bold;
             color: #ffb703;
-            font-size: 13px;
-        }
-
-        /* Adaptações para telas menores ou orientações em retrato no dispositivo de 9" */
-        @media (max-width: 820px) {
-            .dashboard-grid {
-                grid-template-columns: 1fr;
-            }
-            .clock-widgets-grid { 
-                grid-template-columns: 1fr; 
-            }
+            font-size: 11px;
         }
     </style>
 </head>
@@ -327,64 +304,36 @@
         </div>
     </div>
 
-    <!-- Layout Dividido em Duas Colunas para Displays de 9 polegadas -->
-    <div class="dashboard-grid">
+    <!-- Controles & Mostradores Individuais -->
+    <div class="card">
+        <div class="card-title">🌐 Seleção de Fusos Horários</div>
         
-        <!-- Controles & Mostradores Individuais -->
-        <div class="card">
-            <div class="card-title">🌐 Seleção de Fusos Horários</div>
-            
-            <div class="clock-widgets-grid">
-                <div class="select-box">
-                    <select id="tz1" onchange="updateAll()"></select>
-                    <div class="widget-clock">
-                        <div style="font-size:11px; color:#8899a6;" id="name1">--</div>
-                        <div class="time" id="clock1">00:00:00</div>
-                    </div>
+        <div class="clock-widgets-grid">
+            <div class="select-box">
+                <select id="tz1" onchange="updateAll()"></select>
+                <div class="widget-clock">
+                    <div style="font-size:9px; color:#8899a6;" id="name1">--</div>
+                    <div class="time" id="clock1">00:00:00</div>
                 </div>
-                <div class="select-box">
-                    <select id="tz2" onchange="updateAll()"></select>
-                    <div class="widget-clock">
-                        <div style="font-size:11px; color:#8899a6;" id="name2">--</div>
-                        <div class="time" id="clock2">00:00:00</div>
-                    </div>
+            </div>
+            <div class="select-box">
+                <select id="tz2" onchange="updateAll()"></select>
+                <div class="widget-clock">
+                    <div style="font-size:9px; color:#8899a6;" id="name2">--</div>
+                    <div class="time" id="clock2">00:00:00</div>
                 </div>
-                <div class="select-box">
-                    <select id="tz3" onchange="updateAll()"></select>
-                    <div class="widget-clock">
-                        <div style="font-size:11px; color:#8899a6;" id="name3">--</div>
-                        <div class="time" id="clock3">00:00:00</div>
-                    </div>
+            </div>
+            <div class="select-box">
+                <select id="tz3" onchange="updateAll()"></select>
+                <div class="widget-clock">
+                    <div style="font-size:9px; color:#8899a6;" id="name3">--</div>
+                    <div class="time" id="clock3">00:00:00</div>
                 </div>
             </div>
         </div>
-
-        <!-- Calculadora de Voo -->
-        <div class="card">
-            <div class="card-title">✈️ Trajetória de Voo & Distâncias</div>
-            
-            <div class="stops-list" id="stopsList">
-                <div class="stop-row" id="rowOrigin">
-                    <label>Origem:</label>
-                    <select class="flight-select"><option value="">Selecione...</option></select>
-                </div>
-                <div class="stop-row" id="rowDestination">
-                    <label>Destino:</label>
-                    <select class="flight-select"><option value="">Selecione...</option></select>
-                </div>
-            </div>
-
-            <div class="actions">
-                <button class="btn" onclick="addStop()">+ Escala</button>
-                <button class="btn" onclick="calculateRoute()" style="flex:1;">Calcular Voo</button>
-            </div>
-
-            <div class="result-panel" id="resultPanel"></div>
-        </div>
-
     </div>
 
-    <!-- Tabela Matriz Comparativa em Destaque -->
+    <!-- Tabela Matriz -->
     <div class="card">
         <div class="card-title">📊 Matriz Comparativa de 24 Horas</div>
 
@@ -393,12 +342,35 @@
             <div class="legend-item"><div class="legend-color p-manha"></div> Manhã (07h-11h)</div>
             <div class="legend-item"><div class="legend-color p-dia"></div> Dia (12h-16h)</div>
             <div class="legend-item"><div class="legend-color p-anoitecer"></div> Anoitecer (17h-18h)</div>
-            <div class="legend-item"><div class="legend-color p-noite"></div> Noite/Madrugada (19h-04h)</div>
+            <div class="legend-item"><div class="legend-color p-noite"></div> Noite (19h-04h)</div>
         </div>
 
         <div class="table-wrap">
             <table id="timeTable"></table>
         </div>
+    </div>
+
+    <!-- Calculadora de Voo -->
+    <div class="card">
+        <div class="card-title">✈️ Trajetória de Voo & Distâncias</div>
+        
+        <div class="stops-list" id="stopsList">
+            <div class="stop-row" id="rowOrigin">
+                <label>Origem:</label>
+                <select class="flight-select"><option value="">Selecione...</option></select>
+            </div>
+            <div class="stop-row" id="rowDestination">
+                <label>Destino:</label>
+                <select class="flight-select"><option value="">Selecione...</option></select>
+            </div>
+        </div>
+
+        <div class="actions">
+            <button class="btn" onclick="addStop()">+ Escala</button>
+            <button class="btn" onclick="calculateRoute()" style="flex:1;">Calcular Voo</button>
+        </div>
+
+        <div class="result-panel" id="resultPanel"></div>
     </div>
 
 </div>
@@ -767,7 +739,7 @@ searchInput.addEventListener('input', (e) => {
         searchResults.innerHTML = matches.map(m => `
             <div class="search-item" onclick="selectSearchResult('${m.tz}')">
                 <span><strong>${m.k}</strong>, ${m.c}</span>
-                <span style="color:#8899a6; font-size:11px;">${m.tz.split('/')[1] || ''}</span>
+                <span style="color:#8899a6; font-size:9px;">${m.tz.split('/')[1] || ''}</span>
             </div>
         `).join('');
         searchResults.style.display = 'block';
@@ -849,8 +821,8 @@ function calculateRoute() {
     panel.style.display = 'block';
     panel.innerHTML = `
         <div class="total">📐 Distância Total: ${Math.round(totalKm).toLocaleString('pt-BR')} km (${Math.round(totalKm * 0.539957).toLocaleString('pt-BR')} NM)</div>
-        <div style="margin-top:4px; color:#8899a6;">Trechos: ${details.join(' | ')}</div>
-        <div style="margin-top:4px;">⏱️ Tempo estimado de voo: ~${h > 0 ? h + 'h ' : ''}${m}min (vel. média 800 km/h)</div>
+        <div style="margin-top:2px; color:#8899a6;">Trechos: ${details.join(' | ')}</div>
+        <div style="margin-top:2px;">⏱️ Tempo estimado de voo: ~${h > 0 ? h + 'h ' : ''}${m}min (vel. média 800 km/h)</div>
     `;
 }
 
