@@ -3,184 +3,860 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Interface Tablet 9"</title>
+    <title>Relógio Mundial & Calculadora de Voo</title>
     <style>
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-size: 11px;
         }
 
         body {
-            background-color: #0f172a;
-            color: #f8fafc;
+            background-color: #798396;
+            color: #000;
+            padding: 8px;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            padding: 16px;
         }
 
-        /* Container otimizado para telas de tablet de 9 polegadas (~1024x600 px) */
-        .tablet-screen {
+        /* Container otimizado para Tablet 9" (Ex: 1024x600 ou similar) */
+        .tablet-container {
             width: 100%;
-            max-width: 1024px;
-            height: 600px;
-            background: #1e293b;
-            border-radius: 16px;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            max-width: 980px;
+            background: #d4d0c8;
+            border: 3px outset #ffffff;
+            padding: 6px;
             display: flex;
             flex-direction: column;
-            overflow: hidden;
-            border: 1px solid #334155;
+            gap: 6px;
+            box-shadow: 0px 4px 15px rgba(0,0,0,0.4);
         }
 
-        /* Header sem o relógio UTC */
-        .header {
-            height: 56px;
-            background-color: #0f172a;
+        /* Top Bar estilo clássico */
+        .header-bar {
+            background: linear-gradient(90deg, #000080, #1084d0);
+            color: #fff;
+            padding: 4px 8px;
             display: flex;
-            align-items: center;
             justify-content: space-between;
-            padding: 0 20px;
-            border-bottom: 1px solid #334155;
+            align-items: center;
+            font-weight: bold;
+            border: 2px outset #ffffff;
         }
 
-        .header .title {
-            font-size: 1.15rem;
-            font-weight: 600;
-            color: #38bdf8;
+        .header-title {
+            font-size: 12px;
+            letter-spacing: 0.5px;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 6px;
         }
 
-        .header .status-badges {
-            display: flex;
-            gap: 10px;
-        }
-
-        .badge {
-            background: #1e293b;
-            padding: 5px 10px;
-            border-radius: 16px;
-            font-size: 0.8rem;
-            color: #94a3b8;
-            border: 1px solid #334155;
-        }
-
-        .badge.online {
-            color: #4ade80;
-            border-color: rgba(74, 222, 128, 0.2);
-        }
-
-        /* Layout Principal do Tablet */
-        .main-content {
+        .main-layout {
             display: grid;
-            grid-template-columns: 220px 1fr;
-            flex: 1;
-            height: calc(100% - 56px);
+            grid-template-columns: 280px 1fr;
+            gap: 6px;
         }
 
-        /* Menu Lateral */
-        .sidebar {
-            background-color: #0f172a;
-            border-right: 1px solid #334155;
-            padding: 16px 10px;
+        /* Painel Esquerdo: Relógio Relíquia */
+        .clock-panel {
+            background: #ece9d8;
+            border: 2px outset #ffffff;
+            padding: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .clock-face {
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            background: radial-gradient(circle, #ffffff 60%, #c0c0c0 100%);
+            border: 6px solid #404040;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.5), 0 4px 6px rgba(0,0,0,0.3);
+            position: relative;
+        }
+
+        .clock-center {
+            width: 10px;
+            height: 10px;
+            background: #d00;
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10;
+        }
+
+        .hand {
+            position: absolute;
+            bottom: 50%;
+            left: 50%;
+            transform-origin: bottom center;
+            border-radius: 4px;
+        }
+
+        .hand.hour {
+            width: 4px;
+            height: 45px;
+            background: #000;
+            z-index: 5;
+        }
+
+        .hand.minute {
+            width: 3px;
+            height: 65px;
+            background: #222;
+            z-index: 6;
+        }
+
+        .hand.second {
+            width: 1px;
+            height: 75px;
+            background: #d00;
+            z-index: 7;
+        }
+
+        /* Marcas de horas do relógio */
+        .clock-mark {
+            position: absolute;
+            width: 2px;
+            height: 8px;
+            background: #555;
+            left: 50%;
+            transform-origin: 0 90px;
+        }
+
+        .digital-box {
+            background: #000;
+            color: #00ff00;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 16px;
+            font-weight: bold;
+            padding: 4px 10px;
+            border: 2px inset #ffffff;
+            letter-spacing: 1px;
+            text-align: center;
+            width: 100%;
+        }
+
+        /* Painel Direito: Abas e Conteúdo */
+        .content-panel {
+            background: #ece9d8;
+            border: 2px outset #ffffff;
+            padding: 6px;
             display: flex;
             flex-direction: column;
             gap: 6px;
         }
 
-        .nav-item {
-            padding: 10px 14px;
-            border-radius: 8px;
-            color: #94a3b8;
-            text-decoration: none;
-            font-size: 0.9rem;
-            font-weight: 500;
+        /* Estilo das Abas */
+        .tabs {
+            display: flex;
+            gap: 2px;
+            border-bottom: 2px solid #808080;
+        }
+
+        .tab-btn {
+            background: #d4d0c8;
+            border: 2px outset #ffffff;
+            border-bottom: none;
+            padding: 4px 10px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .tab-btn.active {
+            background: #ece9d8;
+            border-bottom: 2px solid #ece9d8;
+            margin-bottom: -2px;
+        }
+
+        .tab-content {
+            display: none;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .tab-content.active {
+            display: flex;
+        }
+
+        /* Controles, Inputs e Selects */
+        .control-row {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+        }
+
+        input[type="text"], select {
+            background: #fff;
+            border: 2px inset #ffffff;
+            padding: 3px 5px;
+            outline: none;
+        }
+
+        button {
+            background: #d4d0c8;
+            border: 2px outset #ffffff;
+            padding: 3px 8px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button:active {
+            border-style: inset;
+        }
+
+        /* Tabela Estilo Fuso Horário */
+        .table-wrap {
+            max-height: 320px;
+            overflow-y: auto;
+            overflow-x: auto;
+            border: 2px inset #ffffff;
+            background: #fff;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            white-space: nowrap;
+        }
+
+        th, td {
+            border: 1px solid #808080;
+            padding: 3px 5px;
+            text-align: center;
+        }
+
+        th {
+            background: #d4d0c8;
+            position: sticky;
+            top: 0;
+            z-index: 2;
+        }
+
+        .col-city {
+            text-align: left;
+            background: #f4f0e6;
+            font-weight: bold;
+            position: sticky;
+            left: 0;
+            z-index: 1;
+        }
+
+        /* Cores de Período do Dia */
+        .p-amanhecer { background-color: #f8c28c; }
+        .p-manha { background-color: #add8e6; }
+        .p-dia { background-color: #ffffff; }
+        .p-anoitecer { background-color: #f4a460; }
+        .p-noite { background-color: #4682b4; color: #fff; }
+
+        .current-hour {
+            outline: 2px solid #000080;
+            font-weight: bold;
+        }
+
+        /* Calculadora de Voo */
+        .flight-builder {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            background: #fff;
+            border: 2px inset #ffffff;
+            padding: 8px;
+        }
+
+        .waypoint-item {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 6px;
         }
 
-        .nav-item.active, .nav-item:hover {
-            background: #1e293b;
-            color: #38bdf8;
+        .flight-summary {
+            background: #fff8dc;
+            border: 1px solid #b8860b;
+            padding: 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
         }
 
-        /* Área do Dashboard */
-        .content-area {
-            padding: 20px;
-            overflow-y: auto;
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 16px;
-            align-content: start;
+        .summary-title {
+            font-weight: bold;
+            color: #000080;
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 2px;
         }
 
-        .card {
-            background: #0f172a;
-            border: 1px solid #334155;
-            border-radius: 10px;
-            padding: 16px;
+        /* Scrollbars Retrô */
+        ::-webkit-scrollbar {
+            width: 12px;
+            height: 12px;
         }
-
-        .card-header {
-            font-size: 0.8rem;
-            color: #94a3b8;
-            margin-bottom: 6px;
-            text-transform: uppercase;
+        ::-webkit-scrollbar-track {
+            background: #d4d0c8;
         }
-
-        .card-value {
-            font-size: 1.6rem;
-            font-weight: 700;
-            color: #f8fafc;
-        }
-
-        .card-full {
-            grid-column: span 2;
+        ::-webkit-scrollbar-thumb {
+            background: #c0c0c0;
+            border: 2px outset #ffffff;
         }
     </style>
 </head>
 <body>
 
-    <div class="tablet-screen">
-        <!-- Cabeçalho (Sem relógio UTC) -->
-        <div class="header">
-            <div class="title">
-                <span>⚡ Painel de Controle</span>
-            </div>
-            <div class="status-badges">
-                <span class="badge online">● Conectado</span>
-                <span class="badge">Tablet 9"</span>
-            </div>
+<div class="tablet-container">
+
+    <div class="header-bar">
+        <div class="header-title">
+            <span>🌐 MATRIZ MUNDIAL & NAVEGAÇÃO AÉREA</span>
         </div>
-
-        <div class="main-content">
-            <!-- Barra Lateral de Navegação -->
-            <div class="sidebar">
-                <a href="#" class="nav-item active">📊 Visão Geral</a>
-                <a href="#" class="nav-item">⚙️ Configurações</a>
-                <a href="#" class="nav-item">📈 Relatórios</a>
-            </div>
-
-            <!-- Área de Conteúdo -->
-            <div class="content-area">
-                <div class="card">
-                    <div class="card-header">Desempenho</div>
-                    <div class="card-value">98.4%</div>
-                </div>
-
-                <div class="card">
-                    <div class="card-header">Sessões Ativas</div>
-                    <div class="card-value">1,248</div>
-                </div>
-            </div>
-        </div>
+        <span id="utcClock" style="font-family: monospace;">UTC: 00:00:00</span>
     </div>
+
+    <div class="main-layout">
+
+        <!-- LADO ESQUERDO: RELÓGIO E REFERÊNCIA -->
+        <div class="clock-panel">
+            <div style="font-weight: bold; color: #000080;">CIDADE DE REFERÊNCIA</div>
+            
+            <select id="refSelect" style="width: 100%;" onchange="updateClock()"></select>
+
+            <div class="clock-face" id="clockFace">
+                <div class="clock-center"></div>
+                <div class="hand hour" id="hourHand"></div>
+                <div class="hand minute" id="minuteHand"></div>
+                <div class="hand second" id="secondHand"></div>
+            </div>
+
+            <div class="digital-box" id="digitalClock">00:00:00</div>
+            
+            <div id="locationDetails" style="text-align: center; font-size: 10px; color: #333;">
+                <!-- Preenchido via JS -->
+            </div>
+        </div>
+
+        <!-- LADO DIREITO: FUSOS & CÁLCULO DE VOO -->
+        <div class="content-panel">
+            <div class="tabs">
+                <button class="tab-btn active" onclick="switchTab('tabFusos', this)">Tabela de Fusos</button>
+                <button class="tab-btn" onclick="switchTab('tabVoo', this)">Calculadora de Voo</button>
+            </div>
+
+            <!-- ABA 1: TABELA DE FUSOS COM BUSCA -->
+            <div id="tabFusos" class="tab-content active">
+                <div class="control-row">
+                    <input type="text" id="searchInput" placeholder="Pesquisar País ou Cidade..." style="flex: 1;" oninput="filterTable()">
+                    <select id="regionFilter" onchange="filterTable()">
+                        <option value="ALL">Todos os Continentes</option>
+                        <option value="África">África</option>
+                        <option value="América">América</option>
+                        <option value="Ásia">Ásia</option>
+                        <option value="Europa">Europa</option>
+                        <option value="Oceania">Oceania</option>
+                    </select>
+                </div>
+
+                <div class="table-wrap">
+                    <table id="matrixTable">
+                        <!-- Gerado via JS -->
+                    </table>
+                </div>
+            </div>
+
+            <!-- ABA 2: CALCULADORA DE DISTÂNCIA DE VOO -->
+            <div id="tabVoo" class="tab-content">
+                <div class="flight-builder">
+                    <div style="font-weight: bold; color: #000080;">ROTA DE VOO COM ESCALAS</div>
+                    
+                    <div id="waypointsContainer" style="display: flex; flex-direction: column; gap: 4px;">
+                        <!-- Trechos gerados via JS -->
+                    </div>
+
+                    <div style="display: flex; gap: 6px; margin-top: 4px;">
+                        <button onclick="addWaypoint()">+ Adicionar Escala</button>
+                        <button onclick="calculateFlight()">✈ Calcular Distância & Tempo</button>
+                    </div>
+                </div>
+
+                <div class="flight-summary" id="flightResults">
+                    <div class="summary-title">Resumo do Voo</div>
+                    <div>Selecione a origem, destino e escalas para calcular.</div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+// Base de dados Unificada com Categorias
+const rawDb = [
+    // África
+    { reg: "África", c: "África do Sul", k: "Pretória", tz: "Africa/Johannesburg", lat: -25.7479, lon: 28.2293 },
+    { reg: "África", c: "Argélia", k: "Argel", tz: "Africa/Algiers", lat: 36.7538, lon: 3.0588 },
+    { reg: "África", c: "Angola", k: "Luanda", tz: "Africa/Luanda", lat: -8.8390, lon: 13.2894 },
+    { reg: "África", c: "Benin", k: "Porto Novo", tz: "Africa/Porto-Novo", lat: 6.4969, lon: 2.6288 },
+    { reg: "África", c: "Botsuana", k: "Gaborone", tz: "Africa/Gaborone", lat: -24.6282, lon: 25.9231 },
+    { reg: "África", c: "Burkina Faso", k: "Ouagadougou", tz: "Africa/Ouagadougou", lat: 12.3714, lon: -1.5197 },
+    { reg: "África", c: "Burundi", k: "Gitega", tz: "Africa/Bujumbura", lat: -3.4264, lon: 29.9246 },
+    { reg: "África", c: "Cabo Verde", k: "Praia", tz: "Atlantic/Cape_Verde", lat: 14.9315, lon: -23.5125 },
+    { reg: "África", c: "Camarões", k: "Iaundé", tz: "Africa/Douala", lat: 3.8480, lon: 11.5021 },
+    { reg: "África", c: "Chade", k: "N'Djamena", tz: "Africa/Ndjamena", lat: 12.1348, lon: 15.0557 },
+    { reg: "África", c: "Comores", k: "Moroni", tz: "Indian/Comoro", lat: -11.7172, lon: 43.2473 },
+    { reg: "África", c: "Costa do Marfim", k: "Iamassucro", tz: "Africa/Abidjan", lat: 6.8276, lon: -5.2893 },
+    { reg: "África", c: "Djibuti", k: "Djibuti", tz: "Africa/Djibouti", lat: 11.5890, lon: 43.1450 },
+    { reg: "África", c: "Egito", k: "Cairo", tz: "Africa/Cairo", lat: 30.0444, lon: 31.2357 },
+    { reg: "África", c: "Eritreia", k: "Asmara", tz: "Africa/Asmara", lat: 15.3229, lon: 38.9251 },
+    { reg: "África", c: "Eswatini", k: "Mbabane", tz: "Africa/Mbabane", lat: -26.3055, lon: 31.1367 },
+    { reg: "África", c: "Etiópia", k: "Adis Abeba", tz: "Africa/Addis_Ababa", lat: 9.0300, lon: 38.7400 },
+    { reg: "África", c: "Gabão", k: "Libreville", tz: "Africa/Libreville", lat: 0.4162, lon: 9.4673 },
+    { reg: "África", c: "Gâmbia", k: "Banjul", tz: "Africa/Banjul", lat: 13.4549, lon: -16.5790 },
+    { reg: "África", c: "Gana", k: "Acra", tz: "Africa/Accra", lat: 5.6037, lon: -0.1870 },
+    { reg: "África", c: "Guiné", k: "Conacri", tz: "Africa/Conakry", lat: 9.6412, lon: -13.5784 },
+    { reg: "África", c: "Guiné-Bissau", k: "Bissau", tz: "Africa/Bissau", lat: 11.8632, lon: -15.5984 },
+    { reg: "África", c: "Guiné Equatorial", k: "Malabo", tz: "Africa/Malabo", lat: 3.7504, lon: 8.7371 },
+    { reg: "África", c: "Lesoto", k: "Maseru", tz: "Africa/Maseru", lat: -29.3151, lon: 27.4869 },
+    { reg: "África", c: "Libéria", k: "Monróvia", tz: "Africa/Monrovia", lat: 6.3005, lon: -10.7969 },
+    { reg: "África", c: "Líbia", k: "Trípoli", tz: "Africa/Tripoli", lat: 32.8872, lon: 13.1913 },
+    { reg: "África", c: "Madagascar", k: "Antananarivo", tz: "Indian/Antananarivo", lat: -18.8792, lon: 47.5079 },
+    { reg: "África", c: "Malawi", k: "Lilongwe", tz: "Africa/Blantyre", lat: -13.9833, lon: 33.7833 },
+    { reg: "África", c: "Mali", k: "Bamako", tz: "Africa/Bamako", lat: 12.6392, lon: -8.0029 },
+    { reg: "África", c: "Marrocos", k: "Rabat", tz: "Africa/Casablanca", lat: 34.0209, lon: -6.8416 },
+    { reg: "África", c: "Maurício", k: "Port Louis", tz: "Indian/Mauritius", lat: -20.1609, lon: 57.5012 },
+    { reg: "África", c: "Mauritânia", k: "Nuaquexote", tz: "Africa/Nouakchott", lat: 18.0735, lon: -15.9582 },
+    { reg: "África", c: "Moçambique", k: "Maputo", tz: "Africa/Maputo", lat: -25.9692, lon: 32.5732 },
+    { reg: "África", c: "Namíbia", k: "Windhoek", tz: "Africa/Windhoek", lat: -22.5609, lon: 17.0658 },
+    { reg: "África", c: "Níger", k: "Niamei", tz: "Africa/Niamey", lat: 13.5116, lon: 2.1254 },
+    { reg: "África", c: "Nigéria", k: "Abuja", tz: "Africa/Lagos", lat: 9.0765, lon: 7.3986 },
+    { reg: "África", c: "Quênia", k: "Nairóbi", tz: "Africa/Nairobi", lat: -1.2921, lon: 36.8219 },
+    { reg: "África", c: "República Centro-Africana", k: "Bangui", tz: "Africa/Bangui", lat: 4.3947, lon: 18.5582 },
+    { reg: "África", c: "República do Congo", k: "Brazzaville", tz: "Africa/Brazzaville", lat: -4.2634, lon: 15.2429 },
+    { reg: "África", c: "República Democrática do Congo", k: "Kinshasa", tz: "Africa/Kinshasa", lat: -4.4419, lon: 15.2663 },
+    { reg: "África", c: "Ruanda", k: "Quigali", tz: "Africa/Kigali", lat: -1.9706, lon: 30.1044 },
+    { reg: "África", c: "São Tomé e Príncipe", k: "São Tomé", tz: "Africa/Sao_Tome", lat: 0.3302, lon: 6.7333 },
+    { reg: "África", c: "Senegal", k: "Dacar", tz: "Africa/Dakar", lat: 14.7167, lon: -17.4677 },
+    { reg: "África", c: "Seychelles", k: "Vitória", tz: "Indian/Mahe", lat: -4.6191, lon: 55.4513 },
+    { reg: "África", c: "Serra Leoa", k: "Freetown", tz: "Africa/Freetown", lat: 8.4840, lon: -13.2299 },
+    { reg: "África", c: "Somália", k: "Mogadíscio", tz: "Africa/Mogadishu", lat: 2.0469, lon: 45.3182 },
+    { reg: "África", c: "Sudão", k: "Cartum", tz: "Africa/Khartoum", lat: 15.5007, lon: 32.5599 },
+    { reg: "África", c: "Sudão do Sul", k: "Juba", tz: "Africa/Juba", lat: 4.8594, lon: 31.5713 },
+    { reg: "África", c: "Tanzânia", k: "Dodoma", tz: "Africa/Dar_es_Salaam", lat: -6.1630, lon: 35.7516 },
+    { reg: "África", c: "Togo", k: "Lomé", tz: "Africa/Lome", lat: 6.1375, lon: 1.2125 },
+    { reg: "África", c: "Tunísia", k: "Túnis", tz: "Africa/Tunis", lat: 36.8065, lon: 10.1815 },
+    { reg: "África", c: "Uganda", k: "Campala", tz: "Africa/Kampala", lat: 0.3476, lon: 32.5825 },
+    { reg: "África", c: "Zâmbia", k: "Lusaka", tz: "Africa/Lusaka", lat: -15.3875, lon: 28.3228 },
+    { reg: "África", c: "Zimbábue", k: "Harare", tz: "Africa/Harare", lat: -17.8252, lon: 31.0335 },
+
+    // América
+    { reg: "América", c: "Antígua e Barbuda", k: "Saint John's", tz: "America/Antigua", lat: 17.1274, lon: -61.8468 },
+    { reg: "América", c: "Argentina", k: "Buenos Aires", tz: "America/Argentina/Buenos_Aires", lat: -34.6037, lon: -58.3816 },
+    { reg: "América", c: "Bahamas", k: "Nassau", tz: "America/Nassau", lat: 25.0343, lon: -77.3963 },
+    { reg: "América", c: "Barbados", k: "Bridgetown", tz: "America/Barbados", lat: 13.1132, lon: -59.5988 },
+    { reg: "América", c: "Belize", k: "Belmopan", tz: "America/Belize", lat: 17.2510, lon: -88.7590 },
+    { reg: "América", c: "Bolívia", k: "Sucre", tz: "America/La_Paz", lat: -19.0196, lon: -65.2619 },
+    { reg: "América", c: "Brasil", k: "Brasília", tz: "America/Sao_Paulo", lat: -15.7975, lon: -47.8919 },
+    { reg: "América", c: "Canadá", k: "Ottawa", tz: "America/Toronto", lat: 45.4215, lon: -75.6972 },
+    { reg: "América", c: "Chile", k: "Santiago", tz: "America/Santiago", lat: -33.4489, lon: -70.6693 },
+    { reg: "América", c: "Colômbia", k: "Bogotá", tz: "America/Bogota", lat: 4.7110, lon: -74.0721 },
+    { reg: "América", c: "Costa Rica", k: "São José", tz: "America/Costa_Rica", lat: 9.9281, lon: -84.0907 },
+    { reg: "América", c: "Cuba", k: "Havana", tz: "America/Havana", lat: 23.1136, lon: -82.3666 },
+    { reg: "América", c: "Dominica", k: "Roseau", tz: "America/Dominica", lat: 15.3092, lon: -61.3794 },
+    { reg: "América", c: "Equador", k: "Quito", tz: "America/Guayaquil", lat: -0.1807, lon: -78.4678 },
+    { reg: "América", c: "El Salvador", k: "São Salvador", tz: "America/El_Salvador", lat: 13.6929, lon: -89.2182 },
+    { reg: "América", c: "Estados Unidos", k: "Washington, D.C.", tz: "America/New_York", lat: 38.9072, lon: -77.0369 },
+    { reg: "América", c: "Granada", k: "St. George's", tz: "America/Grenada", lat: 12.0561, lon: -61.7485 },
+    { reg: "América", c: "Guatemala", k: "Cidade da Guatemala", tz: "America/Guatemala", lat: 14.6349, lon: -90.5069 },
+    { reg: "América", c: "Guiana", k: "Georgetown", tz: "America/Guyana", lat: 6.8013, lon: -58.1551 },
+    { reg: "América", c: "Haiti", k: "Porto Príncipe", tz: "America/Port-au-Prince", lat: 18.5944, lon: -72.3074 },
+    { reg: "América", c: "Honduras", k: "Tegucigalpa", tz: "America/Tegucigalpa", lat: 14.0723, lon: -87.1921 },
+    { reg: "América", c: "Jamaica", k: "Kingston", tz: "America/Jamaica", lat: 17.9714, lon: -76.7936 },
+    { reg: "América", c: "México", k: "Cidade do México", tz: "America/Mexico_City", lat: 19.4326, lon: -99.1332 },
+    { reg: "América", c: "Nicarágua", k: "Manágua", tz: "America/Managua", lat: 12.1150, lon: -86.2362 },
+    { reg: "América", c: "Panamá", k: "Cidade do Panamá", tz: "America/Panama", lat: 8.9824, lon: -79.5199 },
+    { reg: "América", c: "Paraguai", k: "Assunção", tz: "America/Asuncion", lat: -25.2637, lon: -57.5759 },
+    { reg: "América", c: "Peru", k: "Lima", tz: "America/Lima", lat: -12.0464, lon: -77.0428 },
+    { reg: "América", c: "República Dominicana", k: "Santo Domingo", tz: "America/Santo_Domingo", lat: 18.4861, lon: -69.9312 },
+    { reg: "América", c: "Santa Lúcia", k: "Castries", tz: "America/St_Lucia", lat: 14.0101, lon: -60.9875 },
+    { reg: "América", c: "São Cristóvão e Névis", k: "Basseterre", tz: "America/St_Kitts", lat: 17.3026, lon: -62.7177 },
+    { reg: "América", c: "São Vicente e Granadinas", k: "Kingstown", tz: "America/St_Vincent", lat: 13.1600, lon: -61.2248 },
+    { reg: "América", c: "Suriname", k: "Paramaribo", tz: "America/Paramaribo", lat: 5.8520, lon: -55.2038 },
+    { reg: "América", c: "Trinidad e Tobago", k: "Port of Spain", tz: "America/Port_of_Spain", lat: 10.6549, lon: -61.5019 },
+    { reg: "América", c: "Uruguai", k: "Montevidéu", tz: "America/Montevideo", lat: -34.9011, lon: -56.1645 },
+    { reg: "América", c: "Venezuela", k: "Caracas", tz: "America/Caracas", lat: 10.4806, lon: -66.9036 },
+
+    // Ásia
+    { reg: "Ásia", c: "Afeganistão", k: "Cabul", tz: "Asia/Kabul", lat: 34.5553, lon: 69.2075 },
+    { reg: "Ásia", c: "Arábia Saudita", k: "Riade", tz: "Asia/Riyadh", lat: 24.7136, lon: 46.6753 },
+    { reg: "Ásia", c: "Armênia", k: "Erevã", tz: "Asia/Yerevan", lat: 40.1872, lon: 44.5152 },
+    { reg: "Ásia", c: "Azerbaijão", k: "Baku", tz: "Asia/Baku", lat: 40.4093, lon: 49.8671 },
+    { reg: "Ásia", c: "Bahrein", k: "Manama", tz: "Asia/Bahrain", lat: 26.2285, lon: 50.5860 },
+    { reg: "Ásia", c: "Bangladesh", k: "Daca", tz: "Asia/Dhaka", lat: 23.8103, lon: 90.4125 },
+    { reg: "Ásia", c: "Brunei", k: "Bandar Seri Begawan", tz: "Asia/Brunei", lat: 4.9403, lon: 114.9481 },
+    { reg: "Ásia", c: "Butão", k: "Timphu", tz: "Asia/Thimphu", lat: 27.4728, lon: 89.6393 },
+    { reg: "Ásia", c: "Camboja", k: "Phnom Penh", tz: "Asia/Phnom_Penh", lat: 11.5564, lon: 104.9282 },
+    { reg: "Ásia", c: "Catar", k: "Doha", tz: "Asia/Qatar", lat: 25.2854, lon: 51.5310 },
+    { reg: "Ásia", c: "Cazaquistão", k: "Astana", tz: "Asia/Almaty", lat: 51.1694, lon: 71.4491 },
+    { reg: "Ásia", c: "China", k: "Pequim", tz: "Asia/Shanghai", lat: 39.9042, lon: 116.4074 },
+    { reg: "Ásia", c: "Chipre", k: "Nicosia", tz: "Asia/Nicosia", lat: 35.1856, lon: 33.3823 },
+    { reg: "Ásia", c: "Coreia do Norte", k: "Pyongyang", tz: "Asia/Pyongyang", lat: 39.0392, lon: 125.7625 },
+    { reg: "Ásia", c: "Coreia do Sul", k: "Seul", tz: "Asia/Seoul", lat: 37.5665, lon: 126.9780 },
+    { reg: "Ásia", c: "Emirados Árabes Unidos", k: "Abu Dhabi", tz: "Asia/Dubai", lat: 24.4539, lon: 54.3773 },
+    { reg: "Ásia", c: "Filipinas", k: "Manila", tz: "Asia/Manila", lat: 14.5995, lon: 120.9842 },
+    { reg: "Ásia", c: "Geórgia", k: "Tbilisi", tz: "Asia/Tbilisi", lat: 41.7151, lon: 44.8271 },
+    { reg: "Ásia", c: "Iêmen", k: "Sana", tz: "Asia/Aden", lat: 15.3694, lon: 44.1910 },
+    { reg: "Ásia", c: "Índia", k: "Nova Deli", tz: "Asia/Kolkata", lat: 28.6139, lon: 77.2090 },
+    { reg: "Ásia", c: "Indonésia", k: "Jacarta", tz: "Asia/Jakarta", lat: -6.2088, lon: 106.8456 },
+    { reg: "Ásia", c: "Irã", k: "Teerã", tz: "Asia/Tehran", lat: 35.6892, lon: 51.3890 },
+    { reg: "Ásia", c: "Iraque", k: "Bagdá", tz: "Asia/Baghdad", lat: 33.3152, lon: 44.3661 },
+    { reg: "Ásia", c: "Israel", k: "Jerusalém", tz: "Asia/Jerusalem", lat: 31.7683, lon: 35.2137 },
+    { reg: "Ásia", c: "Japão", k: "Tóquio", tz: "Asia/Tokyo", lat: 35.6762, lon: 139.6503 },
+    { reg: "Ásia", c: "Jordânia", k: "Amã", tz: "Asia/Amman", lat: 31.9454, lon: 35.9284 },
+    { reg: "Ásia", c: "Kuwait", k: "Cidade do Kuwait", tz: "Asia/Kuwait", lat: 29.3759, lon: 47.9774 },
+    { reg: "Ásia", c: "Laos", k: "Vientiane", tz: "Asia/Vientiane", lat: 17.9757, lon: 102.6331 },
+    { reg: "Ásia", c: "Líbano", k: "Beirute", tz: "Asia/Beirut", lat: 33.8938, lon: 35.5018 },
+    { reg: "Ásia", c: "Malásia", k: "Cuala Lumpur", tz: "Asia/Kuala_Lumpur", lat: 3.1390, lon: 101.6869 },
+    { reg: "Ásia", c: "Maldivas", k: "Malé", tz: "Indian/Maldives", lat: 4.1755, lon: 73.5093 },
+    { reg: "Ásia", c: "Mianmar", k: "Yangon", tz: "Asia/Yangon", lat: 16.8661, lon: 96.1951 },
+    { reg: "Ásia", c: "Mongólia", k: "Ulan Bator", tz: "Asia/Ulaanbaatar", lat: 47.8864, lon: 106.9057 },
+    { reg: "Ásia", c: "Nepal", k: "Catmandu", tz: "Asia/Kathmandu", lat: 27.7172, lon: 85.3240 },
+    { reg: "Ásia", c: "Omã", k: "Mascate", tz: "Asia/Muscat", lat: 23.5880, lon: 58.3829 },
+    { reg: "Ásia", c: "Paquistão", k: "Islamabad", tz: "Asia/Karachi", lat: 33.6844, lon: 73.0479 },
+    { reg: "Ásia", c: "Quirguistão", k: "Bishkek", tz: "Asia/Bishkek", lat: 42.8746, lon: 74.5698 },
+    { reg: "Ásia", c: "Singapura", k: "Singapura", tz: "Asia/Singapore", lat: 1.3521, lon: 103.8198 },
+    { reg: "Ásia", c: "Síria", k: "Damasco", tz: "Asia/Damascus", lat: 33.5138, lon: 36.2765 },
+    { reg: "Ásia", c: "Sri Lanka", k: "Cotte", tz: "Asia/Colombo", lat: 6.9271, lon: 79.8612 },
+    { reg: "Ásia", c: "Tajiquistão", k: "Duchambe", tz: "Asia/Dushanbe", lat: 38.5598, lon: 68.7870 },
+    { reg: "Ásia", c: "Tailândia", k: "Bangcoc", tz: "Asia/Bangkok", lat: 13.7563, lon: 100.5018 },
+    { reg: "Ásia", c: "Timor-Leste", k: "Dili", tz: "Asia/Dili", lat: -8.5569, lon: 125.5603 },
+    { reg: "Ásia", c: "Turcomenistão", k: "Asgabate", tz: "Asia/Ashgabat", lat: 37.9601, lon: 58.3261 },
+    { reg: "Ásia", c: "Turquia", k: "Ancara", tz: "Europe/Istanbul", lat: 39.9334, lon: 32.8597 },
+    { reg: "Ásia", c: "Uzbequistão", k: "Tashkent", tz: "Asia/Tashkent", lat: 41.2995, lon: 69.2401 },
+    { reg: "Ásia", c: "Vietnã", k: "Hanoi", tz: "Asia/Ho_Chi_Minh", lat: 21.0285, lon: 105.8542 },
+
+    // Europa
+    { reg: "Europa", c: "Albânia", k: "Tirana", tz: "Europe/Tirane", lat: 41.3275, lon: 19.8187 },
+    { reg: "Europa", c: "Alemanha", k: "Berlim", tz: "Europe/Berlin", lat: 52.5200, lon: 13.4050 },
+    { reg: "Europa", c: "Andorra", k: "Andorra-a-Velha", tz: "Europe/Andorra", lat: 42.5063, lon: 1.5218 },
+    { reg: "Europa", c: "Áustria", k: "Viena", tz: "Europe/Vienna", lat: 48.2082, lon: 16.3738 },
+    { reg: "Europa", c: "Bélgica", k: "Bruxelas", tz: "Europe/Brussels", lat: 50.8503, lon: 4.3517 },
+    { reg: "Europa", c: "Bielorrússia", k: "Minsk", tz: "Europe/Minsk", lat: 53.9006, lon: 27.5590 },
+    { reg: "Europa", c: "Bósnia e Herzegovina", k: "Sarajevo", tz: "Europe/Sarajevo", lat: 43.8563, lon: 18.4131 },
+    { reg: "Europa", c: "Bulgária", k: "Sófia", tz: "Europe/Sofia", lat: 42.6977, lon: 23.3219 },
+    { reg: "Europa", c: "Croácia", k: "Zagrebe", tz: "Europe/Zagreb", lat: 45.8150, lon: 15.9819 },
+    { reg: "Europa", c: "Dinamarca", k: "Copenhague", tz: "Europe/Copenhagen", lat: 55.6761, lon: 12.5683 },
+    { reg: "Europa", c: "Eslováquia", k: "Bratislava", tz: "Europe/Bratislava", lat: 48.1486, lon: 17.1077 },
+    { reg: "Europa", c: "Eslovênia", k: "Ljubljana", tz: "Europe/Ljubljana", lat: 46.0569, lon: 14.5058 },
+    { reg: "Europa", c: "Espanha", k: "Madri", tz: "Europe/Madrid", lat: 40.4168, lon: -3.7038 },
+    { reg: "Europa", c: "Estônia", k: "Talin", tz: "Europe/Tallinn", lat: 59.4370, lon: 24.7536 },
+    { reg: "Europa", c: "Finlândia", k: "Helsinque", tz: "Europe/Helsinki", lat: 60.1699, lon: 24.9384 },
+    { reg: "Europa", c: "França", k: "Paris", tz: "Europe/Paris", lat: 48.8566, lon: 2.3522 },
+    { reg: "Europa", c: "Grécia", k: "Atenas", tz: "Europe/Athens", lat: 37.9838, lon: 23.7275 },
+    { reg: "Europa", c: "Hungria", k: "Budapeste", tz: "Europe/Budapest", lat: 47.4979, lon: 19.0402 },
+    { reg: "Europa", c: "Irlanda", k: "Dublin", tz: "Europe/Dublin", lat: 53.3498, lon: -6.2603 },
+    { reg: "Europa", c: "Islândia", k: "Reiquiavique", tz: "Atlantic/Reykjavik", lat: 64.1466, lon: -21.9426 },
+    { reg: "Europa", c: "Itália", k: "Roma", tz: "Europe/Rome", lat: 41.9028, lon: 12.4964 },
+    { reg: "Europa", c: "Letônia", k: "Riga", tz: "Europe/Riga", lat: 56.9496, lon: 24.1052 },
+    { reg: "Europa", c: "Liechtenstein", k: "Vaduz", tz: "Europe/Vaduz", lat: 47.1410, lon: 9.5209 },
+    { reg: "Europa", c: "Lituânia", k: "Vilnius", tz: "Europe/Vilnius", lat: 54.6872, lon: 25.2797 },
+    { reg: "Europa", c: "Luxemburgo", k: "Luxemburgo", tz: "Europe/Luxembourg", lat: 49.6116, lon: 6.1319 },
+    { reg: "Europa", c: "Macedônia do Norte", k: "Skopje", tz: "Europe/Skopje", lat: 41.9981, lon: 21.4254 },
+    { reg: "Europa", c: "Malta", k: "Valletta", tz: "Europe/Malta", lat: 35.8997, lon: 14.5148 },
+    { reg: "Europa", c: "Moldávia", k: "Chisinau", tz: "Europe/Chisinau", lat: 47.0105, lon: 28.8638 },
+    { reg: "Europa", c: "Mônaco", k: "Mônaco", tz: "Europe/Monaco", lat: 43.7384, lon: 7.4246 },
+    { reg: "Europa", c: "Montenegro", k: "Podgorica", tz: "Europe/Podgorica", lat: 42.4304, lon: 19.2594 },
+    { reg: "Europa", c: "Noruega", k: "Oslo", tz: "Europe/Oslo", lat: 59.9139, lon: 10.7522 },
+    { reg: "Europa", c: "Países Baixos", k: "Amsterdã", tz: "Europe/Amsterdam", lat: 52.3676, lon: 4.9041 },
+    { reg: "Europa", c: "Polônia", k: "Varsóvia", tz: "Europe/Warsaw", lat: 52.2297, lon: 21.0122 },
+    { reg: "Europa", c: "Portugal", k: "Lisboa", tz: "Europe/Lisbon", lat: 38.7223, lon: -9.1393 },
+    { reg: "Europa", c: "Reino Unido", k: "Londres", tz: "Europe/London", lat: 51.5074, lon: -0.1278 },
+    { reg: "Europa", c: "República Tcheca", k: "Praga", tz: "Europe/Prague", lat: 50.0755, lon: 14.4378 },
+    { reg: "Europa", c: "Romênia", k: "Bucareste", tz: "Europe/Bucharest", lat: 44.4323, lon: 26.1063 },
+    { reg: "Europa", c: "Rússia", k: "Moscou", tz: "Europe/Moscow", lat: 55.7558, lon: 37.6173 },
+    { reg: "Europa", c: "San Marino", k: "San Marino", tz: "Europe/San_Marino", lat: 43.9424, lon: 12.4578 },
+    { reg: "Europa", c: "Sérvia", k: "Belgrado", tz: "Europe/Belgrade", lat: 44.7866, lon: 20.4489 },
+    { reg: "Europa", c: "Suécia", k: "Estocolmo", tz: "Europe/Stockholm", lat: 59.3293, lon: 18.0686 },
+    { reg: "Europa", c: "Suíça", k: "Berna", tz: "Europe/Zurich", lat: 46.9480, lon: 7.4474 },
+    { reg: "Europa", c: "Ucrânia", k: "Kiev", tz: "Europe/Kiev", lat: 50.4501, lon: 30.5234 },
+
+    // Oceania
+    { reg: "Oceania", c: "Austrália", k: "Camberra", tz: "Australia/Sydney", lat: -35.2809, lon: 149.1300 },
+    { reg: "Oceania", c: "Fiji", k: "Suva", tz: "Pacific/Fiji", lat: -18.1248, lon: 178.4501 },
+    { reg: "Oceania", c: "Ilhas Marshall", k: "Majuro", tz: "Pacific/Majuro", lat: 7.1315, lon: 171.1845 },
+    { reg: "Oceania", c: "Ilhas Salomão", k: "Honiara", tz: "Pacific/Guadalcanal", lat: -9.4456, lon: 159.9729 },
+    { reg: "Oceania", c: "Kiribati", k: "Tarauá do Sul", tz: "Pacific/Tarawa", lat: 1.3292, lon: 172.9785 },
+    { reg: "Oceania", c: "Micronésia", k: "Palikir", tz: "Pacific/Chuuk", lat: 6.9248, lon: 158.1611 },
+    { reg: "Oceania", c: "Nauru", k: "Iaren", tz: "Pacific/Nauru", lat: -0.5477, lon: 166.9208 },
+    { reg: "Oceania", c: "Nova Zelândia", k: "Wellington", tz: "Pacific/Auckland", lat: -41.2865, lon: 174.7762 },
+    { reg: "Oceania", c: "Palau", k: "Ngerulmud", tz: "Pacific/Palau", lat: 7.5004, lon: 134.6243 },
+    { reg: "Oceania", c: "Papua-Nova Guiné", k: "Port Moresby", tz: "Pacific/Port_Moresby", lat: -9.4438, lon: 147.1803 },
+    { reg: "Oceania", c: "Samoa", k: "Apia", tz: "Pacific/Apia", lat: -13.8333, lon: -171.7667 },
+    { reg: "Oceania", c: "Tonga", k: "Nuku'alofa", tz: "Pacific/Tongatapu", lat: -21.1789, lon: -175.1982 },
+    { reg: "Oceania", c: "Tuvalu", k: "Funafuti", tz: "Pacific/Funafuti", lat: -8.5207, lon: 179.1982 },
+    { reg: "Oceania", c: "Vanuatu", k: "Port Vila", tz: "Pacific/Efate", lat: -17.7333, lon: 168.3270 },
+
+    // Observadores
+    { reg: "Ásia", c: "Palestina", k: "Ramallah", tz: "Asia/Gaza", lat: 31.9038, lon: 35.2034 },
+    { reg: "Europa", c: "Vaticano", k: "Vaticano", tz: "Europe/Vatican", lat: 41.9029, lon: 12.4534 }
+].sort((a, b) => a.c.localeCompare(b.c));
+
+let currentFilteredList = [...rawDb];
+
+document.addEventListener("DOMContentLoaded", () => {
+    initClockMarks();
+    initReferenceSelect();
+    renderMatrixTable();
+    initFlightWaypoints();
+    
+    setInterval(updateClock, 1000);
+});
+
+// Criar marcações de hora no relógio analógico
+function initClockMarks() {
+    const face = document.getElementById("clockFace");
+    for (let i = 0; i < 12; i++) {
+        const mark = document.createElement("div");
+        mark.className = "clock-mark";
+        mark.style.transform = `rotate(${i * 30}deg) translateY(0px)`;
+        face.appendChild(mark);
+    }
+}
+
+// Inicializar Select de Referência
+function initReferenceSelect() {
+    const refSel = document.getElementById("refSelect");
+    rawDb.forEach((item, index) => {
+        const opt = document.createElement("option");
+        opt.value = index;
+        opt.textContent = `${item.c} - ${item.k}`;
+        if (item.c === "Brasil") opt.selected = true;
+        refSel.appendChild(opt);
+    });
+}
+
+// Atualização do Relógio Analógico e Digital
+function updateClock() {
+    const now = new Date();
+    document.getElementById("utcClock").textContent = "UTC: " + now.toISOString().substr(11, 8);
+
+    const refIndex = document.getElementById("refSelect").value;
+    const refData = rawDb[refIndex];
+
+    // Obter data/hora na zona selecionada
+    const locString = now.toLocaleString("en-US", { timeZone: refData.tz });
+    const locDate = new Date(locString);
+
+    const hrs = locDate.getHours();
+    const mins = locDate.getMinutes();
+    const secs = locDate.getSeconds();
+
+    // Atualizar Ponteiros
+    const secDeg = (secs / 60) * 360;
+    const minDeg = ((mins + secs / 60) / 60) * 360;
+    const hrDeg = (((hrs % 12) + mins / 60) / 12) * 360;
+
+    document.getElementById("secondHand").style.transform = `rotate(${secDeg}deg)`;
+    document.getElementById("minuteHand").style.transform = `rotate(${minDeg}deg)`;
+    document.getElementById("hourHand").style.transform = `rotate(${hrDeg}deg)`;
+
+    // Digital
+    const strHrs = String(hrs).padStart(2, '0');
+    const strMins = String(mins).padStart(2, '0');
+    const strSecs = String(secs).padStart(2, '0');
+    document.getElementById("digitalClock").textContent = `${strHrs}:${strMins}:${strSecs}`;
+
+    document.getElementById("locationDetails").innerHTML = `
+        <b>Lat:</b> ${refData.lat.toFixed(2)} | <b>Lon:</b> ${refData.lon.toFixed(2)}<br>
+        <b>Fuso:</b> ${refData.tz}
+    `;
+
+    // Atualiza tabela para destacar a hora atual da cidade ref
+    renderMatrixTable();
+}
+
+// Troca de Abas
+function switchTab(tabId, btn) {
+    document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+    document.querySelectorAll(".tab-content").forEach(c => c.classList.remove("active"));
+    btn.classList.add("active");
+    document.getElementById(tabId).classList.add("active");
+}
+
+// Classe do Período do Dia
+function getPeriodClass(h) {
+    if (h >= 5 && h <= 6) return 'p-amanhecer';
+    if (h >= 7 && h <= 11) return 'p-manha';
+    if (h >= 12 && h <= 16) return 'p-dia';
+    if (h >= 17 && h <= 18) return 'p-anoitecer';
+    return 'p-noite';
+}
+
+// Cálculo de Diferença UTC
+function getUTCOffset(tz) {
+    const now = new Date();
+    const utcDate = new Date(now.toLocaleString('en-US', { timeZone: 'UTC' }));
+    const tzDate = new Date(now.toLocaleString('en-US', { timeZone: tz }));
+    return (tzDate - utcDate) / 3600000;
+}
+
+// Filtro e Busca da Tabela
+function filterTable() {
+    const q = document.getElementById("searchInput").value.toLowerCase();
+    const reg = document.getElementById("regionFilter").value;
+
+    currentFilteredList = rawDb.filter(item => {
+        const matchesText = item.c.toLowerCase().includes(q) || item.k.toLowerCase().includes(q);
+        const matchesReg = (reg === "ALL" || item.reg === reg);
+        return matchesText && matchesReg;
+    });
+
+    renderMatrixTable();
+}
+
+// Renderizar Tabela de Fusos
+function renderMatrixTable() {
+    const refIndex = document.getElementById("refSelect").value;
+    const refData = rawDb[refIndex];
+    const refOffset = getUTCOffset(refData.tz);
+
+    const now = new Date();
+    const refLocDate = new Date(now.toLocaleString("en-US", { timeZone: refData.tz }));
+    const currentRefHour = refLocDate.getHours();
+
+    let html = `
+        <thead>
+            <tr>
+                <th class="col-city">País / Capital</th>
+                ${Array.from({length: 24}, (_, i) => `<th>${String(i).padStart(2,'0')}h</th>`).join('')}
+            </tr>
+        </thead>
+        <tbody>
+    `;
+
+    currentFilteredList.forEach(item => {
+        const itemOffset = getUTCOffset(item.tz);
+        const diff = itemOffset - refOffset;
+
+        html += `<tr>`;
+        html += `<td class="col-city">${item.c}<br><span style="font-weight:normal; font-size:9px; color:#555;">${item.k}</span></td>`;
+
+        for (let h = 0; h < 24; h++) {
+            let localH = (h + diff) % 24;
+            if (localH < 0) localH += 24;
+
+            const period = getPeriodClass(localH);
+            const isCurrent = (h === currentRefHour) ? 'current-hour' : '';
+            const formatted = String(Math.floor(localH)).padStart(2, '0');
+
+            html += `<td class="${period} ${isCurrent}">${formatted}</td>`;
+        }
+
+        html += `</tr>`;
+    });
+
+    html += `</tbody>`;
+    document.getElementById("matrixTable").innerHTML = html;
+}
+
+// --- CALCULADORA DE DISTÂNCIA DE VOO (HAVERSINE) ---
+
+function initFlightWaypoints() {
+    const container = document.getElementById("waypointsContainer");
+    container.innerHTML = "";
+    addWaypoint("Origem");
+    addWaypoint("Destino");
+}
+
+function addWaypoint(label = "Escala") {
+    const container = document.getElementById("waypointsContainer");
+    const div = document.createElement("div");
+    div.className = "waypoint-item";
+
+    const tag = document.createElement("span");
+    tag.style.width = "60px";
+    tag.style.fontWeight = "bold";
+    tag.textContent = label + ":";
+
+    const select = document.createElement("select");
+    select.className = "flight-wp-select";
+    select.style.flex = "1";
+
+    rawDb.forEach((item, i) => {
+        const opt = document.createElement("option");
+        opt.value = i;
+        opt.textContent = `${item.c} - ${item.k}`;
+        select.appendChild(opt);
+    });
+
+    div.appendChild(tag);
+    div.appendChild(select);
+
+    if (label === "Escala") {
+        const btnRem = document.createElement("button");
+        btnRem.textContent = "X";
+        btnRem.style.color = "red";
+        btnRem.onclick = () => div.remove();
+        div.appendChild(btnRem);
+    }
+
+    container.appendChild(div);
+}
+
+// Distância Haversine em Km
+function haversine(lat1, lon1, lat2, lon2) {
+    const R = 6371; // Raio da Terra em km
+    const dLat = (lat2 - lat1) * Math.PI / 180;
+    const dLon = (lon2 - lon1) * Math.PI / 180;
+    const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+              Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+              Math.sin(dLon/2) * Math.sin(dLon/2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    return R * c;
+}
+
+function calculateFlight() {
+    const selects = document.querySelectorAll(".flight-wp-select");
+    if (selects.length < 2) return;
+
+    let totalDistKm = 0;
+    let legsHtml = "";
+
+    for (let i = 0; i < selects.length - 1; i++) {
+        const p1 = rawDb[selects[i].value];
+        const p2 = rawDb[selects[i+1].value];
+
+        const dist = haversine(p1.lat, p1.lon, p2.lat, p2.lon);
+        totalDistKm += dist;
+
+        legsHtml += `<div>• <b>Trecho ${i+1}:</b> ${p1.k} (${p1.c}) ➔ ${p2.k} (${p2.c}) = <b>${Math.round(dist).toLocaleString('pt-BR')} km</b></div>`;
+    }
+
+    const totalNM = totalDistKm * 0.539957; // Milhas Náuticas
+    // Média de velocidade comercial ~800 km/h + 45 min de manobra/escala
+    const flightHours = totalDistKm / 800 + ((selects.length - 2) * 1.5); 
+
+    const h = Math.floor(flightHours);
+    const m = Math.round((flightHours - h) * 60);
+
+    const resDiv = document.getElementById("flightResults");
+    resDiv.innerHTML = `
+        <div class="summary-title">Resumo do Voo Estimado</div>
+        ${legsHtml}
+        <hr style="margin: 4px 0;">
+        <div><b>Distância Total:</b> ${Math.round(totalDistKm).toLocaleString('pt-BR')} km (${Math.round(totalNM).toLocaleString('pt-BR')} NM)</div>
+        <div><b>Tempo Estimado no Ar:</b> ~${h}h ${m}min (Velocidade média ~800 km/h)</div>
+    `;
+}
+</script>
 
 </body>
 </html>
