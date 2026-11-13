@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Calculador de Rota e Tempo de Viagem</title>
+  <style>
+    /* Estilização para Landscape e Tela de 7 Polegadas (~1024x600 px) */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+    }
+    body {
+      background-color: #1e1e2e;
+      color: #cdd6f4;
+      font-size: 13px;
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+    header {
+      background: #181825;
+      padding: 6px 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #313244;
+    }
+    header h1 {
+      font-size: 15px;
+      color: #89b4fa;
+    }
+    .app-container {
+      display: flex;
+      flex: 1;
+      height: calc(100vh - 35px);
+      overflow: hidden;
+    }
+    /* Painel Esquerdo: Rotas e Cálculos */
+    .panel-left {
+      flex: 1.2;
+      padding: 10px;
+      border-right: 1px solid #313244;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    /* Painel Direito: Pesquisa e Legenda */
+    .panel-right {
+      flex: 1;
+      padding: 10px;
+      background-color: #181825;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .card {
+      background: #313244;
+      padding: 8px 10px;
+      border-radius: 6px;
+    }
+    .card-title {
+      font-size: 12px;
+      font-weight: bold;
+      color: #f5e0dc;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+    }
+    label {
+      font-size: 11px;
+      display: block;
+      margin-bottom: 2px;
+      color: #a6adc8;
+    }
+    input, select, button {
+      width: 100%;
+      padding: 6px;
+      border-radius: 4px;
+      border: 1px solid #45475a;
+      background: #1e1e2e;
+      color: #cdd6f4;
+      font-size: 12px;
+      outline: none;
+    }
+    input:focus, select:focus {
+      border-color: #89b4fa;
+    }
+    .row {
+      display: flex;
+      gap: 6px;
+    }
+    .col {
+      flex: 1;
+    }
+    .stop-row {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      margin-bottom: 6px;
+    }
+    .btn-btn {
+      cursor: pointer;
+      font-weight: bold;
+      transition: 0.2s;
+    }
+    .btn-add { background: #a6e3a1; color: #11111b; border: none; margin-top: 4px; }
+    .btn-remove { background: #f38ba8; color: #11111b; width: 32px; flex-shrink: 0; border: none; }
+    .btn-calc { background: #89b4fa; color: #11111b; font-size: 13px; font-weight: bold; border: none; margin-top: 5px; }
+
+    /* Resultados */
+    .results-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+    }
+    .res-box {
+      background: #1e1e2e;
+      padding: 6px;
+      border-radius: 4px;
+      border-left: 3px solid #89b4fa;
+    }
+    .res-box.land { border-color: #a6e3a1; }
+    .res-box.air { border-color: #f9e2af; }
+    .res-val {
+      font-size: 13px;
+      font-weight: bold;
+      color: #fff;
+    }
+
+    /* Lista de Cidades / Legenda */
+    .city-list {
+      max-height: 380px;
+      overflow-y: auto;
+      border: 1px solid #45475a;
+      border-radius: 4px;
+      background: #1e1e2e;
+    }
+    .city-item {
+      padding: 4px 8px;
+      border-bottom: 1px solid #313244;
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+    }
+    .city-item:nth-child(even) { background: #181825; }
+    .district-header {
+      background: #45475a;
+      color: #cba6f7;
+      padding: 3px 8px;
+      font-size: 11px;
+      font-weight: bold;
+      position: sticky;
+      top: 0;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Navegação de Rota & Tempo (Israel)</h1>
+    <span style="font-size: 11px; color: #a6adc8;">Modo Horizontal | 100% Offline</span>
+  </header>
+
+  <div class="app-container">
+    
+    <!-- PAINEL ESQUERDO: CONTROLES E RESULTADOS -->
+    <div class="panel-left">
+      <div class="card">
+        <div class="card-title">1. Data e Horário de Saída</div>
+        <input type="datetime-local" id="departure-time">
+      </div>
+
+      <div class="card">
+        <div class="card-title">2. Itinerário (Origem, Paradas e Destino)</div>
+        
+        <label>Origem:</label>
+        <div class="stop-row">
+          <select class="city-select" id="origin-select"></select>
+        </div>
+
+        <label>Paradas Intermediárias:</label>
+        <div id="stops-container"></div>
+        <button type="button" class="btn-btn btn-add" onclick="addStop()">+ Adicionar Parada</button>
+
+        <label style="margin-top: 6px;">Destino:</label>
+        <div class="stop-row">
+          <select class="city-select" id="destination-select"></select>
+        </div>
+
+        <button type="button" class="btn-btn btn-calc" onclick="calculateTrip()">Calcular Viagem</button>
+      </div>
+
+      <div class="card">
+        <div class="card-title">3. Estimativa de Chegada & Distância</div>
+        <div class="results-grid">
+          <div class="res-box land">
+            <label>Terrestre (90 km/h)</label>
+            <div id="land-dist" class="res-val">0 km</div>
+            <div id="land-time" style="font-size: 11px;">Tempo: -</div>
+            <div id="land-arrival" style="font-size: 11px; font-weight: bold; color: #a6e3a1; margin-top:2px;">Chegada: -</div>
+          </div>
+          
+          <div class="res-box air">
+            <label>Voo Direto (~800 km/h)</label>
+            <div id="air-dist" class="res-val">0 km</div>
+            <div id="air-time" style="font-size: 11px;">Tempo: -</div>
+            <div id="air-arrival" style="font-size: 11px; font-weight: bold; color: #f9e2af; margin-top:2px;">Chegada: -</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAINEL DIREITO: PESQUISA E LEGENDA -->
+    <div class="panel-right">
+      <div class="card">
+        <div class="card-title">Pesquisar Cidade</div>
+        <input type="text" id="search-input" placeholder="Digite o nome da cidade..." oninput="filterCities()">
+      </div>
+
+      <div class="card" style="flex:1; display:flex; flex-direction:column;">
+        <div class="card-title">Legenda de Cidades & Coordenadas</div>
+        <div class="city-list" id="city-legend-list">
+          <!-- Gerado via JavaScript -->
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    // Base de dados das cidades extraídas da lista
+    const citiesData = [
+      // Distrito de Jerusalém
+      { district: "Distrito de Jerusalém", name: "Jerusalém", lat: 31.7767, lng: 35.2342 },
+      { district: "Distrito de Jerusalém", name: "Beit Shemesh", lat: 31.7514, lng: 34.9886 },
+      // Distrito Central
+      { district: "Distrito Central", name: "Rishon LeZion", lat: 31.9500, lng: 34.8000 },
+      { district: "Distrito Central", name: "Petah Tikva", lat: 32.0833, lng: 34.8833 },
+      { district: "Distrito Central", name: "Netanya", lat: 32.3286, lng: 34.8567 },
+      { district: "Distrito Central", name: "Rehovot", lat: 31.8914, lng: 34.8078 },
+      { district: "Distrito Central", name: "Kfar Saba", lat: 32.1858, lng: 34.9077 },
+      { district: "Distrito Central", name: "Modi'in-Maccabim-Re meut", lat: 31.9077, lng: 35.0076 },
+      { district: "Distrito Central", name: "Lod", lat: 31.9656, lng: 34.8917 },
+      { district: "Distrito Central", name: "Ramla", lat: 31.9275, lng: 34.8625 },
+      { district: "Distrito Central", name: "Ra'anana", lat: 32.1833, lng: 34.8667 },
+      { district: "Distrito Central", name: "Hod HaSharon", lat: 32.1500, lng: 34.8833 },
+      { district: "Distrito Central", name: "Rosh HaAyin", lat: 32.0833, lng: 34.9500 },
+      { district: "Distrito Central", name: "El'ad", lat: 32.0523, lng: 34.9512 },
+      { district: "Distrito Central", name: "Tayibe (Et Tayiba)", lat: 32.2667, lng: 35.0000 },
+      { district: "Distrito Central", name: "Nes Ziona", lat: 31.9333, lng: 34.8000 },
+      { district: "Distrito Central", name: "Yavne", lat: 31.8778, lng: 34.7400 },
+      { district: "Distrito Central", name: "Be'er Ya'akov", lat: 31.9436, lng: 34.8392 },
+      { district: "Distrito Central", name: "Kefar Yona", lat: 32.3150, lng: 34.9328 },
+      { district: "Distrito Central", name: "Yehud-Monosson", lat: 32.0333, lng: 34.8833 },
+      { district: "Distrito Central", name: "Gedera", lat: 31.8139, lng: 34.7783 },
+      { district: "Distrito Central", name: "Tira", lat: 32.2342, lng: 34.9503 },
+      { district: "Distrito Central", name: "Qalansawe", lat: 32.2858, lng: 34.9819 },
+      // Distrito de Tel Aviv
+      { district: "Distrito de Tel Aviv", name: "Tel Aviv-Yafo", lat: 32.0800, lng: 34.7800 },
+      { district: "Distrito de Tel Aviv", name: "Holon", lat: 32.0167, lng: 34.7667 },
+      { district: "Distrito de Tel Aviv", name: "Bnei Brak", lat: 32.0807, lng: 34.8338 },
+      { district: "Distrito de Tel Aviv", name: "Ramat Gan", lat: 32.0700, lng: 34.8235 },
+      { district: "Distrito de Tel Aviv", name: "Bat Yam", lat: 32.0231, lng: 34.7503 },
+      { district: "Distrito de Tel Aviv", name: "Herzliya", lat: 32.1556, lng: 34.8422 },
+      { district: "Distrito de Tel Aviv", name: "Givatayim", lat: 32.0697, lng: 34.8117 },
+      { district: "Distrito de Tel Aviv", name: "Ramat HaSharon", lat: 32.1461, lng: 34.8394 },
+      { district: "Distrito de Tel Aviv", name: "Kiryat Ono", lat: 32.0636, lng: 34.8553 },
+      { district: "Distrito de Tel Aviv", name: "Or Yehuda", lat: 32.0333, lng: 34.8500 },
+      // Distrito de Haifa
+      { district: "Distrito de Haifa", name: "Haifa", lat: 32.8192, lng: 34.9992 },
+      { district: "Distrito de Haifa", name: "Hadera", lat: 32.4500, lng: 34.9167 },
+      { district: "Distrito de Haifa", name: "Umm al-Fahm", lat: 32.5158, lng: 35.1525 },
+      { district: "Distrito de Haifa", name: "Kiryat Ata", lat: 32.8000, lng: 35.1000 },
+      { district: "Distrito de Haifa", name: "Kiryat Motzkin", lat: 32.8369, lng: 35.0775 },
+      { district: "Distrito de Haifa", name: "Kiryat Yam", lat: 32.8331, lng: 35.0664 },
+      { district: "Distrito de Haifa", name: "Kiryat Bialik", lat: 32.8331, lng: 35.0664 },
+      { district: "Distrito de Haifa", name: "Pardes Hanna-Karkur", lat: 32.4711, lng: 34.9675 },
+      { district: "Distrito de Haifa", name: "Baqa al-Gharbiyye", lat: 32.4203, lng: 35.0422 },
+      { district: "Distrito de Haifa", name: "Tirat Carmel", lat: 32.7600, lng: 34.9700 },
+      { district: "Distrito de Haifa", name: "Nesher", lat: 32.7714, lng: 35.0417 },
+      { district: "Distrito de Haifa", name: "Or Akiva", lat: 32.5061, lng: 34.9189 },
+      // Distrito Norte
+      { district: "Distrito Norte", name: "Nazaré", lat: 32.7021, lng: 35.2978 },
+      { district: "Distrito Norte", name: "Nahariya", lat: 33.0036, lng: 35.0925 },
+      { district: "Distrito Norte", name: "Afula", lat: 32.6078, lng: 35.2897 },
+      { district: "Distrito Norte", name: "Acre (Akko)", lat: 32.9261, lng: 35.0839 },
+      { district: "Distrito Norte", name: "Karmiel", lat: 32.9000, lng: 35.2833 },
+      { district: "Distrito Norte", name: "Tiberíades", lat: 32.7897, lng: 35.5247 },
+      { district: "Distrito Norte", name: "Shefa-'Amr (Shefaram)", lat: 32.8056, lng: 35.1694 },
+      { district: "Distrito Norte", name: "Safed (Tzfat)", lat: 32.9658, lng: 35.4983 },
+      { district: "Distrito Norte", name: "Tamra", lat: 32.8511, lng: 35.2071 },
+      { district: "Distrito Norte", name: "Sakhnin", lat: 32.8667, lng: 35.3000 },
+      { district: "Distrito Norte", name: "Nof HaGalil", lat: 32.7050, lng: 35.3050 },
+      { district: "Distrito Norte", name: "Kiryat Shmona", lat: 33.2078, lng: 35.5700 },
+      { district: "Distrito Norte", name: "Migdal HaEmek", lat: 32.6719, lng: 35.2417 },
+      { district: "Distrito Norte", name: "Yokneam Illit", lat: 32.6594, lng: 35.0847 },
+      { district: "Distrito Norte", name: "Araba", lat: 32.8550, lng: 35.3361 },
+      { district: "Distrito Norte", name: "Ma'alot-Tarshiha", lat: 33.0167, lng: 35.2708 },
+      { district: "Distrito Norte", name: "Beit She'an", lat: 32.4972, lng: 35.4972 },
+      // Distrito Sul
+      { district: "Distrito Sul", name: "Ashdod", lat: 31.7978, lng: 34.6503 },
+      { district: "Distrito Sul", name: "Beer-Sheva (Beersheba)", lat: 31.2522, lng: 34.7867 },
+      { district: "Distrito Sul", name: "Ashkelon", lat: 31.6658, lng: 34.5664 },
+      { district: "Distrito Sul", name: "Rahat", lat: 31.3925, lng: 34.7544 },
+      { district: "Distrito Sul", name: "Kiryat Gat", lat: 31.6061, lng: 34.7717 },
+      { district: "Distrito Sul", name: "Eilat", lat: 29.5500, lng: 34.9500 },
+      { district: "Distrito Sul", name: "Netivot", lat: 31.4167, lng: 34.5833 },
+      { district: "Distrito Sul", name: "Ofakim", lat: 31.2833, lng: 34.6167 },
+      { district: "Distrito Sul", name: "Dimona", lat: 31.0700, lng: 35.0333 },
+      { district: "Distrito Sul", name: "Arad", lat: 31.2614, lng: 35.2133 },
+      { district: "Distrito Sul", name: "Sderot", lat: 31.5256, lng: 34.5969 },
+      { district: "Distrito Sul", name: "Kiryat Malakhi", lat: 31.7275, lng: 34.7450 },
+      // Judeia e Samaria
+      { district: "Judeia e Samaria", name: "Modi'in Illit", lat: 31.9333, lng: 35.0417 },
+      { district: "Judeia e Samaria", name: "Beitar Illit", lat: 31.7039, lng: 35.1136 },
+      { district: "Judeia e Samaria", name: "Ma'ale Adumim", lat: 31.7786, lng: 35.3000 },
+      { district: "Judeia e Samaria", name: "Ariel", lat: 32.1042, lng: 35.1744 }
+    ];
+
+    // Inicialização da Página
+    window.onload = function() {
+      // Ajustar Data/Hora Atual no Input
+      const now = new Date();
+      now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+      document.getElementById('departure-time').value = now.toISOString().slice(0, 16);
+
+      // Preencher Selects Principais
+      populateSelect(document.getElementById('origin-select'), "Jerusalém");
+      populateSelect(document.getElementById('destination-select'), "Tel Aviv-Yafo");
+
+      // Renderizar Legenda
+      renderLegend(citiesData);
+    };
+
+    function populateSelect(selectElem, defaultValue) {
+      selectElem.innerHTML = "";
+      citiesData.forEach((city, index) => {
+        const opt = document.createElement('option');
+        opt.value = index;
+        opt.textContent = `${city.name} (${city.district})`;
+        if (city.name === defaultValue) opt.selected = true;
+        selectElem.appendChild(opt);
+      });
+    }
+
+    // Adicionar e Remover Paradas Intermediárias
+    function addStop() {
+      const container = document.getElementById('stops-container');
+      const div = document.createElement('div');
+      div.className = 'stop-row';
+      
+      const select = document.createElement('select');
+      select.className = 'city-select stop-select';
+      populateSelect(select, citiesData[0].name);
+
+      const removeBtn = document.createElement('button');
+      removeBtn.className = 'btn-btn btn-remove';
+      removeBtn.textContent = 'X';
+      removeBtn.onclick = function() { container.removeChild(div); };
+
+      div.appendChild(select);
+      div.appendChild(removeBtn);
+      container.appendChild(div);
+    }
+
+    // Fórmula de Haversine para Distância em Linha Reta (km)
+    function calculateHaversineDistance(lat1, lon1, lat2, lon2) {
+      const R = 6371; // Raio da Terra em km
+      const dLat = (lat2 - lat1) * Math.PI / 180;
+      const dLon = (lon2 - lon1) * Math.PI / 180;
+      const a = 
+        Math.sin(dLat/2) * Math.sin(dLat/2) +
+        Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
+        Math.sin(dLon/2) * Math.sin(dLon/2);
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+      return R * c;
+    }
+
+    // Função Principal de Cálculo
+    function calculateTrip() {
+      // 1. Obter Pontos da Rota
+      const originIdx = document.getElementById('origin-select').value;
+      const destIdx = document.getElementById('destination-select').value;
+
+      const stopSelects = document.querySelectorAll('.stop-select');
+      
+      let routePoints = [citiesData[originIdx]];
+      stopSelects.forEach(select => {
+        routePoints.push(citiesData[select.value]);
+      });
+      routePoints.push(citiesData[destIdx]);
+
+      // 2. Calcular Distância Total (Somatório de ponto a ponto)
+      let totalStraightDistance = 0;
+      for (let i = 0; i < routePoints.length - 1; i++) {
+        totalStraightDistance += calculateHaversineDistance(
+          routePoints[i].lat, routePoints[i].lng,
+          routePoints[i+1].lat, routePoints[i+1].lng
+        );
+      }
+
+      // Distância terrestre ajustada (+25% de fator de tortuosidade para vias terrestres)
+      const landDistance = totalStraightDistance * 1.25; 
+      const airDistance = totalStraightDistance;
+
+      // 3. Cálculos de Tempo
+      // Terrestre: 90 km/h fixo
+      const landHours = landDistance / 90; 
+      // Voo: ~800 km/h + 30 minutos adicionais fixos (decolagem/pouso/procedimentos)
+      const airHours = (airDistance / 800) + 0.5;
+
+      // 4. Formatação de Saída e Chegada
+      const depVal = document.getElementById('departure-time').value;
+      const depDate = depVal ? new Date(depVal) : new Date();
+
+      const landArrival = new Date(depDate.getTime() + landHours * 3600 * 1000);
+      const airArrival = new Date(depDate.getTime() + airHours * 3600 * 1000);
+
+      // Exibir Resultados
+      document.getElementById('land-dist').textContent = `${landDistance.toFixed(1)} km`;
+      document.getElementById('land-time').textContent = `Tempo: ${formatDuration(landHours)}`;
+      document.getElementById('land-arrival').textContent = `Chegada: ${formatDate(landArrival)}`;
+
+      document.getElementById('air-dist').textContent = `${airDistance.toFixed(1)} km`;
+      document.getElementById('air-time').textContent = `Tempo: ${formatDuration(airHours)}`;
+      document.getElementById('air-arrival').textContent = `Chegada: ${formatDate(airArrival)}`;
+    }
+
+    function formatDuration(decimalHours) {
+      const hrs = Math.floor(decimalHours);
+      const mins = Math.round((decimalHours - hrs) * 60);
+      return `${hrs}h ${mins}min`;
+    }
+
+    function formatDate(dateObj) {
+      const day = String(dateObj.getDate()).padStart(2, '0');
+      const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+      const hours = String(dateObj.getHours()).padStart(2, '0');
+      const mins = String(dateObj.getMinutes()).padStart(2, '0');
+      return `${day}/${month} às ${hours}:${mins}`;
+    }
+
+    // Renderização e Filtro da Legenda de Cidades
+    function renderLegend(data) {
+      const listContainer = document.getElementById('city-legend-list');
+      listContainer.innerHTML = "";
+
+      let currentDistrict = "";
+      data.forEach(city => {
+        if (city.district !== currentDistrict) {
+          currentDistrict = city.district;
+          const distHeader = document.createElement('div');
+          distHeader.className = 'district-header';
+          distHeader.textContent = currentDistrict;
+          listContainer.appendChild(distHeader);
+        }
+        const item = document.createElement('div');
+        item.className = 'city-item';
+        item.innerHTML = `<span><strong>${city.name}</strong></span><span>${city.lat.toFixed(4)}° N, ${city.lng.toFixed(4)}° E</span>`;
+        listContainer.appendChild(item);
+      });
+    }
+
+    function filterCities() {
+      const query = document.getElementById('search-input').value.toLowerCase();
+      const filtered = citiesData.filter(c => 
+        c.name.toLowerCase().includes(query) || 
+        c.district.toLowerCase().includes(query)
+      );
+      renderLegend(filtered);
+    }
+  </script>
+</body>
+</html>
