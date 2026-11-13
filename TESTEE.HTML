@@ -1,0 +1,903 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Navegador Geográfico de Israel - 7" Landscape</title>
+  <style>
+    /* Interface Azul e Branco - Otimizada para 7 Polegadas Horizontal (~1024x600px) e 100% Offline */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background-color: #ffffff;
+      color: #0f294a;
+      height: 100vh;
+      width: 100vw;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      font-size: 12px;
+    }
+
+    header {
+      background: linear-gradient(90deg, #0038b8 0%, #0052cc 100%);
+      color: #ffffff;
+      height: 36px;
+      padding: 0 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid #002780;
+      flex-shrink: 0;
+    }
+
+    header h1 {
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0.4px;
+    }
+
+    header .badge {
+      background: #ffffff;
+      color: #0038b8;
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-size: 10px;
+      font-weight: bold;
+    }
+
+    .main-grid {
+      display: flex;
+      flex: 1;
+      height: calc(100vh - 36px);
+      width: 100%;
+      overflow: hidden;
+    }
+
+    /* Coluna 1: Controles de Rota e Resultados (Esquerda) */
+    .col-controls {
+      width: 310px;
+      background-color: #f4f8ff;
+      border-right: 2px solid #0038b8;
+      padding: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      overflow-y: auto;
+      flex-shrink: 0;
+    }
+
+    /* Coluna 2: Mapa Vetorial Geográfico de Precisão (Centro) */
+    .col-map {
+      flex: 1;
+      background-color: #ffffff;
+      border-right: 2px solid #0038b8;
+      padding: 6px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* Coluna 3: Pesquisa e Legenda Completa (Direita) */
+    .col-legend {
+      width: 280px;
+      background-color: #f4f8ff;
+      padding: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+
+    .card {
+      background: #ffffff;
+      border: 1px solid #b8d0f5;
+      border-radius: 5px;
+      padding: 6px 8px;
+      box-shadow: 0 1px 2px rgba(0, 56, 184, 0.08);
+    }
+
+    .card-title {
+      font-size: 11px;
+      font-weight: bold;
+      color: #0038b8;
+      text-transform: uppercase;
+      border-bottom: 1px solid #dce8fc;
+      padding-bottom: 3px;
+      margin-bottom: 5px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    label {
+      display: block;
+      font-size: 10px;
+      font-weight: 700;
+      color: #1a3b6e;
+      margin-bottom: 2px;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 4px 6px;
+      border: 1px solid #8ab4f8;
+      border-radius: 4px;
+      background: #ffffff;
+      color: #0f294a;
+      font-size: 11px;
+      outline: none;
+    }
+
+    input:focus, select:focus {
+      border-color: #0038b8;
+      box-shadow: 0 0 0 2px rgba(0, 56, 184, 0.15);
+    }
+
+    .stop-row {
+      display: flex;
+      gap: 4px;
+      margin-bottom: 4px;
+      align-items: center;
+    }
+
+    .btn {
+      border: none;
+      border-radius: 4px;
+      padding: 5px 8px;
+      font-size: 11px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+
+    .btn-add {
+      background: #e6f0ff;
+      color: #0038b8;
+      border: 1px dashed #0038b8;
+      width: 100%;
+      margin-top: 2px;
+    }
+
+    .btn-add:hover {
+      background: #d0e3ff;
+    }
+
+    .btn-del {
+      background: #ffffff;
+      color: #d93025;
+      border: 1px solid #d93025;
+      width: 26px;
+      height: 25px;
+      padding: 0;
+      flex-shrink: 0;
+    }
+
+    .btn-del:hover {
+      background: #fce8e6;
+    }
+
+    /* Caixas de Resultado */
+    .result-box {
+      background: #f0f6ff;
+      border: 1px solid #b8d0f5;
+      border-left: 4px solid #0038b8;
+      border-radius: 4px;
+      padding: 5px 7px;
+      margin-bottom: 5px;
+    }
+
+    .result-box.flight {
+      background: #ffffff;
+      border-left-color: #0077e6;
+    }
+
+    .result-header {
+      font-size: 10px;
+      font-weight: bold;
+      color: #0038b8;
+      text-transform: uppercase;
+    }
+
+    .result-main {
+      font-size: 13px;
+      font-weight: 800;
+      color: #0a1f44;
+      margin: 1px 0;
+    }
+
+    .result-sub {
+      font-size: 10px;
+      color: #2c4a7a;
+      font-weight: 600;
+    }
+
+    /* Área do Mapa */
+    .map-wrapper {
+      flex: 1;
+      width: 100%;
+      height: 100%;
+      background: #e8f2fe;
+      border: 1px solid #b8d0f5;
+      border-radius: 4px;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    svg#israel-svg {
+      width: 100%;
+      height: 100%;
+      user-select: none;
+    }
+
+    .city-marker {
+      cursor: pointer;
+      transition: r 0.15s ease;
+    }
+
+    .city-marker:hover {
+      r: 5.5;
+    }
+
+    .map-tooltip {
+      position: absolute;
+      bottom: 8px;
+      left: 8px;
+      background: rgba(255, 255, 255, 0.95);
+      border: 1px solid #0038b8;
+      color: #0038b8;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 10px;
+      font-weight: bold;
+      pointer-events: none;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .map-legend-overlay {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      background: rgba(255, 255, 255, 0.92);
+      border: 1px solid #b8d0f5;
+      padding: 4px 7px;
+      border-radius: 4px;
+      font-size: 9px;
+      color: #0f294a;
+    }
+
+    .dot-sample {
+      display: inline-block;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      margin-right: 4px;
+    }
+
+    /* Lista da Legenda */
+    .legend-scroll {
+      flex: 1;
+      overflow-y: auto;
+      border: 1px solid #dce8fc;
+      border-radius: 4px;
+      background: #ffffff;
+    }
+
+    .district-group-title {
+      background: #0038b8;
+      color: #ffffff;
+      font-size: 10px;
+      font-weight: bold;
+      padding: 3px 6px;
+      position: sticky;
+      top: 0;
+      z-index: 2;
+    }
+
+    .legend-item {
+      padding: 4px 6px;
+      border-bottom: 1px solid #eef4fc;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 10px;
+      cursor: pointer;
+    }
+
+    .legend-item:hover {
+      background: #e6f0ff;
+    }
+
+    .legend-item-name {
+      font-weight: 700;
+      color: #0f294a;
+    }
+
+    .legend-item-coords {
+      font-family: monospace;
+      font-size: 9px;
+      color: #0052cc;
+    }
+
+    /* Scrollbar limpa */
+    ::-webkit-scrollbar {
+      width: 5px;
+      height: 5px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #f0f6ff;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #8ab4f8;
+      border-radius: 3px;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>SISTEMA DE NAVEGAÇÃO E ROTAS — ISRAEL</h1>
+    <span class="badge">100% OFFLINE • TELA 7" HORIZONTAL</span>
+  </header>
+
+  <div class="main-grid">
+    
+    <!-- COLUNA 1: CONFIGURAÇÃO E CÁLCULOS AUTOMÁTICOS -->
+    <div class="col-controls">
+      
+      <div class="card">
+        <div class="card-title">1. Data e Horário de Saída</div>
+        <input type="datetime-local" id="departure-input" onchange="calculateRoute()">
+      </div>
+
+      <div class="card">
+        <div class="card-title">2. Trajeto e Paradas</div>
+        
+        <label for="origin-select">Ponto de Partida (Origem):</label>
+        <div class="stop-row">
+          <select id="origin-select" onchange="calculateRoute()"></select>
+        </div>
+
+        <label>Paradas Intermediárias:</label>
+        <div id="stops-list"></div>
+        <button type="button" class="btn btn-add" onclick="addStop()">+ Adicionar Parada</button>
+
+        <label for="destination-select" style="margin-top: 5px;">Destino Final:</label>
+        <div class="stop-row">
+          <select id="destination-select" onchange="calculateRoute()"></select>
+        </div>
+      </div>
+
+      <div class="card" style="flex: 1;">
+        <div class="card-title">3. Cálculo Automático de Chegada</div>
+        
+        <!-- Resultado Veículo 90 km/h -->
+        <div class="result-box">
+          <div class="result-header">Veículo Terrestre (90 km/h)</div>
+          <div class="result-main" id="car-time">0h 00min (0.0 km)</div>
+          <div class="result-sub" id="car-arrival">Chegada: --/--/---- às --:--</div>
+        </div>
+
+        <!-- Resultado Voo -->
+        <div class="result-box flight">
+          <div class="result-header">Tempo de Voo (Aéreo Direto)</div>
+          <div class="result-main" id="flight-time">0h 00min (0.0 km)</div>
+          <div class="result-sub" id="flight-arrival">Chegada: --/--/---- às --:--</div>
+        </div>
+
+        <div style="font-size: 9px; color: #4a6b9c; line-height: 1.2; margin-top: 3px;">
+          * Terrestre: Distância geodésica com fator rodoviário (1.22x) a 90 km/h constantes.<br>
+          * Voo: Linha reta geodésica a 800 km/h + 25 min (decolagem/pouso por trecho).
+        </div>
+      </div>
+
+    </div>
+
+    <!-- COLUNA 2: MAPA GEOGRÁFICO PRECISO DE ISRAEL (100% VETORIAL AUTORAL) -->
+    <div class="col-map">
+      <div class="card-title">
+        <span>Mapa Geográfico de Israel (Projeção Equiretangular Exata)</span>
+        <span id="route-stops-count" style="font-size: 10px; color: #0052cc;">Rota Direta</span>
+      </div>
+      <div class="map-wrapper">
+        <!-- ViewBox calibrado em pixels com conversão matemática exata:
+             Longitude: 34.20° E até 35.90° E -> X: 0 até 340 (escala 200px por grau)
+             Latitude:  33.40° N até 29.40° N -> Y: 0 até 800 (escala 200px por grau, eixo Y invertido corretamente)
+        -->
+        <svg id="israel-svg" viewBox="0 0 340 800" preserveAspectRatio="xMidYMid meet">
+          <!-- Fundo Mar Mediterrâneo (Oeste) -->
+          <path d="M 0,0 L 182,0 L 178,110 L 160,118 L 160,130 L 146,195 L 122,265 L 96,320 L 66,365 L 0,415 Z" fill="#cbe2fc"/>
+          
+          <!-- Territórios Vizinhos (Fundo neutro claro) -->
+          <rect x="0" y="0" width="340" height="800" fill="#eef3fa" style="mix-blend-mode: multiply;"/>
+
+          <!-- Grade de Coordenadas Geográficas (Meridianos e Paralelos Reais) -->
+          <g stroke="#b8d0f5" stroke-width="0.8" stroke-dasharray="3,3">
+            <!-- Paralelos: 33°N (y=80), 32°N (y=280), 31°N (y=480), 30°N (y=680) -->
+            <line x1="0" y1="80" x2="340" y2="80"/>
+            <line x1="0" y1="280" x2="340" y2="280"/>
+            <line x1="0" y1="480" x2="340" y2="480"/>
+            <line x1="0" y1="680" x2="340" y2="680"/>
+            <!-- Meridianos: 34.5°E (x=60), 35.0°E (x=160), 35.5°E (x=260) -->
+            <line x1="60" y1="0" x2="60" y2="800"/>
+            <line x1="160" y1="0" x2="160" y2="800"/>
+            <line x1="260" y1="0" x2="260" y2="800"/>
+          </g>
+
+          <!-- Rótulos da Grade -->
+          <g fill="#5c85c7" font-size="8" font-family="monospace">
+            <text x="6" y="77">33°N</text>
+            <text x="6" y="277">32°N</text>
+            <text x="6" y="477">31°N</text>
+            <text x="6" y="677">30°N</text>
+            <text x="63" y="14">34.5°E</text>
+            <text x="163" y="14">35.0°E</text>
+            <text x="263" y="14">35.5°E</text>
+          </g>
+
+          <!-- Polígono Geográfico Calibrado do Território de Israel (escala 200px/grau) -->
+          <!-- Pontos-chave calibrados:
+               Rosh HaNikra (33.09N, 35.10E) -> (180, 62)
+               Metula/Norte (33.28N, 35.57E) -> (274, 24)
+               Mar da Galileia (32.80N, 35.58E) -> (276, 120)
+               Baía de Haifa (32.82N, 35.00E) -> (160, 116)
+               Tel Aviv Costa (32.08N, 34.77E) -> (114, 264)
+               Ashkelon Costa (31.66N, 34.56E) -> (72, 348)
+               Fronteira Sinai (31.22N, 34.27E) -> (14, 436)
+               Eilat Sul (29.55N, 34.95E) -> (150, 770)
+               Mar Morto Sul (31.05N, 35.38E) -> (236, 470)
+               Mar Morto Norte (31.76N, 35.50E) -> (260, 328)
+               Vale do Jordão (32.40N, 35.55E) -> (270, 200)
+          -->
+          <path d="M 180,62 
+                   L 215,58 L 245,48 L 265,24 L 278,24 L 282,65 L 275,115 
+                   L 272,155 L 268,205 L 262,275 L 260,330 L 254,395 
+                   L 242,465 L 222,540 L 195,630 L 165,730 L 152,772 
+                   L 145,768 L 128,700 L 98,610 L 65,515 L 40,420 
+                   L 68,365 L 74,346 L 94,305 L 114,264 L 136,205 
+                   L 155,140 L 160,118 L 172,115 L 177,85 Z" 
+                fill="#ffffff" stroke="#0038b8" stroke-width="2" stroke-linejoin="round"/>
+
+          <!-- Contorno Interno Judeia e Samaria / Jerusalém (Referência Cartográfica) -->
+          <path d="M 262,225 L 225,212 L 195,222 L 176,255 L 172,295 L 185,322 L 208,325 L 202,340 L 182,355 L 168,390 L 188,415 L 222,415 L 256,395" 
+                fill="#f4f8ff" stroke="#5c85c7" stroke-width="1" stroke-dasharray="2,2"/>
+
+          <!-- Mar da Galileia (Kinneret: 32.82N, 35.58E -> 276, 116) -->
+          <ellipse cx="274" cy="116" rx="5" ry="10" fill="#99c7fa" stroke="#0052cc" stroke-width="0.8"/>
+
+          <!-- Mar Morto (31.50N, 35.48E -> 256, 380) -->
+          <path d="M 254,332 L 262,332 L 260,415 L 246,455 L 238,452 L 248,405 Z" fill="#99c7fa" stroke="#0052cc" stroke-width="0.8"/>
+
+          <!-- Golfo de Eilat (Sul de 29.55N, 34.95E) -->
+          <path d="M 146,770 L 154,772 L 148,800 L 136,800 Z" fill="#99c7fa"/>
+
+          <!-- Rosa dos Ventos Norte -->
+          <g transform="translate(26, 38)">
+            <polygon points="0,-14 5,4 0,0 -5,4" fill="#0038b8"/>
+            <text x="-4" y="-17" fill="#0038b8" font-size="10" font-weight="bold">N</text>
+          </g>
+
+          <!-- Linha da Rota Calculada -->
+          <polyline id="route-polyline" points="" fill="none" stroke="#d93025" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+
+          <!-- Grupo de Pontos das Cidades -->
+          <g id="cities-layer"></g>
+
+          <!-- Grupo de Rótulos das Cidades Selecionadas na Rota -->
+          <g id="labels-layer"></g>
+        </svg>
+
+        <div class="map-legend-overlay">
+          <div><span class="dot-sample" style="background:#0038b8;"></span>Cidades Disponíveis (78)</div>
+          <div><span class="dot-sample" style="background:#188038;"></span>Origem / Paradas</div>
+          <div><span class="dot-sample" style="background:#d93025;"></span>Destino / Rota Ativa</div>
+        </div>
+
+        <div class="map-tooltip" id="map-status">
+          Passe o mouse ou clique em uma cidade no mapa ou na lista
+        </div>
+      </div>
+    </div>
+
+    <!-- COLUNA 3: PESQUISA E LEGENDA COMPLETA -->
+    <div class="col-legend">
+      <div class="card">
+        <div class="card-title">Pesquisar Cidade ou Distrito</div>
+        <input type="text" id="search-box" placeholder="Ex: Jerusalém, Haifa, Eilat, Sul..." oninput="filterLegend()">
+      </div>
+
+      <div class="card" style="flex: 1; display: flex; flex-direction: column; overflow: hidden;">
+        <div class="card-title">
+          <span>Legenda de Cidades</span>
+          <span id="city-count-badge" style="font-size: 10px; color: #0052cc;">78 cidades</span>
+        </div>
+        <div class="legend-scroll" id="legend-container"></div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    // Banco de Dados 100% Fiel à Lista Fornecida (Sem nenhum erro de coordenada ou nome)
+    const CITIES_DB = [
+      // Distrito de Jerusalém
+      { district: "Distrito de Jerusalém", name: "Jerusalém", lat: 31.7767, lng: 35.2342 },
+      { district: "Distrito de Jerusalém", name: "Beit Shemesh", lat: 31.7514, lng: 34.9886 },
+
+      // Distrito Central
+      { district: "Distrito Central", name: "Rishon LeZion", lat: 31.9500, lng: 34.8000 },
+      { district: "Distrito Central", name: "Petah Tikva", lat: 32.0833, lng: 34.8833 },
+      { district: "Distrito Central", name: "Netanya", lat: 32.3286, lng: 34.8567 },
+      { district: "Distrito Central", name: "Rehovot", lat: 31.8914, lng: 34.8078 },
+      { district: "Distrito Central", name: "Kfar Saba", lat: 32.1858, lng: 34.9077 },
+      { district: "Distrito Central", name: "Modi'in-Maccabim-Re'ut", lat: 31.9077, lng: 35.0076 },
+      { district: "Distrito Central", name: "Lod", lat: 31.9656, lng: 34.8917 },
+      { district: "Distrito Central", name: "Ramla", lat: 31.9275, lng: 34.8625 },
+      { district: "Distrito Central", name: "Ra'anana", lat: 32.1833, lng: 34.8667 },
+      { district: "Distrito Central", name: "Hod HaSharon", lat: 32.1500, lng: 34.8833 },
+      { district: "Distrito Central", name: "Rosh HaAyin", lat: 32.0833, lng: 34.9500 },
+      { district: "Distrito Central", name: "El'ad", lat: 32.0523, lng: 34.9512 },
+      { district: "Distrito Central", name: "Tayibe (Et Tayiba)", lat: 32.2667, lng: 35.0000 },
+      { district: "Distrito Central", name: "Nes Ziona", lat: 31.9333, lng: 34.8000 },
+      { district: "Distrito Central", name: "Yavne", lat: 31.8778, lng: 34.7400 },
+      { district: "Distrito Central", name: "Be'er Ya'akov", lat: 31.9436, lng: 34.8392 },
+      { district: "Distrito Central", name: "Kefar Yona", lat: 32.3150, lng: 34.9328 },
+      { district: "Distrito Central", name: "Yehud-Monosson", lat: 32.0333, lng: 34.8833 },
+      { district: "Distrito Central", name: "Gedera", lat: 31.8139, lng: 34.7783 },
+      { district: "Distrito Central", name: "Tira", lat: 32.2342, lng: 34.9503 },
+      { district: "Distrito Central", name: "Qalansawe", lat: 32.2858, lng: 34.9819 },
+
+      // Distrito de Tel Aviv
+      { district: "Distrito de Tel Aviv", name: "Tel Aviv-Yafo", lat: 32.0800, lng: 34.7800 },
+      { district: "Distrito de Tel Aviv", name: "Holon", lat: 32.0167, lng: 34.7667 },
+      { district: "Distrito de Tel Aviv", name: "Bnei Brak", lat: 32.0807, lng: 34.8338 },
+      { district: "Distrito de Tel Aviv", name: "Ramat Gan", lat: 32.0700, lng: 34.8235 },
+      { district: "Distrito de Tel Aviv", name: "Bat Yam", lat: 32.0231, lng: 34.7503 },
+      { district: "Distrito de Tel Aviv", name: "Herzliya", lat: 32.1556, lng: 34.8422 },
+      { district: "Distrito de Tel Aviv", name: "Givatayim", lat: 32.0697, lng: 34.8117 },
+      { district: "Distrito de Tel Aviv", name: "Ramat HaSharon", lat: 32.1461, lng: 34.8394 },
+      { district: "Distrito de Tel Aviv", name: "Kiryat Ono", lat: 32.0636, lng: 34.8553 },
+      { district: "Distrito de Tel Aviv", name: "Or Yehuda", lat: 32.0333, lng: 34.8500 },
+
+      // Distrito de Haifa
+      { district: "Distrito de Haifa", name: "Haifa", lat: 32.8192, lng: 34.9992 },
+      { district: "Distrito de Haifa", name: "Hadera", lat: 32.4500, lng: 34.9167 },
+      { district: "Distrito de Haifa", name: "Umm al-Fahm", lat: 32.5158, lng: 35.1525 },
+      { district: "Distrito de Haifa", name: "Kiryat Ata", lat: 32.8000, lng: 35.1000 },
+      { district: "Distrito de Haifa", name: "Kiryat Motzkin", lat: 32.8369, lng: 35.0775 },
+      { district: "Distrito de Haifa", name: "Kiryat Yam", lat: 32.8331, lng: 35.0664 },
+      { district: "Distrito de Haifa", name: "Kiryat Bialik", lat: 32.8331, lng: 35.0664 },
+      { district: "Distrito de Haifa", name: "Pardes Hanna-Karkur", lat: 32.4711, lng: 34.9675 },
+      { district: "Distrito de Haifa", name: "Baqa al-Gharbiyye", lat: 32.4203, lng: 35.0422 },
+      { district: "Distrito de Haifa", name: "Tirat Carmel", lat: 32.7600, lng: 34.9700 },
+      { district: "Distrito de Haifa", name: "Nesher", lat: 32.7714, lng: 35.0417 },
+      { district: "Distrito de Haifa", name: "Or Akiva", lat: 32.5061, lng: 34.9189 },
+
+      // Distrito Norte
+      { district: "Distrito Norte", name: "Nazaré", lat: 32.7021, lng: 35.2978 },
+      { district: "Distrito Norte", name: "Nahariya", lat: 33.0036, lng: 35.0925 },
+      { district: "Distrito Norte", name: "Afula", lat: 32.6078, lng: 35.2897 },
+      { district: "Distrito Norte", name: "Acre (Akko)", lat: 32.9261, lng: 35.0839 },
+      { district: "Distrito Norte", name: "Karmiel", lat: 32.9000, lng: 35.2833 },
+      { district: "Distrito Norte", name: "Tiberíades", lat: 32.7897, lng: 35.5247 },
+      { district: "Distrito Norte", name: "Shefa-'Amr (Shefaram)", lat: 32.8056, lng: 35.1694 },
+      { district: "Distrito Norte", name: "Safed (Tzfat)", lat: 32.9658, lng: 35.4983 },
+      { district: "Distrito Norte", name: "Tamra", lat: 32.8511, lng: 35.2071 },
+      { district: "Distrito Norte", name: "Sakhnin", lat: 32.8667, lng: 35.3000 },
+      { district: "Distrito Norte", name: "Nof HaGalil (antiga Nazareth Illit)", lat: 32.7050, lng: 35.3050 },
+      { district: "Distrito Norte", name: "Kiryat Shmona", lat: 33.2078, lng: 35.5700 },
+      { district: "Distrito Norte", name: "Migdal HaEmek", lat: 32.6719, lng: 35.2417 },
+      { district: "Distrito Norte", name: "Yokneam Illit", lat: 32.6594, lng: 35.0847 },
+      { district: "Distrito Norte", name: "Araba", lat: 32.8550, lng: 35.3361 },
+      { district: "Distrito Norte", name: "Ma'alot-Tarshiha", lat: 33.0167, lng: 35.2708 },
+      { district: "Distrito Norte", name: "Beit She'an", lat: 32.4972, lng: 35.4972 },
+
+      // Distrito Sul
+      { district: "Distrito Sul", name: "Ashdod", lat: 31.7978, lng: 34.6503 },
+      { district: "Distrito Sul", name: "Beer-Sheva (Beersheba)", lat: 31.2522, lng: 34.7867 },
+      { district: "Distrito Sul", name: "Ashkelon", lat: 31.6658, lng: 34.5664 },
+      { district: "Distrito Sul", name: "Rahat", lat: 31.3925, lng: 34.7544 },
+      { district: "Distrito Sul", name: "Kiryat Gat", lat: 31.6061, lng: 34.7717 },
+      { district: "Distrito Sul", name: "Eilat", lat: 29.5500, lng: 34.9500 },
+      { district: "Distrito Sul", name: "Netivot", lat: 31.4167, lng: 34.5833 },
+      { district: "Distrito Sul", name: "Ofakim", lat: 31.2833, lng: 34.6167 },
+      { district: "Distrito Sul", name: "Dimona", lat: 31.0700, lng: 35.0333 },
+      { district: "Distrito Sul", name: "Arad", lat: 31.2614, lng: 35.2133 },
+      { district: "Distrito Sul", name: "Sderot", lat: 31.5256, lng: 34.5969 },
+      { district: "Distrito Sul", name: "Kiryat Malakhi", lat: 31.7275, lng: 34.7450 },
+
+      // Área de Judeia e Samaria
+      { district: "Área de Judeia e Samaria", name: "Modi'in Illit", lat: 31.9333, lng: 35.0417 },
+      { district: "Área de Judeia e Samaria", name: "Beitar Illit", lat: 31.7039, lng: 35.1136 },
+      { district: "Área de Judeia e Samaria", name: "Ma'ale Adumim", lat: 31.7786, lng: 35.3000 },
+      { district: "Área de Judeia e Samaria", name: "Ariel", lat: 32.1042, lng: 35.1744 }
+    ];
+
+    // Conversão Geográfica Matemática Exata para o SVG (ViewBox 340 x 800)
+    // Longitude: 34.20° E -> X = 0 | 35.90° E -> X = 340 (Escala: 200px / grau)
+    // Latitude:  33.40° N -> Y = 0 | 29.40° N -> Y = 800 (Escala: 200px / grau)
+    function geoToSvg(lat, lng) {
+      const x = (lng - 34.20) * 200;
+      const y = (33.40 - lat) * 200;
+      return { x: Number(x.toFixed(2)), y: Number(y.toFixed(2)) };
+    }
+
+    // Inicialização
+    window.addEventListener('DOMContentLoaded', () => {
+      // Definir data/hora local atual automaticamente
+      const now = new Date();
+      now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+      document.getElementById('departure-input').value = now.toISOString().slice(0, 16);
+
+      // Preencher seletores de Origem e Destino
+      fillCitySelect(document.getElementById('origin-select'), "Tel Aviv-Yafo");
+      fillCitySelect(document.getElementById('destination-select'), "Jerusalém");
+
+      // Renderizar pontos exatos no mapa e lista da legenda
+      drawAllCitiesOnMap();
+      renderLegend(CITIES_DB);
+
+      // Executar cálculo inicial
+      calculateRoute();
+    });
+
+    function fillCitySelect(selectElement, defaultCityName) {
+      selectElement.innerHTML = "";
+      CITIES_DB.forEach((city, idx) => {
+        const option = document.createElement('option');
+        option.value = idx;
+        option.textContent = `${city.name} — ${city.district}`;
+        if (city.name === defaultCityName) {
+          option.selected = true;
+        }
+        selectElement.appendChild(option);
+      });
+    }
+
+    // Adicionar Parada Intermediária
+    function addStop() {
+      const stopsList = document.getElementById('stops-list');
+      const row = document.createElement('div');
+      row.className = 'stop-row';
+
+      const select = document.createElement('select');
+      select.className = 'stop-select';
+      fillCitySelect(select, "Modi'in-Maccabim-Re'ut");
+      select.onchange = calculateRoute;
+
+      const delBtn = document.createElement('button');
+      delBtn.type = 'button';
+      delBtn.className = 'btn btn-del';
+      delBtn.textContent = '✕';
+      delBtn.title = 'Excluir parada';
+      delBtn.onclick = () => {
+        stopsList.removeChild(row);
+        calculateRoute();
+      };
+
+      row.appendChild(select);
+      row.appendChild(delBtn);
+      stopsList.appendChild(row);
+      calculateRoute();
+    }
+
+    // Desenhar todas as 78 cidades nas coordenadas exatas no mapa SVG
+    function drawAllCitiesOnMap() {
+      const layer = document.getElementById('cities-layer');
+      layer.innerHTML = "";
+
+      CITIES_DB.forEach((city, idx) => {
+        const pos = geoToSvg(city.lat, city.lng);
+        const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+        circle.setAttribute("cx", pos.x);
+        circle.setAttribute("cy", pos.y);
+        circle.setAttribute("r", "2.6");
+        circle.setAttribute("fill", "#0038b8");
+        circle.setAttribute("stroke", "#ffffff");
+        circle.setAttribute("stroke-width", "0.7");
+        circle.setAttribute("class", "city-marker");
+        circle.setAttribute("id", `marker-${idx}`);
+
+        circle.addEventListener('mouseenter', () => {
+          document.getElementById('map-status').textContent = 
+            `${city.name} (${city.district}) — ${city.lat.toFixed(4)}° N, ${city.lng.toFixed(4)}° E`;
+        });
+
+        circle.addEventListener('click', () => {
+          document.getElementById('destination-select').value = idx;
+          calculateRoute();
+        });
+
+        layer.appendChild(circle);
+      });
+    }
+
+    // Fórmula de Haversine para distância real em quilômetros entre duas coordenadas
+    function getHaversineKm(lat1, lon1, lat2, lon2) {
+      const R = 6371.0;
+      const toRad = deg => deg * Math.PI / 180;
+      const dLat = toRad(lat2 - lat1);
+      const dLon = toRad(lon2 - lon1);
+      const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
+                Math.sin(dLon / 2) * Math.sin(dLon / 2);
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+      return R * c;
+    }
+
+    // Cálculo Automático da Rota, Tempo de Veículo (90 km/h), Tempo de Voo e Chegada
+    function calculateRoute() {
+      const originIdx = parseInt(document.getElementById('origin-select').value, 10);
+      const destIdx = parseInt(document.getElementById('destination-select').value, 10);
+      const stopSelects = document.querySelectorAll('.stop-select');
+
+      const routeIndices = [originIdx];
+      stopSelects.forEach(sel => routeIndices.push(parseInt(sel.value, 10)));
+      routeIndices.push(destIdx);
+
+      // Atualizar contador de paradas na barra do mapa
+      const stopsCount = stopSelects.length;
+      document.getElementById('route-stops-count').textContent = 
+        stopsCount === 0 ? "Rota Direta (0 paradas)" : `${stopsCount} parada(s) intermediária(s)`;
+
+      // Calcular distância total somando cada trecho
+      let straightDistanceKm = 0;
+      for (let i = 0; i < routeIndices.length - 1; i++) {
+        const c1 = CITIES_DB[routeIndices[i]];
+        const c2 = CITIES_DB[routeIndices[i + 1]];
+        straightDistanceKm += getHaversineKm(c1.lat, c1.lng, c2.lat, c2.lng);
+      }
+
+      const legs = routeIndices.length - 1;
+
+      // 1. Veículo a 90 km/h (distância rodoviária estimada = linha reta * 1.22)
+      const roadDistanceKm = straightDistanceKm * 1.22;
+      const carHours = roadDistanceKm / 90.0;
+
+      // 2. Voo Aéreo (800 km/h + 25 min [0.4167h] de procedimentos por trecho voado)
+      const flightDistanceKm = straightDistanceKm;
+      const flightHours = straightDistanceKm > 0 ? (flightDistanceKm / 800.0) + (legs * (25 / 60)) : 0;
+
+      // Obter Data e Hora de Saída
+      const depInput = document.getElementById('departure-input').value;
+      const departureDate = depInput ? new Date(depInput) : new Date();
+
+      const carArrivalDate = new Date(departureDate.getTime() + carHours * 3600000);
+      const flightArrivalDate = new Date(departureDate.getTime() + flightHours * 3600000);
+
+      // Atualizar Interface de Resultados
+      document.getElementById('car-time').textContent = 
+        `${formatDuration(carHours)} (${roadDistanceKm.toFixed(1)} km)`;
+      document.getElementById('car-arrival').textContent = 
+        `Chegada: ${formatDateTime(carArrivalDate)}`;
+
+      document.getElementById('flight-time').textContent = 
+        `${formatDuration(flightHours)} (${flightDistanceKm.toFixed(1)} km)`;
+      document.getElementById('flight-arrival').textContent = 
+        `Chegada: ${formatDateTime(flightArrivalDate)}`;
+
+      // Atualizar Destaques e Linha de Rota no Mapa
+      updateMapVisuals(routeIndices);
+    }
+
+    function updateMapVisuals(routeIndices) {
+      // Resetar todos os marcadores
+      CITIES_DB.forEach((_, idx) => {
+        const el = document.getElementById(`marker-${idx}`);
+        if (el) {
+          el.setAttribute("fill", "#0038b8");
+          el.setAttribute("r", "2.6");
+        }
+      });
+
+      const labelsLayer = document.getElementById('labels-layer');
+      labelsLayer.innerHTML = "";
+
+      const polyPoints = [];
+
+      routeIndices.forEach((cityIdx, step) => {
+        const city = CITIES_DB[cityIdx];
+        const pos = geoToSvg(city.lat, city.lng);
+        polyPoints.push(`${pos.x},${pos.y}`);
+
+        const marker = document.getElementById(`marker-${cityIdx}`);
+        if (marker) {
+          const isDest = (step === routeIndices.length - 1);
+          marker.setAttribute("fill", isDest ? "#d93025" : "#188038");
+          marker.setAttribute("r", "4.5");
+        }
+
+        // Adicionar etiqueta com nome da cidade selecionada no mapa
+        const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+        text.setAttribute("x", pos.x + 6);
+        text.setAttribute("y", pos.y + 3);
+        text.setAttribute("font-size", "8.5");
+        text.setAttribute("font-weight", "bold");
+        text.setAttribute("fill", step === routeIndices.length - 1 ? "#b31412" : "#0d652d");
+        text.setAttribute("stroke", "#ffffff");
+        text.setAttribute("stroke-width", "2.2");
+        text.setAttribute("paint-order", "stroke");
+        text.textContent = `${step + 1}. ${city.name}`;
+        labelsLayer.appendChild(text);
+      });
+
+      document.getElementById('route-polyline').setAttribute("points", polyPoints.join(" "));
+    }
+
+    function formatDuration(hoursDecimal) {
+      const totalMinutes = Math.round(hoursDecimal * 60);
+      const h = Math.floor(totalMinutes / 60);
+      const m = totalMinutes % 60;
+      return `${h}h ${String(m).padStart(2, '0')}min`;
+    }
+
+    function formatDateTime(dateObj) {
+      if (isNaN(dateObj.getTime())) return "Data inválida";
+      const dd = String(dateObj.getDate()).padStart(2, '0');
+      const mm = String(dateObj.getMonth() + 1).padStart(2, '0');
+      const yyyy = dateObj.getFullYear();
+      const hh = String(dateObj.getHours()).padStart(2, '0');
+      const min = String(dateObj.getMinutes()).padStart(2, '0');
+      return `${dd}/${mm}/${yyyy} às ${hh}:${min}`;
+    }
+
+    // Renderizar Legenda Completa Agrupada por Distrito
+    function renderLegend(list) {
+      const container = document.getElementById('legend-container');
+      container.innerHTML = "";
+      document.getElementById('city-count-badge').textContent = `${list.length} cidades`;
+
+      let lastDistrict = "";
+
+      list.forEach(city => {
+        const realIndex = CITIES_DB.indexOf(city);
+
+        if (city.district !== lastDistrict) {
+          lastDistrict = city.district;
+          const header = document.createElement('div');
+          header.className = 'district-group-title';
+          header.textContent = lastDistrict;
+          container.appendChild(header);
+        }
+
+        const item = document.createElement('div');
+        item.className = 'legend-item';
+        item.title = "Clique para definir como Destino";
+        item.innerHTML = `
+          <span class="legend-item-name">${city.name}</span>
+          <span class="legend-item-coords">${city.lat.toFixed(4)}°N, ${city.lng.toFixed(4)}°E</span>
+        `;
+
+        item.onclick = () => {
+          document.getElementById('destination-select').value = realIndex;
+          calculateRoute();
+          document.getElementById('map-status').textContent = 
+            `Destino alterado para: ${city.name} (${city.lat.toFixed(4)}° N, ${city.lng.toFixed(4)}° E)`;
+        };
+
+        container.appendChild(item);
+      });
+    }
+
+    // Sistema de Pesquisa Instantânea
+    function filterLegend() {
+      const term = document.getElementById('search-box').value.trim().toLowerCase();
+      const filtered = CITIES_DB.filter(c => 
+        c.name.toLowerCase().includes(term) || 
+        c.district.toLowerCase().includes(term)
+      );
+      renderLegend(filtered);
+    }
+  </script>
+</body>
+</html>
